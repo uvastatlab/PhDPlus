@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Data Science Essentials in R</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">PhD+ Module: Data Science Essentials in R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="intror.html">1. Intro to R</a>
+</li>
+<li>
+  <a href="dataprep.html">2. Data Prep</a>
+</li>
+<li>
+  <a href="dataviz.html">3. Data Viz</a>
+</li>
+<li>
+  <a href="linearmodel.html">4. Linear Models</a>
+</li>
+<li>
+  <a href="modelviz.html">5. Model Viz</a>
+</li>
+<li>
+  <a href="shinyr.html">6. Interactive Viz</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Data Science Essentials in R</h1>
+
+</div>
+
+
+<p><link rel="stylesheet" href="styles.css" type="text/css"></p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In Spring 2019, the <a href="https://www.library.virginia.edu">UVA Library’s</a> <a href="https://data.library.virginia.edu">Research Data Services Team</a> is partnering with UVA’s <a href="http://phdplus.virginia.edu/">PhDPlus program</a> to pilot a new module – Data Science Essentials in R – a six-session series to build data analysis, wrangling, and visualization skills.</p>
+<p>This site will host the materials for the series.</p>
+</div>
+<div id="overview-of-the-module" class="section level1">
+<h1>Overview of the Module</h1>
+<div id="who" class="section level2">
+<h2>Who</h2>
+<p>The PhDPlus program is focused on doctoral students and post-doctoral research associates.</p>
+<p>However, the UVA Library’s Research Data Services is offering the same workshop series through our standing <a href="https://data.library.virginia.edu/training/">RDS workshop series</a>, open to all. And all of our materials will be available on this webpage for all interested learners!</p>
+</div>
+<div id="when" class="section level2">
+<h2>When</h2>
+<ul>
+<li>Dates: Thursdays, 2/21, 2/28, 3/7, 3/21, 3/28, 4/4</li>
+<li>Time: 3:00 - 5:00 p.m.</li>
+<li>Place: Brown Science &amp; Engineering Library (in Clark Hall), Room 133</li>
+</ul>
+</div>
+<div id="what" class="section level2">
+<h2>What</h2>
+<ul>
+<li>Session 1: <strong>Introduction to R</strong> - This workshop provides a gentle introduction to R and RStudio. R is a free, open-source software environment and programming language designed specifically for statistical analysis; RStudio is a free, open source integrated development environment (IDE) for R that provides a friendly interface for viewing graphs, data tables, R code, and output all at the same time. In this jhands-on workshop we’ll get started navigating R with RStudio, loading libraries, and importing data. We’ll do some basic data manipulation, exploration, and analysis, and begin creating plots and graphics. And we’ll cover some key practices and shortcuts for using R effectively and helpful resources for learning more.</li>
+<li>Session 2: <strong>Data Preparation/Tidy Data in R</strong> - Before analyzing data, we spend considerable effort wrangling the data into an analyzable form – creating and recoding variables, merging data sets, filtering and aggregating data, reshaping and more. In this workshop, we’ll learn about data preparation using dplyr, a library defining a grammar of data manipulaiton, and tidyr, a library for reshaping and tidying data. We’ll also cover working with data types like factors and dates and using conditional logic.</li>
+<li>Session 3: <strong>(Exploratory) Data Visualization in R</strong> - Exploring our data with graphs allows us to visualize relationships, spot unusual observations, or find unexpected patterns. In this workshop we introduce how to effectively use the ggplot2 package to explore and visualize data in R. With its consistent syntax and layered approach to making graphics, ggplot2 has revolutionized data visualization. What previously would have required hours of tedious programming can now be accomplished in a few lines of ggplot2 code. This workshop will introduce the logic behind ggplot2, how to use ggplot2 to explore your data, and how to customize and polish ggplot2 graphs. Prerequisites: basic experience using R at the level of our Intro to R workshop.</li>
+<li>Session 4: <strong>Linear Modeling in R</strong> - The linear model is one of the most commonly-used statistical models. Also called the regression model or the ordinary linear regression, linear modeling is the foundation for more complex general linear models like logit or count models, mixed-effects models, and structural equation models. So it’s a good model to understand. This workshop will cover to use R to fit and analyze linear models. Through hands-on examples, we’ll talk about interpetation of model output and checking model assumptions. We’ll also explore dummy variables, interactions, and variable transformations. While the workshop will assume you’ve met a regression model before, it can serve as a refresher for forgotten statistics! This workshop also assumes basic experience using R and familiarity with the tidyverse libraries, or successful completion of our Intro to R, Data Preparation in R, and Data Visualization in R workshops.</li>
+<li>Session 5: <strong>Visualizing Models, Communicating Results in R</strong> - The statistical model is often the workhorse method for quantifying or establishing relationships in experimental or observational data. However the results of modeling are often tables of numbers that can defy intuition. In this workshop we introduce approaches to visualizing models in R to help explain how they work, what they mean and how certain we can be of their predictions. We’ll also present ways to help format modeling output for use in LaTeX or R Markdown reports. Speaking of R Markdown, that’s RStudio’s platform for creating documents that combine R code, output, graphs and exposition. We’ll get you up and running with R Markdown as well! This workshop assumes experience with R and linear modeling at the level of our Linear Modeling in R workshop.</li>
+<li>Session 6: <strong>Interactive Web Apps/Data Vis in R with Shiny</strong> - Imagine presenting your research using a web application that allows a user to interact with your statistical model and see how it behaves given various inputs. Or think about being able to teach a statistical concept such as correlation where you can interactively change the correlation coefficient and see the resulting scatterplot of a linear relationship. The shiny package makes applications like this surprisingly easy to create in R. In this workshop we’ll get up and running with shiny and provide several examples that you can adapt to your own research and courses. As you’ll find out, you don’t have to be a web developer to create web applications in R! And thanks to RStudio, these applications can be run locally on your computer or shared with colleagues or students as R scripts. This workshop assumes experience with R and linear modeling at the level of our Linear Modeling in R and Visualizing Models workshops.</li>
+</ul>
+</div>
+<div id="how" class="section level2">
+<h2>How</h2>
+<p>To register, ADD LINK</p>
+</div>
+</div>
+<div id="programs-and-partners" class="section level1">
+<h1>Programs and Partners</h1>
+<div id="uva-librarys-research-data-services" class="section level2">
+<h2>UVA Library’s Research Data Services</h2>
+<p><img src="images/library_logo.png" style="width:25%; border:10px solid; margin-right: 20px" align="center"></p>
+<p>UVA Library’s Research Data Services is a team of statistical and computational consultants, data curation and data discovery librarians, research software specialists, and subject librarians. We support</p>
+<ul>
+<li>Data discovery and acquisition: Search and discovery for existing data sources; licensing and acquisition of data for academic research and teaching; understanding data documentation.</li>
+<li>Research data management: Support for data management and data sharing plans; consulting on the preparation, documentation, organization and formatting of data for sharing and archiving.</li>
+<li>Data analysis, visualization, and computation: Support for data science, applied statistics, and scientific computing, including data wrangling and cleaning, analysis and visualization, statistical inference and computational methods, reproducibility and open science.</li>
+<li>Research software: Accessing and installing University-licensed software.</li>
+</ul>
+</div>
+<div id="uvas-phdplus" class="section level2">
+<h2>UVA’s PhDPlus</h2>
+<p><img src="images/uva-phd-plus.png" style="width:25%; border:10px solid; margin-right: 20px" align="center"></p>
+<p>PhDPlus is a university-wide initiative to prepare PhD students across all disciplines for long-term career success. The goal is to enable versatile academics who are deeply engaged with society’s needs to become influential professionals in every sector and field.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

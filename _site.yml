@@ -1,0 +1,30 @@
+name: "Data Science Essentials in R"
+output_dir: '.'
+navbar:
+  title: "PhD+ Module: Data Science Essentials in R"
+  left:
+  - text: "Home"
+    href: index.html
+  - text: "1. Intro to R"
+    href: intror.html
+  - text: "2. Data Prep"
+    href: dataprep.html
+  - text: "3. Data Viz"
+    href: dataviz.html
+  - text: "4. Linear Models"
+    href: linearmodel.html
+  - text: "5. Model Viz"
+    href: modelviz.html
+  - text: "6. Interactive Viz"
+    href: shinyr.html
+right:
+  - icon: fa-envelope fa-lg
+    href: mailto:statlab@virginia.edu
+  - icon: fa-github fa-lg
+    href: http://github.com/uvastatlab
+output:
+  html_document:
+    lib_dir: site_libs
+    css: 'styles.css'
+    theme: cosmo
+    self_contained: FALSE

@@ -1,0 +1,61 @@
+---
+title: "Data Science Essentials in R"
+output: 
+  html_document: 
+    fig_caption: yes
+    toc: yes
+    toc_float: true
+---
+
+<link rel="stylesheet" href="styles.css" type="text/css">
+
+
+# Introduction
+
+In Spring 2019, the [UVA Library's](https://www.library.virginia.edu) [Research Data Services Team](https://data.library.virginia.edu) is partnering with UVA's [PhDPlus program](http://phdplus.virginia.edu/) to pilot a new module  -- Data Science Essentials in R -- a six-session series to build data analysis, wrangling, and visualization skills.
+
+This site will host the materials for the series.
+
+
+# Overview of the Module
+
+## Who
+The PhDPlus program is focused on doctoral students and post-doctoral research associates. 
+
+However, the UVA Library's Research Data Services is offering the same workshop series through our standing [RDS workshop series](https://data.library.virginia.edu/training/), open to all. And all of our materials will be available on this webpage for all interested learners!
+
+## When
+* Dates: Thursdays, 2/21, 2/28, 3/7, 3/21, 3/28, 4/4
+* Time: 3:00 - 5:00 p.m.
+* Place: Brown Science & Engineering Library (in Clark Hall), Room 133
+
+## What
+* Session 1: **Introduction to R** - This workshop provides a gentle introduction to R and RStudio. R is a free, open-source software environment and programming language designed specifically for statistical analysis; RStudio is a free, open source integrated development environment (IDE) for R that provides a friendly interface for viewing graphs, data tables, R code, and output all at the same time. In this jhands-on workshop we’ll get started navigating R with RStudio, loading libraries, and importing data. We'll do some basic data manipulation, exploration, and analysis, and begin creating plots and graphics. And we'll cover some key practices and shortcuts for using R effectively and helpful resources for learning more. 
+* Session 2: **Data Preparation/Tidy Data in R** - Before analyzing data, we spend considerable effort wrangling the data into an analyzable form -- creating and recoding variables, merging data sets, filtering and aggregating data, reshaping and more. In this workshop, we'll learn about data preparation using dplyr, a library defining a grammar of data manipulaiton, and tidyr, a library for reshaping and tidying data. We'll also cover working with data types like factors and dates and using conditional logic. 
+* Session 3: **(Exploratory) Data Visualization in R** - Exploring our data with graphs allows us to visualize relationships, spot unusual observations, or find unexpected patterns. In this workshop we introduce how to effectively use the ggplot2 package to explore and visualize data in R. With its consistent syntax and layered approach to making graphics, ggplot2 has revolutionized data visualization. What previously would have required hours of tedious programming can now be accomplished in a few lines of ggplot2 code. This workshop will introduce the logic behind ggplot2, how to use ggplot2 to explore your data, and how to customize and polish ggplot2 graphs. Prerequisites: basic experience using R at the level of our Intro to R workshop.
+* Session 4: **Linear Modeling in R** - The linear model is one of the most commonly-used statistical models. Also called the regression model or the ordinary linear regression, linear modeling is the foundation for more complex general linear models like logit or count models, mixed-effects models, and structural equation models.  So it's a good model to understand. This workshop will cover to use R to fit and analyze linear models. Through hands-on examples, we'll talk about interpetation of model output and checking model assumptions. We'll also explore dummy variables, interactions, and variable transformations. While the workshop will assume you've met a regression model before, it can  serve as a refresher for forgotten statistics! This workshop also assumes basic experience using R and familiarity with the tidyverse libraries, or successful completion of our Intro to R,  Data Preparation in R, and Data Visualization in R workshops.
+* Session 5: **Visualizing Models, Communicating Results in R** - The statistical model is often the workhorse method for quantifying or establishing relationships in experimental or observational data. However the results of modeling are often tables of numbers that can defy intuition. In this workshop we introduce approaches to visualizing models in R to help explain how they work, what they mean and how certain we can be of their predictions. We’ll also present ways to help format modeling output for use in LaTeX or R Markdown reports. Speaking of R Markdown, that’s RStudio’s platform for creating documents that combine R code, output, graphs and exposition. We’ll get you up and running with R Markdown as well! This workshop assumes experience with R and linear modeling at the level of our Linear Modeling in R workshop.
+* Session 6: **Interactive Web Apps/Data Vis in R with Shiny** - Imagine presenting your research using a web application that allows a user to interact with your statistical model and see how it behaves given various inputs. Or think about being able to teach a statistical concept such as correlation where you can interactively change the correlation coefficient and see the resulting scatterplot of a linear relationship. The shiny package makes applications like this surprisingly easy to create in R. In this workshop we’ll get up and running with shiny and provide several examples that you can adapt to your own research and courses. As you’ll find out, you don’t have to be a web developer to create web applications in R! And thanks to RStudio, these applications can be run locally on your computer or shared with colleagues or students as R scripts. This workshop assumes experience with R and linear modeling at the level of our Linear Modeling in R and Visualizing Models workshops.
+
+## How
+To register, ADD LINK
+
+
+# Programs and Partners
+
+## UVA Library's Research Data Services
+<img src="images/library_logo.png" style="width:25%; border:10px solid; margin-right: 20px" align="center">
+
+UVA Library's Research Data Services is a team of statistical and computational consultants, data curation and data discovery librarians, research software specialists, and subject librarians. We support
+
+* Data discovery and acquisition: Search and discovery for existing data sources; licensing and acquisition of data for academic research and teaching; understanding data documentation.
+* Research data management: Support for data management and data sharing plans;  consulting on the preparation, documentation, organization and formatting of data for sharing and archiving.
+* Data analysis, visualization, and computation: Support for data science, applied statistics, and scientific computing, including data wrangling and cleaning, analysis and visualization, statistical inference and computational methods, reproducibility and open science.
+* Research software: Accessing and installing University-licensed software.
+
+
+## UVA's PhDPlus
+<img src="images/uva-phd-plus.png" style="width:25%; border:10px solid; margin-right: 20px" align="center">
+
+PhDPlus is a university-wide initiative to prepare PhD students across all disciplines for long-term career success. The goal is to enable versatile academics who are deeply engaged with society’s needs to become influential professionals in every sector and field. 
+

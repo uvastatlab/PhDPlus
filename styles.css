@@ -1,0 +1,17 @@
+h1.title {
+  font-size: 38px;
+  color: #232D4B;
+}
+h1 { /* Header 1 */
+  font-size: 28px;
+  color: #E57200;
+}
+h2 { /* Header 2 */
+    font-size: 22px;
+  color: #666666;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+  font-family: "Times New Roman", Times, serif;
+  color: #141E3C;
+}
