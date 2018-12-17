@@ -12,10 +12,12 @@ output:
 
 # Introduction
 
+<img src="images/Rlogo.png" style="float:left; width:15%; margin-right: 20px">
 In Spring 2019, the [UVA Library's](https://www.library.virginia.edu) [Research Data Services Team](https://data.library.virginia.edu) is partnering with UVA's [PhDPlus program](http://phdplus.virginia.edu/) to pilot a new module  -- Data Science Essentials in R -- a six-session series to build data analysis, wrangling, and visualization skills.
 
 This site will host the materials for the series.
 
+<br>
 
 # Overview of the Module
 
@@ -40,13 +42,15 @@ However, the UVA Library's Research Data Services is offering the same workshop 
 ## How
 To register, ADD LINK
 
+<br>
 
 # Programs and Partners
 
 ## UVA Library's Research Data Services
-<img src="images/library_logo.png" style="width:25%; border:10px solid; margin-right: 20px" align="center">
+<img src="images/library_logo.png" style="float:left; width:25%; margin-right: 20px">
 
 UVA Library's Research Data Services is a team of statistical and computational consultants, data curation and data discovery librarians, research software specialists, and subject librarians. We support
+
 
 * Data discovery and acquisition: Search and discovery for existing data sources; licensing and acquisition of data for academic research and teaching; understanding data documentation.
 * Research data management: Support for data management and data sharing plans;  consulting on the preparation, documentation, organization and formatting of data for sharing and archiving.
@@ -55,7 +59,7 @@ UVA Library's Research Data Services is a team of statistical and computational 
 
 
 ## UVA's PhDPlus
-<img src="images/uva-phd-plus.png" style="width:25%; border:10px solid; margin-right: 20px" align="center">
+<img src="images/uva-phd-plus.png" style="float:left; width:25%; margin-right: 20px">
 
 PhDPlus is a university-wide initiative to prepare PhD students across all disciplines for long-term career success. The goal is to enable versatile academics who are deeply engaged with society’s needs to become influential professionals in every sector and field. 
 

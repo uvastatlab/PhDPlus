@@ -21,7 +21,7 @@ right:
   - icon: fa-envelope fa-lg
     href: mailto:statlab@virginia.edu
   - icon: fa-github fa-lg
-    href: http://github.com/uvastatlab
+    href: http://github.com/uvastatlab/phdplus/
 output:
   html_document:
     lib_dir: site_libs
