@@ -51,6 +51,7 @@ To register, ADD LINK
 
 UVA Library's Research Data Services is a team of statistical and computational consultants, data curation and data discovery librarians, research software specialists, and subject librarians. We support
 
+<br>
 
 * Data discovery and acquisition: Search and discovery for existing data sources; licensing and acquisition of data for academic research and teaching; understanding data documentation.
 * Research data management: Support for data management and data sharing plans;  consulting on the preparation, documentation, organization and formatting of data for sharing and archiving.
