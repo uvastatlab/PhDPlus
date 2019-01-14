@@ -39,8 +39,11 @@ However, the UVA Library's Research Data Services is offering the same workshop 
 * Session 5: **Visualizing Models, Communicating Results in R** - The statistical model is often the workhorse method for quantifying or establishing relationships in experimental or observational data. However the results of modeling are often tables of numbers that can defy intuition. In this workshop we introduce approaches to visualizing models in R to help explain how they work, what they mean and how certain we can be of their predictions. We’ll also present ways to help format modeling output for use in LaTeX or R Markdown reports. Speaking of R Markdown, that’s RStudio’s platform for creating documents that combine R code, output, graphs and exposition. We’ll get you up and running with R Markdown as well! This workshop assumes experience with R and linear modeling at the level of our Linear Modeling in R workshop.
 * Session 6: **Interactive Web Apps/Data Vis in R with Shiny** - Imagine presenting your research using a web application that allows a user to interact with your statistical model and see how it behaves given various inputs. Or think about being able to teach a statistical concept such as correlation where you can interactively change the correlation coefficient and see the resulting scatterplot of a linear relationship. The shiny package makes applications like this surprisingly easy to create in R. In this workshop we’ll get up and running with shiny and provide several examples that you can adapt to your own research and courses. As you’ll find out, you don’t have to be a web developer to create web applications in R! And thanks to RStudio, these applications can be run locally on your computer or shared with colleagues or students as R scripts. This workshop assumes experience with R and linear modeling at the level of our Linear Modeling in R and Visualizing Models workshops.
 
+The workshops will assume understanding of the material in the preceding sessions and will build on a common research case, using Albemarle Real Estate Property data (though each workshop may also introduce additional examples and data). There may be opportunities to advance this research example as part of our Collaborative Regional Equity Atlas work for those interested.
+
+
 ## How
-To register, ADD LINK
+Register for the series through [PhD+ pages](https://phdplus.virginia.edu/core-module/data-literacy). You may register for individual sessions; if registration exceeds the registration cap (35), preference will be given to individuals who've signed up for the entire series.
 
 <br>
 
@@ -63,4 +66,7 @@ UVA Library's Research Data Services is a team of statistical and computational 
 <img src="images/uva-phd-plus.png" style="float:left; width:25%; margin-right: 20px">
 
 PhDPlus is a university-wide initiative to prepare PhD students across all disciplines for long-term career success. The goal is to enable versatile academics who are deeply engaged with society’s needs to become influential professionals in every sector and field. 
+
+<i class="fa fa-github fa-lg"></i>
+<i class="fa-envelope-o fa-lg"></i>
 
