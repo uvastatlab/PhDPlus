@@ -100,6 +100,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -114,7 +117,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -134,6 +136,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -155,18 +194,77 @@ $(document).ready(function () {
 });
 </script>
 
-
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -317,9 +415,453 @@ div.tocify {
 </div>
 
 
+<div id="get-ready" class="section level1">
+<h1>Get Ready!</h1>
+<p>Download the data files and R scripts:</p>
+<ul>
+<li>Download the zipped folder. It contains two data files (CAMA_CardLevelData.txt, CAMA_ParcelInfo.txt) and two R scripts (intro_dplyr.R and data_prep.R)</li>
+<li>Unzip it and put it somwehere you can locate it on your machine.</li>
+</ul>
+</div>
 <div id="data-preparation-and-tidy-data" class="section level1">
 <h1>Data Preparation and Tidy Data</h1>
-<p>TBA</p>
+<p>Data is usually messy and requires preparation (aka cleaning, wrangling, munging). You can approach data preparation as tedious <a href="https://www.nytimes.com/2014/08/18/technology/for-big-data-scientists-hurdle-to-insights-is-janitor-work.html">“janitorial work”</a><a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> or as an opportunity to really get to know your data – it’s possibility and limitations, quirks and errors. We’ll use the Albemarle County Real Estate data to as an in-depth example, getting it ready for more complex visualizations and analysis to come.</p>
+<p>Before we dive in with the data, let’s get to know the <code>dplyr</code> package. Part of the the <a href="https://www.tidyverse.org/"><code>tidyverse</code></a>, <a href="https://dplyr.tidyverse.org/"><code>dplyr</code></a> is a package for data manipulation. The package implements a <em>grammar</em> for transforming data, based on verbs/functions that define a set of common tasks.</p>
+<div id="functionsverbs" class="section level2">
+<h2>Functions/Verbs</h2>
+<p><code>dplyr</code> functions are for <code>d</code>ata frames</p>
+<ul>
+<li>first argument of <code>dplyr</code> functions is always a data frame</li>
+<li>followed by function specific arguments that detail what to do</li>
+<li>returns a data frame</li>
+</ul>
+</div>
+</div>
+<div id="dplyr-isolating-data" class="section level1">
+<h1>dplyr: Isolating data</h1>
+<center>
+<p><span class="math inline">\(\color{blue}{\text{select()}}\)</span> - extract <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{green}{\text{filter()}}\)</span> - extract <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+<p><span class="math inline">\(\color{green}{\text{arrange()}}\)</span> - reorder <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+</center>
+<p>Let’s look at some quick examples using the <code>homes</code> data from last week.</p>
+<div id="select" class="section level2">
+<h2>select()</h2>
+<p>Extract columns by name</p>
+<pre class="r"><code>select(homes, TotalValue)</code></pre>
+<pre><code>## # A tibble: 27,943 x 1
+##   TotalValue
+##        &lt;dbl&gt;
+## 1     409900
+## 2     523100
+## 3     180900
+## 4     620700
+## 5     162500
+## # … with 2.794e+04 more rows</code></pre>
+<pre class="r"><code>select(homes, TotalValue, City)</code></pre>
+<pre><code>## # A tibble: 27,943 x 2
+##   TotalValue City       
+##        &lt;dbl&gt; &lt;chr&gt;      
+## 1     409900 CROZET     
+## 2     523100 CROZET     
+## 3     180900 EARLYSVILLE
+## 4     620700 CROZET     
+## 5     162500 CROZET     
+## # … with 2.794e+04 more rows</code></pre>
+<p>select() helpers include</p>
+<ul>
+<li>select(.data, <strong>var1:var10</strong>): select range of columns</li>
+<li>select(.data, <strong>-c(var1, var2)</strong>): select every column but</li>
+<li>select(.data, <strong>starts_with(“string”)</strong>): select columns that start with…</li>
+<li>select(.data, <strong>contains(“string”)</strong>): select columns whose names contain…</li>
+</ul>
+<pre class="r"><code>select(homes, LotSize:City)</code></pre>
+<pre><code>## # A tibble: 27,943 x 3
+##   LotSize TotalValue City       
+##     &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;      
+## 1    5        409900 CROZET     
+## 2   61.2      523100 CROZET     
+## 3    1.76     180900 EARLYSVILLE
+## 4   50.6      620700 CROZET     
+## 5    3.88     162500 CROZET     
+## # … with 2.794e+04 more rows</code></pre>
+<pre class="r"><code>select(homes, -c(LotSize:City))</code></pre>
+<pre><code>## # A tibble: 27,943 x 9
+##   YearBuilt YearRemodeled Condition NumStories FinSqFt Bedroom FullBath
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1      2006             0 Average         1       1922       3        3
+## 2      2003             0 Average         1       1848       3        2
+## 3      1972             0 Average         1       1248       2        1
+## 4      1998             0 Good            1       1244       1        1
+## 5      1886             0 Average         1.86    1861       4        1
+## # … with 2.794e+04 more rows, and 2 more variables: HalfBath &lt;dbl&gt;,
+## #   TotalRooms &lt;dbl&gt;</code></pre>
+<pre class="r"><code>select(homes, contains(&quot;Year&quot;))</code></pre>
+<pre><code>## # A tibble: 27,943 x 2
+##   YearBuilt YearRemodeled
+##       &lt;dbl&gt;         &lt;dbl&gt;
+## 1      2006             0
+## 2      2003             0
+## 3      1972             0
+## 4      1998             0
+## 5      1886             0
+## # … with 2.794e+04 more rows</code></pre>
+</div>
+<div id="filter" class="section level2">
+<h2>filter()</h2>
+<p>Extract rows that meet logical condition</p>
+<pre class="r"><code>filter(homes, YearBuilt == 2016)</code></pre>
+<pre><code>## # A tibble: 317 x 12
+##   YearBuilt YearRemodeled Condition NumStories FinSqFt Bedroom FullBath
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1      2016             0 Good             1.6    2842       3        2
+## 2      2016             0 Average          2.5    2271       3        3
+## 3      2016             0 Average          2.5    1880       3        2
+## 4      2016             0 Good             2      2496       4        3
+## 5      2016             0 Good             2      1805       3        2
+## # … with 312 more rows, and 5 more variables: HalfBath &lt;dbl&gt;,
+## #   TotalRooms &lt;dbl&gt;, LotSize &lt;dbl&gt;, TotalValue &lt;dbl&gt;, City &lt;chr&gt;</code></pre>
+<p>Logical tests</p>
+<ul>
+<li>x <strong>&lt;</strong> y: less than</li>
+<li>x <strong>&gt;</strong> y: greater than</li>
+<li>x <strong>==</strong> y: equal to</li>
+<li>x <strong>&lt;-</strong> y: less than or equal to</li>
+<li>y <strong>&gt;=</strong> y: greater than or equal to</li>
+<li>x <strong>!=</strong> y: not equal to</li>
+<li>x <strong>%in%</strong> y: is a member of</li>
+<li><strong>is.na(</strong>x<strong>)</strong>: is NA</li>
+<li><strong>!is.na(</strong>x<strong>)</strong>: is not NA</li>
+</ul>
+<pre class="r"><code>filter(homes, YearRemodeled &gt; 0)</code></pre>
+<pre><code>## # A tibble: 1,727 x 12
+##   YearBuilt YearRemodeled Condition NumStories FinSqFt Bedroom FullBath
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1      1975          1982 Average         1       1520       3        1
+## 2      1940          1987 Fair            1.52     812       2        0
+## 3      1978          2007 Average         1.33    2399       3        2
+## 4      1903          2000 Good            1.83    4496       5        3
+## 5      1801          1984 Average         1.75    1050       2        2
+## # … with 1,722 more rows, and 5 more variables: HalfBath &lt;dbl&gt;,
+## #   TotalRooms &lt;dbl&gt;, LotSize &lt;dbl&gt;, TotalValue &lt;dbl&gt;, City &lt;chr&gt;</code></pre>
+<pre class="r"><code>filter(homes, Bedroom == max(Bedroom))</code></pre>
+<pre><code>## # A tibble: 1 x 12
+##   YearBuilt YearRemodeled Condition NumStories FinSqFt Bedroom FullBath
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1      1969             0 Average            1    1680      16        8
+## # … with 5 more variables: HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;,
+## #   LotSize &lt;dbl&gt;, TotalValue &lt;dbl&gt;, City &lt;chr&gt;</code></pre>
+<pre class="r"><code>filter(homes, City %in% c(&quot;SCOTTSVILLE&quot;, &quot;CROZET&quot;))</code></pre>
+<pre><code>## # A tibble: 3,884 x 12
+##   YearBuilt YearRemodeled Condition NumStories FinSqFt Bedroom FullBath
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1      2006             0 Average         1       1922       3        3
+## 2      2003             0 Average         1       1848       3        2
+## 3      1998             0 Good            1       1244       1        1
+## 4      1886             0 Average         1.86    1861       4        1
+## 5      1910             0 Fair            1.53    1108       3        1
+## # … with 3,879 more rows, and 5 more variables: HalfBath &lt;dbl&gt;,
+## #   TotalRooms &lt;dbl&gt;, LotSize &lt;dbl&gt;, TotalValue &lt;dbl&gt;, City &lt;chr&gt;</code></pre>
+<p>Boolean operators for multiple conditions</p>
+<ul>
+<li>a <strong>&amp;</strong> b: and</li>
+<li>a <strong>|</strong> b: or</li>
+<li><strong>xor(</strong>a,b<strong>)</strong>: exactly or</li>
+<li><strong>!</strong>a: not</li>
+</ul>
+<pre class="r"><code>filter(homes, City == &quot;SCOTTSVILLE&quot; &amp; FinSqFt &gt; mean(FinSqFt))</code></pre>
+<pre><code>## # A tibble: 224 x 12
+##   YearBuilt YearRemodeled Condition NumStories FinSqFt Bedroom FullBath
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1      1995             0 Average         2       3326       3        3
+## 2      2004             0 Average         1       2250       4        2
+## 3      1998             0 Good            2.15    2287       3        2
+## 4      2007             0 Good            1.93    4566       4        5
+## 5      1993             0 Average         1.48    2584       3        3
+## # … with 219 more rows, and 5 more variables: HalfBath &lt;dbl&gt;,
+## #   TotalRooms &lt;dbl&gt;, LotSize &lt;dbl&gt;, TotalValue &lt;dbl&gt;, City &lt;chr&gt;</code></pre>
+</div>
+<div id="arrange" class="section level2">
+<h2>arrange()</h2>
+<p>Order rows from smallest to largest values for designated column/s.</p>
+<pre class="r"><code>arrange(homes, FinSqFt)</code></pre>
+<pre><code>## # A tibble: 27,943 x 12
+##   YearBuilt YearRemodeled Condition NumStories FinSqFt Bedroom FullBath
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1      1952             0 Poor               1     144       1        0
+## 2      1982             0 Average            1     261       0        1
+## 3      1973             0 Fair               1     304       1        1
+## 4      2001             0 Good               1     372       1        1
+## 5      1948             0 Poor               1     394       2        0
+## # … with 2.794e+04 more rows, and 5 more variables: HalfBath &lt;dbl&gt;,
+## #   TotalRooms &lt;dbl&gt;, LotSize &lt;dbl&gt;, TotalValue &lt;dbl&gt;, City &lt;chr&gt;</code></pre>
+<ul>
+<li><strong>desc()</strong>: reverses order, largest to smallest.</li>
+</ul>
+<pre class="r"><code>arrange(homes, desc(FinSqFt))</code></pre>
+<pre><code>## # A tibble: 27,943 x 12
+##   YearBuilt YearRemodeled Condition NumStories FinSqFt Bedroom FullBath
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1      1985             0 Average         2.19   17865       8       13
+## 2      1830          1930 Good            1.45   14216      15        5
+## 3      2007             0 Excellent       2.06   13968       9       10
+## 4      2016             0 Excellent       2      13720       6        7
+## 5      2009             0 Good            1.48   11749       5        7
+## # … with 2.794e+04 more rows, and 5 more variables: HalfBath &lt;dbl&gt;,
+## #   TotalRooms &lt;dbl&gt;, LotSize &lt;dbl&gt;, TotalValue &lt;dbl&gt;, City &lt;chr&gt;</code></pre>
+</div>
+<div id="and-more" class="section level2">
+<h2>and more…</h2>
+<center>
+<p><span class="math inline">\(\color{green}{\text{slice()}}\)</span> - extract <span class="math inline">\(\color{green}{\text{rows}}\)</span> using index(es)</p>
+<p><span class="math inline">\(\color{green}{\text{distinct()}}\)</span> - filter for unique <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+<p><span class="math inline">\(\color{green}{\text{sample_n()/sample_frac()}}\)</span> - randomly sample <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+</center>
+</div>
+</div>
+<div id="pipes" class="section level1">
+<h1>Pipes!</h1>
+<p>The <code>%&gt;%</code> is the pipe operator. It passes the result on left into the first argument of the function on the right, or “pipes” the previous output as the input for the next function. Read it in your head as <em>then</em></p>
+<p>For example, if we just want the TotalValue and LotSize for homes in Scottsville arranged in descending order of LotSize, without the pipe, we’d:</p>
+<pre class="r"><code>scottsville &lt;- filter(homes, City == &quot;SCOTTSVILLE&quot;)
+scottsville &lt;- select(scottsville, TotalValue, LotSize)
+scottsville &lt;- arrange(scottsville, desc(LotSize))
+scottsville</code></pre>
+<pre><code>## # A tibble: 975 x 2
+##   TotalValue LotSize
+##        &lt;dbl&gt;   &lt;dbl&gt;
+## 1    2156700    612.
+## 2    2665700    511.
+## 3    2352200    365.
+## 4     892300    294.
+## 5    3165200    282.
+## # … with 970 more rows</code></pre>
+<p>With the pipe, we can start with homes, <em>then</em> filter only the rows for Scottsville, <em>then</em> select only the variables TotalValue and LotSize, <em>then</em> arrange the rows by descending order of LotSize.</p>
+<pre class="r"><code>homes %&gt;% 
+  filter(City == &quot;SCOTTSVILLE&quot;) %&gt;% 
+  select(TotalValue, LotSize) %&gt;% 
+  arrange(desc(LotSize))</code></pre>
+<pre><code>## # A tibble: 975 x 2
+##   TotalValue LotSize
+##        &lt;dbl&gt;   &lt;dbl&gt;
+## 1    2156700    612.
+## 2    2665700    511.
+## 3    2352200    365.
+## 4     892300    294.
+## 5    3165200    282.
+## # … with 970 more rows</code></pre>
+<div id="keyboard-shortcut" class="section level2">
+<h2>Keyboard Shortcut!</h2>
+<ul>
+<li>Mac: cmd + shift + m</li>
+<li>Windows: ctrl + shift + m</li>
+</ul>
+</div>
+</div>
+<div id="the-data" class="section level1">
+<h1>The Data</h1>
+<p>Let’s take this to the raw data and start exploring it! It comes from the Albemarle county <a href="http://www.albemarle.org/department.asp?department=gds&amp;relpage=3914#Parcels">Office of Geographic Data Services</a>, though the links are not currently visible.</p>
+<p>The data includes</p>
+<ul>
+<li><a href="http://people.virginia.edu/~mpc8t/dser/CAMA_CardLevelData.txt.htm">Real Estate Information - Primary Card Level Data</a></li>
+<li><a href="http://people.virginia.edu/~mpc8t/dser/CAMA_ParcelInfo.txt.htm">Real Estate Information - Parcel Level Data</a></li>
+</ul>
+</div>
+<div id="dplyr-deriving-data" class="section level1">
+<h1>dplyr: Deriving data</h1>
+<center>
+<p><span class="math inline">\(\color{blue}{\text{mutate()}}\)</span> - create new <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{blue}{\text{summarize()}}\)</span> - summarize <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{green}{\text{group_by()}}\)</span> - group <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+</center>
+<div id="mutate" class="section level2">
+<h2>mutate()</h2>
+<p>Create new columns.</p>
+<pre class="r"><code>homes %&gt;% 
+  mutate(value_sqft = TotalValue/FinSqFt) %&gt;% 
+  select(YearBuilt, Condition, FinSqFt, TotalValue, City, value_sqft) %&gt;% 
+  arrange(desc(value_sqft))</code></pre>
+<pre><code>## # A tibble: 27,943 x 6
+##   YearBuilt Condition FinSqFt TotalValue City            value_sqft
+##       &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt;
+## 1      1962 Average      1590   11352300 CHARLOTTESVILLE      7140.
+## 2      1925 Good         1254    4718200 CHARLOTTESVILLE      3763.
+## 3      1997 Average      1012    3349200 KESWICK              3309.
+## 4      1940 Average       624    1945800 EARLYSVILLE          3118.
+## 5      1987 Average      1171    3340300 CHARLOTTESVILLE      2853.
+## # … with 2.794e+04 more rows</code></pre>
+<p>We can create new variables as functions of other variables (ratios, conditions, ranks, etc.). We can mutate multiple variables in the same command.</p>
+<pre class="r"><code>homes %&gt;% 
+  mutate(value_sqft = TotalValue/FinSqFt,
+         remodel = if_else(YearRemodeled &gt; 0, 1, 0)) %&gt;% 
+  select(value_sqft, remodel, City) %&gt;% 
+  arrange(value_sqft)</code></pre>
+<pre><code>## # A tibble: 27,943 x 3
+##   value_sqft remodel City           
+##        &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;          
+## 1       16.8       0 NORTH GARDEN   
+## 2       18.1       0 CROZET         
+## 3       18.8       0 SCOTTSVILLE    
+## 4       19.7       0 SCOTTSVILLE    
+## 5       26.9       0 CHARLOTTESVILLE
+## # … with 2.794e+04 more rows</code></pre>
+<ul>
+<li><code>if_else(**condition, value_if_true, value_if_false, value_if_na**)</code>: mutate based on condition</li>
+<li><code>case_when(condition1 ~ value1,          condition2 ~ value2,          condition3 ~ value3,         TRUE ~ value_everything_else)</code>: vectorize multiple <code>if_else()</code> statements</li>
+</ul>
+</div>
+<div id="summarize" class="section level2">
+<h2>summarize()</h2>
+<p>Compute table of summaries.</p>
+<pre class="r"><code>homes %&gt;% 
+  summarize(oldest = min(YearBuilt), 
+            newest = max(YearBuilt), 
+            total = n())</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   oldest newest total
+##    &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
+## 1   1668   2016 27943</code></pre>
+<p><code>summarize</code> takes a single vector as input (a variable) and returns a single value as output (the requested summary of the variable).</p>
+<p>Summary functions include</p>
+<ul>
+<li><strong>first()</strong>: first value</li>
+<li><strong>last()</strong>: last value</li>
+<li><strong>nth(</strong>.x, <strong>n)</strong>: nth value</li>
+<li><strong>n()</strong>: number of values</li>
+<li><strong>n_distinct()</strong>: number of distinct values</li>
+<li><strong>min()</strong>: minimum value</li>
+<li><strong>max()</strong>: maximum value</li>
+<li><strong>mean()</strong>: mean value</li>
+<li><strong>median()</strong>: median value</li>
+<li><strong>var()</strong>: variance</li>
+<li><strong>sd()</strong>: standard deviation</li>
+<li><strong>IQR()</strong>: interquartile range</li>
+</ul>
+<p>That’s not always interesting on it’s own, but when combined with <code>group_by</code>, it is powerful!</p>
+</div>
+<div id="group_by" class="section level2">
+<h2>group_by()</h2>
+<p>Groups cases by common values of one or more columns.</p>
+<pre class="r"><code>homes %&gt;% 
+  group_by(City) %&gt;% 
+  summarize(oldest = min(YearBuilt), 
+            newest = max(YearBuilt), 
+            total = n())</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   City            oldest newest total
+##   &lt;chr&gt;            &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
+## 1 CHARLOTTESVILLE   1668   2016 20059
+## 2 CROZET            1700   2016  2909
+## 3 EARLYSVILLE       1735   2016  1864
+## 4 KESWICK           1724   2016  1558
+## 5 NORTH GARDEN      1700   2016   578
+## 6 SCOTTSVILLE       1732   2016   975</code></pre>
+</div>
+<div id="and-more-1" class="section level2">
+<h2>and more…</h2>
+<center>
+<p><span class="math inline">\(\color{blue}{\text{tally()}}\)</span> - short hand for <code>summarize(n())</code></p>
+<p><span class="math inline">\(\color{blue}{\text{count()}}\)</span> - short hand for <code>group_by()</code> + <code>tally()</code></p>
+<p><span class="math inline">\(\color{blue}{\text{summarize_all()}}\)</span> - apply summary function to all <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{blue}{\text{summarize_at()}}\)</span> - apply summary function to selected <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{blue}{\text{rename()}}\)</span> - rename <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{blue}{\text{recode()}}\)</span> - modify values of <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+</center>
+</div>
+</div>
+<div id="factors" class="section level1">
+<h1>Factors</h1>
+<p>Factors are variables which take on a limited number of values, aka categorical variables. In R, factors are stored as a vector of integer values with the corresponding set of character values you’ll see when displayed (colloquially, labels; in R, levels).</p>
+<pre class="r"><code>homes %&gt;% count(Condition) # currently a character</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   Condition       n
+##   &lt;chr&gt;       &lt;int&gt;
+## 1 Average     14940
+## 2 Excellent    1961
+## 3 Fair          634
+## 4 Good        10295
+## 5 Poor          108
+## 6 Substandard     5</code></pre>
+<pre class="r"><code>homes %&gt;% 
+  mutate(condition = factor(Condition)) %&gt;% # make a factor
+  count(condition)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   condition       n
+##   &lt;fct&gt;       &lt;int&gt;
+## 1 Average     14940
+## 2 Excellent    1961
+## 3 Fair          634
+## 4 Good        10295
+## 5 Poor          108
+## 6 Substandard     5</code></pre>
+<pre class="r"><code># assert the ordering of the factor levels
+cond_levels &lt;- c(&quot;Excellent&quot;, &quot;Good&quot;, &quot;Average&quot;, &quot;Fair&quot;, &quot;Poor&quot;, &quot;Substandards&quot;)
+homes %&gt;% 
+  mutate(condition = factor(Condition, levels = cond_levels)) %&gt;% 
+  count(condition)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   condition     n
+##   &lt;fct&gt;     &lt;int&gt;
+## 1 Excellent  1961
+## 2 Good      10295
+## 3 Average   14940
+## 4 Fair        634
+## 5 Poor        108
+## 6 &lt;NA&gt;          5</code></pre>
+<div id="forcats" class="section level2">
+<h2>forcats</h2>
+<p>The <a href="https://forcats.tidyverse.org/"><code>forcats</code></a> package, part of the <code>tidyverse</code>, provides helper functions for working with factors. Including</p>
+<ul>
+<li><strong>fct_infreq()</strong>: reorder factor levels by frequency of levels</li>
+<li><strong>fct_reorder()</strong>: reorder factor levels by another variable</li>
+<li><strong>fct_relevel()</strong>: change order of factor levels by hand</li>
+<li><strong>fct_recode()</strong>: change factor levels by hand</li>
+<li><strong>fct_collapse()</strong>: collapse factor levels into defined groups</li>
+<li><strong>fct_lump()</strong>: collapse least/most frequent levels of factor into “other”</li>
+</ul>
+</div>
+</div>
+<div id="dplyr-joins" class="section level1">
+<h1>dplyr: Joins</h1>
+<p>Often, a single data set won’t contain all of the information or attributes necessary to address your questions. Instead, we have to join or combine multiple data sets. The Albermarle homes data came from multiple data tables; and we could consider adding data from additional sources to answer yet more questions.</p>
+<p>The variables used to connect data sets are called keys. A key (a single variable or multiple variables) uniquely identifies an observation.</p>
+<center>
+<p><span class="math inline">\(\color{blue}{\text{Mutating joins}}\)</span> use information from one data set to add <span class="math inline">\(\color{blue}{\text{variables}}\)</span> to another data set (like <span class="math inline">\(\color{blue}{\text{mutate())}}\)</span>.</p>
+<p><span class="math inline">\(\color{green}{\text{Filtering joins}}\)</span> use information from one data set to extract <span class="math inline">\(\color{green}{\text{rows}}\)</span> from another data set (like <span class="math inline">\(\color{green}{\text{filter())}}\)</span>.</p>
+</center>
+<p>The syntax is always <code>name_join(x, y, by = &quot;key&quot;)</code></p>
+<div id="mutating-joins" class="section level2">
+<h2>mutating joins</h2>
+<p>A visual explanation is in Grolemund’s and Wickham’s <a href="https://r4ds.had.co.nz/relational-data.html#understanding-joins">R for Data Science</a>.</p>
+<ul>
+<li><strong>full_join()</strong>: keeps all observations in x and y</li>
+<li><strong>left_join()</strong>: keeps all observations in x</li>
+<li><strong>right_join()</strong>: keeps all observations in y</li>
+<li><strong>inner_join()</strong>: keeps observations in both x and y</li>
+</ul>
+</div>
+<div id="filtering-joins" class="section level2">
+<h2>filtering joins</h2>
+<p>Filtering joins match observations in the same way, but rather than adding variables, it extracts observations.</p>
+<ul>
+<li><strong>semi_join()</strong>: keeps all observations in x that have a match in y</li>
+<li><strong>anti_join()</strong>: drops all observations in x that have a match in y</li>
+</ul>
+</div>
+</div>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<ul>
+<li>RStudio’s <a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">dplyr cheat sheet</a></li>
+<li>Garrett Grolemund and Hadley Wickham. 2018. <a href="https://r4ds.had.co.nz/">R for Data Science</a>.</li>
+<li><a href="http://people.virginia.edu/~jah2ax/intro_to_R_spring_2019/intro_to_R_spring_2019.html#finding_help">Finding Help</a> resources from Introduction to R</li>
+</ul>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Way to be classist NYT…<a href="#fnref1">↩</a></p></li>
+</ol>
 </div>
 
 
