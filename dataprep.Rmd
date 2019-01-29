@@ -82,7 +82,7 @@ Logical tests
 * x **<** y: less than
 * x **>** y: greater than
 * x **==** y: equal to
-* x **<-** y: less than or equal to
+* x **<=** y: less than or equal to
 * y **>=** y: greater than or equal to
 * x **!=** y: not equal to
 * x **%in%** y: is a member of
@@ -168,6 +168,7 @@ The data includes
 *  [Real Estate Information - Primary Card Level Data](http://people.virginia.edu/~mpc8t/dser/CAMA_CardLevelData.txt.htm)
 * [Real Estate Information - Parcel Level Data](http://people.virginia.edu/~mpc8t/dser/CAMA_ParcelInfo.txt.htm)
 
+We'll be using this data to understand more about housing assessments and value, so we'll focus on properties that are inhabited as homes.
 
 # dplyr: Deriving data
 
@@ -278,7 +279,7 @@ homes %>%
   count(condition)
 
 # assert the ordering of the factor levels
-cond_levels <- c("Excellent", "Good", "Average", "Fair", "Poor", "Substandards")
+cond_levels <- c("Excellent", "Good", "Average", "Fair", "Poor", "Substandard")
 homes %>% 
   mutate(condition = factor(Condition, levels = cond_levels)) %>% 
   count(condition)

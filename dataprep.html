@@ -526,7 +526,7 @@ div.tocify {
 <li>x <strong>&lt;</strong> y: less than</li>
 <li>x <strong>&gt;</strong> y: greater than</li>
 <li>x <strong>==</strong> y: equal to</li>
-<li>x <strong>&lt;-</strong> y: less than or equal to</li>
+<li>x <strong>&lt;=</strong> y: less than or equal to</li>
 <li>y <strong>&gt;=</strong> y: greater than or equal to</li>
 <li>x <strong>!=</strong> y: not equal to</li>
 <li>x <strong>%in%</strong> y: is a member of</li>
@@ -666,6 +666,7 @@ scottsville</code></pre>
 <li><a href="http://people.virginia.edu/~mpc8t/dser/CAMA_CardLevelData.txt.htm">Real Estate Information - Primary Card Level Data</a></li>
 <li><a href="http://people.virginia.edu/~mpc8t/dser/CAMA_ParcelInfo.txt.htm">Real Estate Information - Parcel Level Data</a></li>
 </ul>
+<p>We’ll be using this data to understand more about housing assessments and value, so we’ll focus on properties that are inhabited as homes.</p>
 </div>
 <div id="dplyr-deriving-data" class="section level1">
 <h1>dplyr: Deriving data</h1>
@@ -795,19 +796,19 @@ scottsville</code></pre>
 ## 5 Poor          108
 ## 6 Substandard     5</code></pre>
 <pre class="r"><code># assert the ordering of the factor levels
-cond_levels &lt;- c(&quot;Excellent&quot;, &quot;Good&quot;, &quot;Average&quot;, &quot;Fair&quot;, &quot;Poor&quot;, &quot;Substandards&quot;)
+cond_levels &lt;- c(&quot;Excellent&quot;, &quot;Good&quot;, &quot;Average&quot;, &quot;Fair&quot;, &quot;Poor&quot;, &quot;Substandard&quot;)
 homes %&gt;% 
   mutate(condition = factor(Condition, levels = cond_levels)) %&gt;% 
   count(condition)</code></pre>
 <pre><code>## # A tibble: 6 x 2
-##   condition     n
-##   &lt;fct&gt;     &lt;int&gt;
-## 1 Excellent  1961
-## 2 Good      10295
-## 3 Average   14940
-## 4 Fair        634
-## 5 Poor        108
-## 6 &lt;NA&gt;          5</code></pre>
+##   condition       n
+##   &lt;fct&gt;       &lt;int&gt;
+## 1 Excellent    1961
+## 2 Good        10295
+## 3 Average     14940
+## 4 Fair          634
+## 5 Poor          108
+## 6 Substandard     5</code></pre>
 <div id="forcats" class="section level2">
 <h2>forcats</h2>
 <p>The <a href="https://forcats.tidyverse.org/"><code>forcats</code></a> package, part of the <code>tidyverse</code>, provides helper functions for working with factors. Including</p>
