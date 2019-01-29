@@ -18,7 +18,7 @@ homes <- read_csv("http://people.virginia.edu/~jah2ax/intro_to_R_spring_2019/alb
 
 Download the data files and R scripts:
 
-* Download the zipped folder. It contains two data files (CAMA_CardLevelData.txt, CAMA_ParcelInfo.txt) and two R scripts (intro_dplyr.R and data_prep.R)
+* [Download this zipped folder.](http://static.lib.virginia.edu/statlab/materials/workshops/dataprepR.zip) It contains two data files (CAMA_CardLevelData.txt, CAMA_ParcelInfo.txt) and two R scripts (intro_dplyr.R and data_prep.R)
 * Unzip it and put it somwehere you can locate it on your machine.
 
 # Data Preparation and Tidy Data
