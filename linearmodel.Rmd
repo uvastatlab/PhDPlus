@@ -7,6 +7,486 @@ output:
     toc_float: true
 ---
 
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(broom)
+homes <- read_csv("https://github.com/uvastatlab/phdplus/blob/master/data/albemarle_homes.csv?raw=true")
+
+# data frame with square foot bins
+sqft_break <- c(0, 250, 500, 750, 1250, 1500, 1750, 2000, 2250, 
+                2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 
+                4500, 4750, 5000, 5250, 5550, 5750, 6000, 6250,
+                6500, 6750, 7000, 7250, 7500, 7750, 8000, Inf)
+homes_tmp <- homes %>% 
+  mutate(sqft_bins = cut(FinSqFt, breaks = sqft_break)) %>% 
+  group_by(sqft_bins) %>% 
+  mutate(bin_meany = mean(ImprovementsValue),
+         bin_medx = max(FinSqFt)) %>% 
+  ungroup()
+```
+
+# Get Ready!
+
+* Go to [GitHub and copy the R script](https://github.com/uvastatlab/phdplus/blob/master/scripts/linearmodel.R) into RStudio
+
+
 # Linear Modeling
 
-TBA
+We'll focus on inferential models today, and gesture toward predictive models at the end.
+
+## What are models?
+
+By a model, we mean a mathematical representation about the process that generated our observed data (aka data generation process). That is, how an outcome of interest (a response variable, dependent variable, $Y$) is related to (is a function of) one or more predictor (explanatory, independent, $X$) variables. For example, $$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \epsilon$$
+
+where $Y$ is the outcome/response variable, $X_1$ and $X_2$ are the predictors/explanatory variables, $\beta_0$ and $\beta_1$ are coefficients to be estimated, and $\epsilon$ is random error (more below). 
+
+## What are linear models?
+
+Linear models, or regression models, trace the the distribution of the dependent variable ($Y$) -- or some characteristic of the distribution (the mean) -- as a function of the independent variables ($X$s).In other words, the regression function/linear model is the curve determined by the conditional means (conditional expectation) of the response variable for fixed values of explanatory variables. 
+
+Using our Albemarle Homes data, I've plotted the "improvement value" of a property as a function of the square feet of the property -- with square feet collapsed into bins ranging from 0-250, 250-500, 500-750, etc.
+
+```{r}
+# plot with bins
+p <- ggplot(homes_tmp, aes(x = bin_medx, y = ImprovementsValue)) 
+p + geom_point(alpha = 1/10) 
+```
+
+This shows the conditional distribution of improvement value. Let's add the conditional mean for each square foot bin.
+
+```{r}
+# plot with conditional means
+p + geom_point(alpha = 1/10) + 
+  geom_point(aes(x=bin_medx, y=bin_meany), color = "orange", size = 3) 
+```
+
+If we connect these dots, we've traced the curve of the conditional mean of improvement value.
+
+```{r}
+# plot with line connecting conditional means
+p + geom_point(alpha = 1/10) + 
+  geom_point(aes(x=bin_medx, y=bin_meany), color = "orange", size = 3) +
+  geom_line(aes(x=bin_medx, y=bin_meany), color = "orange")
+```
+
+In linear regression analysis, we add the additional caveat that (the mean of) $Y$ is some  **linear** function of $X$. 
+
+```{r}
+# plot with regression line
+p + geom_point(alpha = 1/10) + 
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  geom_point(aes(x = bin_medx, y = bin_meany), color = "orange", size = 3) +
+  geom_line(aes(x = bin_medx, y = bin_meany), color = "orange") 
+```
+
+We represent the relationship mathematically $$E(Y|X_i) = \beta_0 + \beta_1 X_1 + \beta_2 X_2$$
+
+For example,
+
+```{r echo = FALSE}
+lm_impvalue <- lm(ImprovementsValue ~ bin_medx, data = homes_tmp)
+# add predicted values to df
+homes_tmp$predicted <- predict(lm_impvalue)   # Save the predicted values
+homes_tmp$residuals <- residuals(lm_impvalue) # Save the residual values
+```
+
+$$Improvement~value = `r format(round(lm_impvalue$coefficients[[1]], 0), scientific = FALSE)` + `r round(lm_impvalue$coefficients[[2]], 0)` * Square~feet$$
+
+Linearity doesn’t necessarily imply that the curve connecting the mean of $Y$ conditional on values of $X$ is a straight line (though that is often what we impose), but that the *parameters* that describe the function relating $Y$ to the $X$s are linear. The equation is additive -- the weights aren't multipled or raised to a power other than 1. 
+
+This **is not** additive $$E(Y|X_i) = \beta_0 + \beta_1 X_1^{\beta_2}$$
+
+... and so **not** a linear model. But this is additive $$E(Y|X_i) = \beta_0 + \beta_1 X_1 + \beta_2 X_2^2$$
+
+... and so **is** a linear model, though not a straight line.
+
+
+## Model error
+
+Models are probabilistic, not deterministic. 
+
+* The regression tells us about the average assessed value for homes of a given size; any given home will deviate from the conditional expectation (conditional mean), much like a home's value will deviate from the overall mean in the sample.
+* A home's assessed value isn't perfectly predicted by size, or even size and a lot of other important variables.
+* And if the data collection process was repeated, the assessed values would vary from those we observe here.
+
+No model will perfectly predict an outcome of interest, so regression models are laregely about quantifying our uncertainty. The error term is meant to capture this stochastic element
+
+
+## An aside (sort of) {#box}
+
+All statistical models are extreme simplifications of complex social reality, not literal representations of the social processes by which outcomes are realized and observed.
+
+Or, as George Box famously notes in his [1979 address to ASA](https://www-jstor-org.proxy01.its.virginia.edu/stable/2286713) (via UVA): 
+
+> Models, of course, are never true, but fortunately it is only necessary that they be useful. For this it is usually needful only that they not be grossly wrong.
+
+More succintly, in [1987](https://search.lib.virginia.edu/catalog/u770409)
+
+> All models are wrong, but some are useful.
+
+Avoid reifying statistical models; they are descriptive summaries, not literal accounts of social processes. 
+
+## Residuals
+
+$\epsilon$ is our random (stochastic) element, the error or disturbance term. It reprsents the deviation of a particular value of $Y_i$ from the conditional mean.
+$$\epsilon_i = Y_i - E(Y|X_i)$$
+
+Regression partitions variation in $Y$ into the systematic component (that accounted for by variation in $X$s) and the stochastic component (not explained).
+
+Error is estimated by the residuals -- the difference between the predicted value and actual value (shown here for a sample of 500 homes)
+
+```{r echo = FALSE}
+# plot with residual lines
+# sample 1000 for plotting
+set.seed(121)
+homes_tmp_samp <- homes_tmp %>% sample_n(size = 500)
+
+# plot
+ggplot(homes_tmp_samp, aes(x = bin_medx, y = ImprovementsValue)) +
+  geom_point(aes(color = residuals)) +
+  geom_line(aes(y = predicted)) +
+  geom_segment(aes(xend = bin_medx, yend = predicted)) +
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +
+  guides(color = FALSE)
+```
+
+The model is estimated to generate a mean residual value of 0; what the residuals estimate is the variance of the error, $\sigma^2_{\epsilon}$ -- that is, how much a typical observation's actual value deviates from the predicted value.
+
+Theoretically $\epsilon_i$ represents the aggregated omitted variables, measurement error in $Y$, and inherently random elements of $Y$. 
+
+
+## Estimation (briefly)
+
+We estimate the regression coefficients (weights, parameters) by minimizing the sum of the squares of the residuals (that is, minimize the squared-error loss function). This generates estimates that define a line as close to the actual data points as possible. 
+
+$$min \sum (\hat{\epsilon}_i)^2\\
+min \sum(Y_i - \hat{Y}_i)^2\\
+min \sum(Y_i - \hat{\beta}_0 + \hat{\beta}_1 X_i)^2$$
+
+This **least-squares criterion** is a quadratic and symmetric function:
+
+* Quadratic: deviations farther from the line are weighted more heavily by the squaring process so atypical observations can have a big effect on the placement of the line. 
+* Symmetric: deviations above the least-squares line and those below it are treated the same. 
+
+
+# Before you model
+
+Explore and clean the data
+
+* numbers are read as numbers; factors are read as factors
+* values are in expected range
+* how much missingness, how are missing obs coded
+* how variables are distributed (histograms, density plots, etc.)
+
+Explore and visualize relationships
+
+* approximately linear? scatterplots and smoothers
+* interactions? conditioning plots and facetting
+
+<center>
+![](images/tukey_bulge.png){width=250px}
+</center>
+
+# Linear Models in R
+
+## Implementation in R
+
+To build a linear model we propose a model and then estimate the coefficients and the standard deviation of the error term. For the model $Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \epsilon$, this means estimating $\beta_0$, $\beta_1$, $\beta_2$, and $\sigma$. 
+
+```{r echo = FALSE, message = FALSE}
+# one more variable: age of home
+homes <- homes %>% 
+  mutate(age = 2016 - YearBuilt)
+
+city_age <- homes %>% 
+  filter(age < 2016) %>% 
+  group_by(city) %>% 
+  summarize(med_age = median(age))
+
+homes <- left_join(homes, city_age)
+
+homes <- homes %>% 
+  mutate(age = if_else(age == 2016, med_age, age))
+```
+
+The basic function is `lm`; required arguments are `formula` and `data`.
+
+<center>
+`lm(Y ~ X1 + X2, data = mydata)`
+</center>
+
+
+```{r}
+lm_impvalue <- lm(ImprovementsValue ~ FinSqFt + age + LotSize, 
+                  data = homes)
+```
+
+## Model summary
+
+The saved linear model object contains various quantities of interest. Extractor functions provide those quantities, e.g., 
+```{r}
+summary(lm_impvalue)
+```
+
+* **Call:** The model formula, useful if result is saved for later
+* **Residuals:** A quick check of the distribution of residuals. Ideally, median is near 0, max and min, and 1Q and 3Q, are approximately equivalent.
+* **Coefficients:** 
+  * **Estimate:** $\hat{\beta}$
+  * **Std. error:** standard error of $\hat{\beta}$
+  * **t value:** test statistic for $H_0: \hat{\beta} = 0$, calculated by $\left(\frac{estimate}{std. error}\right)$
+  * $\mathbf{Pr(>|t|)}$: $p$-value of hypothesis test (2-sided)
+  * **Signif. codes:** indicate statistical significance
+* **Residual standard error:** $\hat{\sigma}$
+* **degrees of freedom:** # of obs - # of estimated parameters
+* **Multiple R-squared:** measure of model fit (0,1)
+* **Adjusted R-squared:** measure of model fit adjusted for number of parameters (0,1)
+* **F-statistic:** test statistic for hypothesis that all coefficients (other
+than intercept) simultaneously equal zero
+* **p-value:** $p$-value for F-statistics
+
+## Extraction
+
+To extract specific quantities of interest:
+```{r}
+coef(lm_impvalue)
+confint(lm_impvalue)
+head(fitted(lm_impvalue))
+
+# or save summary information
+ms_impvalue <- summary(lm_impvalue)
+# and extract quantitites
+ms_impvalue$coefficients
+ms_impvalue$adj.r.squared
+ms_impvalue$sigma 
+```
+
+
+# Specifying Models
+
+R uses the Wilkinson-Rogers notation for specifying models: 
+
+<center>
+`response variable ~ explanatory variables`
+</center>
+
+The tilde (~) is read as "is modelled as a function of" or "regressed on." Additional model symbols are include:
+
+* `+` inclusion of variable
+* `-` exclusion of variable (not subtraction)
+* `∗` include variables and their interactions 
+* `:` interact variables
+* `∧` interaction of variables to specified degree (not exponent)
+
+To override a model symbol, use the `I()` function.
+
+Some examples
+
+* `y ~ x1 + x2 + x3` (multiple regression)
+* `y ~ .` (regress y on all variables in data set)
+* `y ~ x1 + x2 - 1` (exclude intercept)
+* `y ~ x1 + x2 + x2:x2` (interact x1 and x2)
+* `y ~ x1 * x2` (same as above)
+* `y ~ x1 + x2 + x3 + x1:x2 + x1:x3 + x2:x3 + x1:x2:x3` (all two and three-way interactions)
+* `y ~ x1 * x2 * x3` (same as above)
+* `y ~ (x1 + x2 + x3)ˆ2` (all 2-way interactions)
+* `y ~ x1 + I(x1ˆ2) + x3` (polynomial regression)
+* `y ~ poly(x1, 2, raw = TRUE) + x3` (polynomial regresion)
+
+## Factors
+
+For inclusion in a model, R requires categorical predictors -- like city or condition in the Albemarle housing data -- to be encoded as factors. A factor is a set of integer codes (1, 2, 3) with associated levels (Fair, Average, Good). 
+
+By default, coefficients for factors are modeled using treatment contrasts -- one level is treated as the baseline and the other levels have coefficients that express differences from that baseline. For example, let's add the city address of the property.
+
+```{r}
+table(homes$city)
+lm_impvalue <- lm(ImprovementsValue ~ city + FinSqFt + age + LotSize, 
+                  data = homes)
+summary(lm_impvalue)
+```
+
+The effect of the baseline category -- Charlottesville -- is not listed, but is part of the intercept. The coefficients on the remaining levels represent how the value of homes in the other cities differ, on average, from the value of homes in Charlottesville.
+
+
+## Interactions
+
+Inclusion of a factor variable tests for varying intercepts between categories, but assumes any numerical variables influence the outcome variable for each category in the same way -- e.g., the baseline value of homes in Charlottesville may be higher, but the relation between home size and home value is the same across all cities.
+
+If, instead, the effect of a variable *depends* on another variable -- e.g., the effect of home size on home value depends on which city the home is in -- we say the variables interact. Interactions are one way of expressing potential causal heterogeneity, when an outcome is structured differently for different types of observations. 
+
+```{r}
+lm_impvalue <- lm(ImprovementsValue ~ city*FinSqFt + age + LotSize, 
+                  data = homes)
+summary(lm_impvalue)
+```
+
+Here we have varying intercepts and varying slopes. We can have interactions between two factors, between a factor and numeric variable (as above), between two numeric variables, between three variables! And polynomial regression, where a predictor is included as a squared or cubed (or higher exponent) term, works the same way -- with a variable interacted with itself.  
+
+Come back next week for more on interpreting interactions!
+
+
+## Nonlinearities
+
+If data exploration suggested relationships aren't reasonably linear, transformations of the variables can accommodate a variety of nonlinearities. Logs and polynomials are the most widely used.
+
+Adding a squared X term:
+
+```{r}
+lm_impvalue <- lm(ImprovementsValue ~ city + poly(FinSqFt, 2, raw = TRUE) + age + LotSize, 
+                data = homes)
+summary(lm_impvalue)
+```
+
+Logging Y (along with a squared X term):
+
+```{r}
+homes2 <- homes %>% filter(ImprovementsValue > 0 & ImprovementsValue < 4e6)
+lm_impvalue <- lm(ImprovementsValue ~ city + poly(FinSqFt, 2, raw = TRUE) + age + LotSize, 
+                  data = homes2)
+summary(lm_impvalue)
+```
+
+Other possibilites include piecewise approaches (e.g., GAMs/splines).
+
+
+# Evaluating Models
+
+## Diagnostics
+
+The linear model makes several assumptions that enable estimation or inference; if these assumptions are strongly violated, estimates or inferences can be suspect.
+$$\epsilon_i \sim \mathcal{N}_{iid}(0,\sigma^2)$$
+Or, errors are independently and identically distributed (iid) around mean 0 with constant variance ($\sigma^2$) and drawn from a normal distribution.
+
+As a partial check of these assumptions, we can examine the residuals. 
+
+```{r}
+plot(lm_impvalue, which = 1) # 
+```
+
+**Residuals vs Fitted values**: checks linearity and constant variance, should have a horizontal line with uniform scatter of points.
+
+```{r}
+plot(lm_impvalue, which = 3)
+```
+
+**Scale-Location**: checks constant variance, should have a horizontal line with a uniform scatter of points.
+
+```{r}
+plot(lm_impvalue, which = 2)
+```
+
+**Normal Q-Q**: checks normality, points should lie close to diagonal line.
+
+
+```{r}
+plot(lm_impvalue, which = 5)
+```
+
+**Residuals vs Leverage**: checks for influential observations, points should lie within contour lines.
+
+
+## Evaluating model specification, model fit
+
+What should be included in a model, and in what form, are questions of model specification (aka feature selection). Ideally, it's based on theory; in practice, we often employ hypothesis tests comparing nested models or criteron-based approaches based on goodness-of-fit metrics. 
+
+To test whether inclusion of a subset of variables substantially improves a model, we can use a partial F-test to compare models with and without this subset of variables.
+
+```{r}
+lm_imp_full <- lm(ImprovementsValue ~ city*FinSqFt + age + LotSize, 
+                  data = homes)
+lm_imp_red <- lm(ImprovementsValue ~ city + FinSqFt + age + LotSize, 
+                  data = homes)
+anova(lm_imp_red, lm_imp_full)
+```
+
+The null hypothesis is that the models are essentially the same, that the reduced model fits as well as the more fully specified model. A low p-value is a rejection of that null: the fuller model has more explanatory power.
+
+Alternatively, we can compare models on a goodness-of-fit measure like the Akaike Information Criteria (AIC). When comparing models fitted *to the same data,* the smaller the AIC, the better the fit.
+
+```{r}
+extractAIC(lm_imp_full)
+extractAIC(lm_imp_red)
+```
+
+Some recommend using cross-validation for model evaluation –- estimate, diagnose, build the model with half of your sample, and proceed with inference by estimating the “good” model on the second half of your data. We'll get to an example of that at the end.
+
+<center>
+[Nota Bene](#box)
+</center>
+
+
+## Interpretation and visualization
+
+**Interpretation:** In multiple regression the coefficient represents the amount of change in $Y$ for a unit change in each predictor, *holding all other included variables contant*. That is, interpretation proceeds as if one predictor could change with no other variables changing.
+
+**Viualization:** models are often best conveyed visually. The `broom` package tidies model summaries into a `tibble` that we can plot.
+
+```{r}
+tidy_imp <- tidy(lm_imp_full, conf.int = TRUE)
+# coeffcient plot for intercept/factors
+ggplot(tidy_imp[1:10,], aes(x = estimate, y = term, 
+                     xmin = conf.low, 
+                     xmax = conf.high)) +
+  geom_point() +
+  geom_vline(xintercept = 0) +
+  geom_errorbarh() +
+  labs(x = "Coefficient Estimate", y = "Intercept and Factors",
+       title = "Effect of City on Intercept")
+
+# coeffcient plot for slopes/interactions
+ggplot(tidy_imp[11:22,], aes(x = estimate, y = term, 
+                            xmin = conf.low, 
+                            xmax = conf.high)) +
+  geom_point() +
+  geom_vline(xintercept = 0) +
+  geom_errorbarh() + 
+  labs(x = "Coefficient Estimate", y = "Slopes and Interactions",
+       title = "Effect of Lot Size, Age, and Square Feet")
+```
+
+
+# Regression as Machine Learning
+
+We've been using regression as a statistical model; it is also one of the more widely used machine learning algorithms.
+
+## Machine learning
+
+As mathematical representations, statistical models and machine learning algorithms are often indistinguishable. In practice, they tend to be used differently. Machine learning focuses on data-driven prediction, whereas statistical modeling focuses on theory-driven knowledge discovery.
+
+Machine learning algorithms learn a target function ($f$) that best maps input variables ($X$) to an output variable ($Y$) -- $Y = f(X)$ -- in order to make predictions of $Y$ for new $X$, aka predictive modeling/analytics. The goal is to maximize prediction accuracy/minimize model error, without reference to explainability (or theory, hypotheses).
+
+| Statistical models | Machine learning models |
+|----|----|
+| Theory driven | Data driven |
+| Explanation | Prediction |
+| Researcher-curated data | Machine-generated data |
+| Evaluation via goodness of fit | Evaluation via prediction accuracy |
+
+
+## Some definitions
+
+For the example in the R script...
+
+* **RMSE:** Root Mean Squared Error, measures the average prediction error made by the model; i.e., the average difference between the observed outcome values and the values predicted by the model.
+* **Cross validation:** split data into a training set and test set; build/learn the model on the training set; calculate RMSE/prediction error of the model using the test/held-out data.
+* **$k$-fold cross validation:** divide data into $k$ sets, hold out 1 set and fit model with remaining $k-1$ sets; calculate RMSE/prediction error on the held-out data; repeat with each $k$ set; take average RMSE across $k$.
+
+
+# Friends of the Linear Model
+
+Many models expand on the basic linear regression model
+
+* Genearlized linear models (e.g., logit, poisson, multinomial, etc.)
+* Mixed effects models (random coefficients, hierarchical models)
+* Penalized regression (shrinkage or regulariziation, e.g., Ridge, Lasso, ElasticNet)
+* and more!
+
+
+# Resources
+
+* Garrett Grolemund and Hadley Wickham. 2018. [R for Data Science](https://r4ds.had.co.nz/model-intro.html), Chapters 22-25
+* James, G., et al. 2013. [An Introduction to Statistical Learning.](http://www-bcf.usc.edu/~gareth/ISL/) New York: Springer.
+
+
+
+
