@@ -11,7 +11,7 @@
 
 
 
-<title>Introduction to R</title>
+<title>Install/Update R &amp; RStudio</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -410,17 +410,104 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Introduction to R</h1>
+<h1 class="title toc-ignore">Install/Update R &amp; RStudio</h1>
 
 </div>
 
 
-<div id="get-ready" class="section level1">
-<h1>Get Ready!</h1>
-<p>Before the first session, make sure you have installed or updated R, RStudio, and the tidyverse package. <a href="installR.html">Instructions are here.</a></p>
+<div id="before-the-first-session" class="section level1">
+<h1>Before the first session</h1>
+<p>To participate in the Data Science Essentials in R series, please bring a laptop with R and RStudio installed. We recommend that you have the latest version of R (3.5.2 Eggshell Igloo) and of the tidyverse package (1.2.1). You need to have RStudio installed, but it is less crucial that you are using the most recent version (1.1.463).</p>
+<p>Do you already have R and RStudio installed?</p>
+<ul>
+<li>No - follow the instructions for <a href="#noinstall">“I do not have R installed”</a></li>
+<li>Yes - follow the instructions for <a href="#yesinstall">“I have R installed”</a></li>
+</ul>
 </div>
-<div id="introduction-to-r" class="section level1">
-<h1>Introduction to R</h1>
+<div id="noinstall" class="section level1">
+<h1>“I do not have R installed”</h1>
+<p>You should install R, RStudio, and tidyverse.</p>
+<div id="installing-r" class="section level2">
+<h2>Installing R</h2>
+<div id="windows" class="section level3">
+<h3>Windows:</h3>
+<ol style="list-style-type: decimal">
+<li>Go to<a href="https://cloud.r-project.org/bin/windows/base/" class="uri">https://cloud.r-project.org/bin/windows/base/</a></li>
+<li>Click the “Download R 3.5.2 for Windows” link.</li>
+<li>When the file finishes downloading, double-click to install. You should be able to click “Next” to all dialogs to finish the installation.</li>
+</ol>
+</div>
+<div id="mac" class="section level3">
+<h3>Mac:</h3>
+<ol style="list-style-type: decimal">
+<li>Go to <a href="https://cloud.r-project.org/bin/macosx/" class="uri">https://cloud.r-project.org/bin/macosx/</a></li>
+<li>Click the link “R-3.5.2.pkg”</li>
+<li>When the file finishes downloading, double-click to install. You should be able to click “Next” to all dialogs to finish the installation.</li>
+</ol>
+</div>
+</div>
+<div id="installing-rstudio" class="section level2">
+<h2>Installing RStudio</h2>
+<ol style="list-style-type: decimal">
+<li>Go to <a href="https://www.rstudio.com/products/rstudio/download/#download" class="uri">https://www.rstudio.com/products/rstudio/download/#download</a>.</li>
+<li>Under “Installers for Supported Platforms” select the appropriate installer for your operating system:</li>
+</ol>
+<ul>
+<li>Windows: “RStudio 1.1.463- Windows Vista/7/8/10”</li>
+<li>Mac: “RStudio 1.1.463 - Mac OS X 10.6+ (64-bit)”</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>When the file finishes downloading, double-click to install. You should be able to click “Next” to all dialogs to finish the installation.</li>
+</ol>
+</div>
+<div id="installtidyverse" class="section level2">
+<h2>Installing tidyverse</h2>
+<p>Open RStudio. Go to Tools &gt; Install Packages. Enter <code>tidyverse</code>, then select Install.</p>
+<p>You are ready for Data Science Essentials for R!</p>
+</div>
+</div>
+<div id="yesinstall" class="section level1">
+<h1>“I have R installed”</h1>
+<p>The workshops run more smoothly when everyone is using the same version of R and tidyverse. Please update R and tidyverse, if necessary (and less crucially, RStudio).</p>
+<div id="verify-r-version" class="section level2">
+<h2>Verify R version</h2>
+<p>Open RStudio. At the top of the Console you will see session info. The first line tells you which version of R you are using. If RStudio is already open and you’re deep in a session, type <code>R.version.string</code> to print out the R version.</p>
+<p>Do you have R version 3.5.2 (“Eggshell Igloo”) installed?</p>
+<ul>
+<li>No - follow the instructions for <a href="#updateR">“Updating R”</a></li>
+<li>Yes - Great! Do you have tidyverse installed?
+<ul>
+<li>No or I don’t know - See <a href="#installtidyverse">“Installing tidyverse”</a></li>
+<li>Yes - Great! Go to Go to Tools &gt; Check for Package Updates. If there’s an update available for tidyverse, install it.</li>
+</ul></li>
+</ul>
+<p>You are ready for Data Science Essentials for R!</p>
+</div>
+<div id="updateR" class="section level2">
+<h2>Updating R/RStudio/Tidyverse</h2>
+<div id="windows-1" class="section level3">
+<h3>Windows</h3>
+<p>To update R on Windows, try using the package <a href="https://cran.r-project.org/web/packages/installr/index.html"><code>installr</code></a> (only for Windows)</p>
+<ol style="list-style-type: decimal">
+<li>Install and load <code>installr</code>: <code>install.packages(&quot;installr&quot;)</code> and <code>library(installr)</code></li>
+<li>Call <code>updateR()</code> function. This will start the updating process of your R installation by: “finding the latest R version, downloading it, running the installer, deleting the installation file, copy and updating old packages to the new R installation.”</li>
+<li>From within RStudio, go to Help &gt; Check for Updates to install newer version of RStudio (if available, optional).</li>
+</ol>
+<p>You are ready for Data Science Essentials for R!</p>
+</div>
+<div id="mac-1" class="section level3">
+<h3>Mac</h3>
+<p>On Mac, you can simply download and install the newest version of R. When you restart RStudio, it will use the updated version of R.</p>
+<ol style="list-style-type: decimal">
+<li>Go to <a href="https://cloud.r-project.org/bin/macosx/" class="uri">https://cloud.r-project.org/bin/macosx/</a></li>
+<li>Click the link “R-3.5.2.pkg”</li>
+<li>When the file finishes downloading, double-click to install. You should be able to click “Next” to all dialogs to finish the installation.</li>
+<li>From within RStudio, go to Help &gt; Check for Updates to install newer version of RStudio (if available, optional).</li>
+<li>To update packages, go to Tools &gt; Check for Package Updates. If updates are available, select All (or just tidyverse), and click Install Updates.</li>
+</ol>
+<p>You are ready for Data Science Essentials for R!</p>
+</div>
+</div>
 </div>
 
 

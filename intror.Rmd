@@ -7,7 +7,9 @@ output:
     toc_float: true
 ---
 
+# Get Ready!
+
+Before the first session, make sure you have installed or updated R, RStudio, and the tidyverse package. [Instructions are here.](installR.html)
 
 # Introduction to R
 
-TBA
