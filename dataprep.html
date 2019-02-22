@@ -415,9 +415,507 @@ div.tocify {
 </div>
 
 
+<div id="get-ready" class="section level1">
+<h1>Get Ready!</h1>
+<ul>
+<li>Download the data files and R scripts:
+<ul>
+<li><a href="https://github.com/uvastatlab/phdplus/blob/master/dataprepR.zip">Go to GitHub</a>, and click “Download”. The folder contains two data files (CAMA_CardLevelData.txt, CAMA_ParcelInfo.txt) and two R scripts (intro_dplyr.R and data_prep.R).</li>
+<li>Unzip it and put it somwehere you can locate it on your machine.</li>
+</ul></li>
+</ul>
+</div>
+<div id="the-data" class="section level1">
+<h1>The Data</h1>
+<p>We’ll be working with real estate data from Albemarle county <a href="http://www.albemarle.org/department.asp?department=gds&amp;relpage=3914#Parcels">Office of Geographic Data Services</a>, though the links are not currently visible.</p>
+<p>The data includes</p>
+<ul>
+<li><a href="http://people.virginia.edu/~mpc8t/dser/CAMA_CardLevelData.txt.htm">Real Estate Information - Primary Card Level Data</a></li>
+<li><a href="http://people.virginia.edu/~mpc8t/dser/CAMA_ParcelInfo.txt.htm">Real Estate Information - Parcel Level Data</a></li>
+</ul>
+<p>We’ll be using this data to understand more about housing assessments and value, so we’ll focus on properties that are inhabited as homes.</p>
+</div>
 <div id="data-preparation-and-tidy-data" class="section level1">
 <h1>Data Preparation and Tidy Data</h1>
-<p>TBA</p>
+<p>Data is usually messy and requires preparation (aka cleaning, wrangling, munging). You can approach data preparation as tedious <a href="https://www.nytimes.com/2014/08/18/technology/for-big-data-scientists-hurdle-to-insights-is-janitor-work.html">“janitorial work”</a><a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> or as an opportunity to really get to know your data – it’s possibility and limitations, quirks and errors. We’ll use the Albemarle County Real Estate data to as an in-depth example, getting it ready for more complex visualizations and analysis to come.</p>
+<p>Before we dive in with the data, let’s get to know the <code>dplyr</code> package. Part of the the <a href="https://www.tidyverse.org/"><code>tidyverse</code></a>, <a href="https://dplyr.tidyverse.org/"><code>dplyr</code></a> is a package for data manipulation. The package implements a <em>grammar</em> for transforming data, based on verbs/functions that define a set of common tasks.</p>
+<div id="functionsverbs" class="section level2">
+<h2>Functions/Verbs</h2>
+<p><code>dplyr</code> functions are for <code>d</code>ata frames</p>
+<ul>
+<li>first argument of <code>dplyr</code> functions is always a data frame</li>
+<li>followed by function specific arguments that detail what to do</li>
+<li>returns a data frame</li>
+</ul>
+</div>
+</div>
+<div id="dplyr-isolating-data" class="section level1">
+<h1>dplyr: Isolating data</h1>
+<center>
+<p><span class="math inline">\(\color{blue}{\text{select()}}\)</span> - extract <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{green}{\text{filter()}}\)</span> - extract <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+<p><span class="math inline">\(\color{green}{\text{arrange()}}\)</span> - reorder <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+</center>
+<p>Let’s look at some quick examples using the Albemarle <code>homes</code> data .</p>
+<pre class="r"><code>library(tidyverse)
+options(tibble.print_min = 5)
+
+homes &lt;- read_csv(&quot;https://raw.githubusercontent.com/uvastatlab/phdplus/master/data/albemarle_homes.csv&quot;)
+homes</code></pre>
+<pre><code>## # A tibble: 32,746 x 24
+##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0060…      2006             0 Single…    1922 Centra…      1       3
+## 2 0060…      2003             0 Single…    1848 Centra…      0       3
+## 3 0070…      1974             0 Single…    1368 No Cen…      0       3
+## 4 0070…      1954             0 Single…    1092 No Cen…      0       4
+## 5 0070…      1987             0 Single…    1344 Centra…      0       3
+## # … with 3.274e+04 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
+## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
+## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
+## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
+## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<div id="select" class="section level2">
+<h2>select()</h2>
+<p>Extract columns by name</p>
+<pre class="r"><code>select(homes, TotalValue)</code></pre>
+<pre><code>## # A tibble: 32,746 x 1
+##   TotalValue
+##        &lt;dbl&gt;
+## 1     409900
+## 2     523100
+## 3     228800
+## 4     177900
+## 5     232400
+## # … with 3.274e+04 more rows</code></pre>
+<pre class="r"><code>select(homes, TotalValue, city)</code></pre>
+<pre><code>## # A tibble: 32,746 x 2
+##   TotalValue city  
+##        &lt;dbl&gt; &lt;chr&gt; 
+## 1     409900 CROZET
+## 2     523100 CROZET
+## 3     228800 OTHER 
+## 4     177900 OTHER 
+## 5     232400 OTHER 
+## # … with 3.274e+04 more rows</code></pre>
+<p>select() helpers include</p>
+<ul>
+<li>select(.data, <strong>var1:var10</strong>): select range of columns</li>
+<li>select(.data, <strong>-c(var1, var2)</strong>): select every column but</li>
+<li>select(.data, <strong>starts_with(“string”)</strong>): select columns that start with…</li>
+<li>select(.data, <strong>contains(“string”)</strong>): select columns whose names contain…</li>
+</ul>
+<pre class="r"><code>select(homes, FinSqFt:FP_Num)</code></pre>
+<pre><code>## # A tibble: 32,746 x 3
+##   FinSqFt Cooling        FP_Num
+##     &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;
+## 1    1922 Central Air         1
+## 2    1848 Central Air         0
+## 3    1368 No Central Air      0
+## 4    1092 No Central Air      0
+## 5    1344 Central Air         0
+## # … with 3.274e+04 more rows</code></pre>
+<pre class="r"><code>select(homes, -c(FinSqFt:FP_Num))</code></pre>
+<pre><code>## # A tibble: 32,746 x 21
+##   TMP   YearBuilt YearRemodeled UseCode Bedroom FullBath HalfBath
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1 0060…      2006             0 Single…       3        3        0
+## 2 0060…      2003             0 Single…       3        2        0
+## 3 0070…      1974             0 Single…       3        1        0
+## 4 0070…      1954             0 Single…       4        1        0
+## 5 0070…      1987             0 Single…       3        2        0
+## # … with 3.274e+04 more rows, and 14 more variables: TotalRooms &lt;dbl&gt;,
+## #   City &lt;chr&gt;, Zip &lt;dbl&gt;, LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;,
+## #   ImprovementsValue &lt;dbl&gt;, TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;,
+## #   LastSaleDate &lt;dttm&gt;, condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;,
+## #   landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre class="r"><code>select(homes, contains(&quot;Year&quot;))</code></pre>
+<pre><code>## # A tibble: 32,746 x 2
+##   YearBuilt YearRemodeled
+##       &lt;dbl&gt;         &lt;dbl&gt;
+## 1      2006             0
+## 2      2003             0
+## 3      1974             0
+## 4      1954             0
+## 5      1987             0
+## # … with 3.274e+04 more rows</code></pre>
+</div>
+<div id="filter" class="section level2">
+<h2>filter()</h2>
+<p>Extract rows that meet logical condition</p>
+<pre class="r"><code>filter(homes, YearBuilt == 2016)</code></pre>
+<pre><code>## # A tibble: 351 x 24
+##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0100…      2016             0 Single…    2842 Centra…      1       3
+## 2 060K…      2016             0 Single…    2766 Centra…      1       4
+## 3 060L…      2016             0 Single…    2271 Centra…      1       3
+## 4 061A…      2016             0 Single…    1880 Centra…      0       3
+## 5 032G…      2016             0 Single…    2496 Centra…      0       4
+## # … with 346 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
+## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
+## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
+## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
+## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<p>Logical tests</p>
+<ul>
+<li>x <strong>&lt;</strong> y: less than</li>
+<li>x <strong>&gt;</strong> y: greater than</li>
+<li>x <strong>==</strong> y: equal to</li>
+<li>x <strong>&lt;=</strong> y: less than or equal to</li>
+<li>y <strong>&gt;=</strong> y: greater than or equal to</li>
+<li>x <strong>!=</strong> y: not equal to</li>
+<li>x <strong>%in%</strong> y: is a member of</li>
+<li><strong>is.na(</strong>x<strong>)</strong>: is NA</li>
+<li><strong>!is.na(</strong>x<strong>)</strong>: is not NA</li>
+</ul>
+<pre class="r"><code>filter(homes, YearRemodeled &gt; 0)</code></pre>
+<pre><code>## # A tibble: 2,288 x 24
+##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0070…      1920          1987 Single…    2131 No Cen…      0       5
+## 2 0080…      1850          1969 Single…    2024 No Cen…      5       4
+## 3 0090…      1976          1983 Single…    1560 No Cen…      1       4
+## 4 0090…      1823          1968 Single…    5226 Centra…      8       3
+## 5 0140…      1975          1982 Single…    1520 No Cen…      1       3
+## # … with 2,283 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
+## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
+## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
+## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
+## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre class="r"><code>filter(homes, Bedroom == max(Bedroom))</code></pre>
+<pre><code>## # A tibble: 1 x 24
+##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0760…      1973             0 Single…     940 Centra…      0      20
+## # … with 16 more variables: FullBath &lt;dbl&gt;, HalfBath &lt;dbl&gt;,
+## #   TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;, LotSize &lt;dbl&gt;,
+## #   LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;, TotalValue &lt;dbl&gt;,
+## #   LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;, condition &lt;chr&gt;, fp &lt;dbl&gt;,
+## #   city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre class="r"><code>filter(homes, city %in% c(&quot;SCOTTSVILLE&quot;, &quot;CROZET&quot;))</code></pre>
+<pre><code>## # A tibble: 4,095 x 24
+##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0060…      2006             0 Single…    1922 Centra…      1       3
+## 2 0060…      2003             0 Single…    1848 Centra…      0       3
+## 3 0140…      1998             0 Single…    1244 Centra…      1       1
+## 4 0150…      1997             0 Single…     924 No Cen…      0       3
+## 5 0070…      1886             0 Single…    1861 No Cen…      1       4
+## # … with 4,090 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
+## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
+## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
+## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
+## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<p>Boolean operators for multiple conditions</p>
+<ul>
+<li>a <strong>&amp;</strong> b: and</li>
+<li>a <strong>|</strong> b: or</li>
+<li><strong>xor(</strong>a,b<strong>)</strong>: exactly or</li>
+<li><strong>!</strong>a: not</li>
+</ul>
+<pre class="r"><code>filter(homes, city == &quot;SCOTTSVILLE&quot; &amp; FinSqFt &gt; mean(FinSqFt))</code></pre>
+<pre><code>## # A tibble: 256 x 24
+##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 1050…      1995             0 Single…    3326 Centra…      2       3
+## 2 1150…      2004             0 Single…    2250 Centra…      1       4
+## 3 1230…      2011             0 Single…    1966 Centra…      0       4
+## 4 1240…      1993             0 Single…    2008 Centra…      0       3
+## 5 1310…      1998             0 Single…    2287 Centra…      1       3
+## # … with 251 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
+## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
+## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
+## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
+## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+</div>
+<div id="arrange" class="section level2">
+<h2>arrange()</h2>
+<p>Order rows from smallest to largest values for designated column/s.</p>
+<pre class="r"><code>arrange(homes, FinSqFt)</code></pre>
+<pre><code>## # A tibble: 32,746 x 24
+##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0380…      1952             0 Single…     144 No Cen…      0       1
+## 2 0410…         0             0 Single…     221 No Cen…      0       0
+## 3 0380…      1995             0 Single…     231 No Cen…      0       0
+## 4 0620…      1982             0 Single…     261 No Cen…      1       0
+## 5 0140…      1955             0 Single…     300 No Cen…      0       1
+## # … with 3.274e+04 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
+## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
+## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
+## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
+## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<ul>
+<li><strong>desc()</strong>: reverses order, largest to smallest.</li>
+</ul>
+<pre class="r"><code>arrange(homes, desc(FinSqFt))</code></pre>
+<pre><code>## # A tibble: 32,746 x 24
+##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0440…      1998             0 Single…    8982 Centra…      3       5
+## 2 0450…      1940          1980 Single…    8897 Centra…      3       6
+## 3 0860…      2015             0 Single…    8878 Centra…      3       4
+## 4 0160…      2009             0 Single…    8849 Centra…      1       4
+## 5 0430…      2008             0 Single…    8829 Centra…      3       6
+## # … with 3.274e+04 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
+## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
+## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
+## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
+## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+</div>
+<div id="and-more" class="section level2">
+<h2>and more…</h2>
+<center>
+<p><span class="math inline">\(\color{green}{\text{slice()}}\)</span> - extract <span class="math inline">\(\color{green}{\text{rows}}\)</span> using index(es)</p>
+<p><span class="math inline">\(\color{green}{\text{distinct()}}\)</span> - filter for unique <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+<p><span class="math inline">\(\color{green}{\text{sample_n()/sample_frac()}}\)</span> - randomly sample <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+</center>
+</div>
+</div>
+<div id="pipes" class="section level1">
+<h1>Pipes!</h1>
+<p>The <code>%&gt;%</code> is the pipe operator. It passes the result on left into the first argument of the function on the right, or “pipes” the previous output as the input for the next function. Read it in your head as <em>then</em></p>
+<p>For example, if we just want the TotalValue and LotSize for homes in Scottsville arranged in descending order of LotSize, without the pipe, we’d:</p>
+<pre class="r"><code>scottsville &lt;- filter(homes, city == &quot;SCOTTSVILLE&quot;)
+scottsville &lt;- select(scottsville, TotalValue, LotSize)
+scottsville &lt;- arrange(scottsville, desc(LotSize))
+scottsville</code></pre>
+<pre><code>## # A tibble: 1,077 x 2
+##   TotalValue LotSize
+##        &lt;dbl&gt;   &lt;dbl&gt;
+## 1    2156700    612.
+## 2    2665700    511.
+## 3    2352200    365.
+## 4    2800800    315.
+## 5     892300    294.
+## # … with 1,072 more rows</code></pre>
+<p>With the pipe, we can start with homes, <em>then</em> filter only the rows for Scottsville, <em>then</em> select only the variables TotalValue and LotSize, <em>then</em> arrange the rows by descending order of LotSize.</p>
+<pre class="r"><code>homes %&gt;% 
+  filter(city == &quot;SCOTTSVILLE&quot;) %&gt;% 
+  select(TotalValue, LotSize) %&gt;% 
+  arrange(desc(LotSize))</code></pre>
+<pre><code>## # A tibble: 1,077 x 2
+##   TotalValue LotSize
+##        &lt;dbl&gt;   &lt;dbl&gt;
+## 1    2156700    612.
+## 2    2665700    511.
+## 3    2352200    365.
+## 4    2800800    315.
+## 5     892300    294.
+## # … with 1,072 more rows</code></pre>
+<div id="keyboard-shortcut" class="section level2">
+<h2>Keyboard Shortcut!</h2>
+<ul>
+<li>Mac: cmd + shift + m</li>
+<li>Windows: ctrl + shift + m</li>
+</ul>
+</div>
+</div>
+<div id="dplyr-deriving-data" class="section level1">
+<h1>dplyr: Deriving data</h1>
+<center>
+<p><span class="math inline">\(\color{blue}{\text{mutate()}}\)</span> - create new <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{blue}{\text{summarize()}}\)</span> - summarize <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{green}{\text{group_by()}}\)</span> - group <span class="math inline">\(\color{green}{\text{rows}}\)</span></p>
+</center>
+<div id="mutate" class="section level2">
+<h2>mutate()</h2>
+<p>Create new columns.</p>
+<pre class="r"><code>homes %&gt;% 
+  mutate(value_sqft = TotalValue/FinSqFt) %&gt;% 
+  select(YearBuilt, condition, FinSqFt, TotalValue, city, value_sqft) %&gt;% 
+  arrange(desc(value_sqft))</code></pre>
+<pre><code>## # A tibble: 32,746 x 6
+##   YearBuilt condition FinSqFt TotalValue city            value_sqft
+##       &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt;
+## 1         0 Average      1210   10351200 KESWICK              8555.
+## 2      1935 Average       475    3931500 OTHER                8277.
+## 3      1962 Average      1590   11352300 CHARLOTTESVILLE      7140.
+## 4      1934 Average       600    3931500 OTHER                6552.
+## 5         0 Fair          731    4153300 OTHER                5682.
+## # … with 3.274e+04 more rows</code></pre>
+<p>We can create new variables as functions of other variables (ratios, conditions, ranks, etc.). We can mutate multiple variables in the same command.</p>
+<pre class="r"><code>homes %&gt;% 
+  mutate(value_sqft = TotalValue/FinSqFt,
+         remodel = if_else(YearRemodeled &gt; 0, 1, 0)) %&gt;% 
+  select(value_sqft, remodel, city) %&gt;% 
+  arrange(value_sqft)</code></pre>
+<pre><code>## # A tibble: 32,746 x 3
+##   value_sqft remodel city           
+##        &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;          
+## 1       7.62       0 CHARLOTTESVILLE
+## 2      10.8        0 ESMONT         
+## 3      11.0        0 OTHER          
+## 4      12.1        0 OTHER          
+## 5      13.7        0 OTHER          
+## # … with 3.274e+04 more rows</code></pre>
+<ul>
+<li><code>if_else(**condition, value_if_true, value_if_false, value_if_na**)</code>: mutate based on condition</li>
+<li><code>case_when(condition1 ~ value1,          condition2 ~ value2,          condition3 ~ value3,         TRUE ~ value_everything_else)</code>: vectorize multiple <code>if_else()</code> statements</li>
+</ul>
+</div>
+<div id="summarize" class="section level2">
+<h2>summarize()</h2>
+<p>Compute table of summaries.</p>
+<pre class="r"><code>homes %&gt;% 
+  summarize(oldest = min(YearBuilt), 
+            newest = max(YearBuilt), 
+            total = n())</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   oldest newest total
+##    &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
+## 1      0   2016 32746</code></pre>
+<p><code>summarize</code> takes a single vector as input (a variable) and returns a single value as output (the requested summary of the variable).</p>
+<p>Summary functions include</p>
+<ul>
+<li><strong>first()</strong>: first value</li>
+<li><strong>last()</strong>: last value</li>
+<li><strong>nth(</strong>.x, <strong>n)</strong>: nth value</li>
+<li><strong>n()</strong>: number of values</li>
+<li><strong>n_distinct()</strong>: number of distinct values</li>
+<li><strong>min()</strong>: minimum value</li>
+<li><strong>max()</strong>: maximum value</li>
+<li><strong>mean()</strong>: mean value</li>
+<li><strong>median()</strong>: median value</li>
+<li><strong>var()</strong>: variance</li>
+<li><strong>sd()</strong>: standard deviation</li>
+<li><strong>IQR()</strong>: interquartile range</li>
+</ul>
+<p>That’s not always interesting on it’s own, but when combined with <code>group_by</code>, it is powerful!</p>
+</div>
+<div id="group_by" class="section level2">
+<h2>group_by()</h2>
+<p>Groups cases by common values of one or more columns.</p>
+<pre class="r"><code>homes %&gt;% 
+  group_by(city) %&gt;% 
+  summarize(oldest = min(YearBuilt), 
+            newest = max(YearBuilt), 
+            total = n())</code></pre>
+<pre><code>## # A tibble: 10 x 4
+##    city            oldest newest total
+##    &lt;chr&gt;            &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
+##  1 AFTON                0   2015   519
+##  2 BARBOURSVILLE        0   2016   422
+##  3 CHARLOTTESVILLE      0   2016 21113
+##  4 CROZET               0   2016  3018
+##  5 EARLYSVILLE          0   2016  1920
+##  6 ESMONT               0   2016   538
+##  7 KESWICK              0   2016  1619
+##  8 NORTH GARDEN         0   2016   620
+##  9 OTHER                0   2016  1900
+## 10 SCOTTSVILLE          0   2016  1077</code></pre>
+</div>
+<div id="and-more-1" class="section level2">
+<h2>and more…</h2>
+<center>
+<p><span class="math inline">\(\color{blue}{\text{tally()}}\)</span> - short hand for <code>summarize(n())</code></p>
+<p><span class="math inline">\(\color{blue}{\text{count()}}\)</span> - short hand for <code>group_by()</code> + <code>tally()</code></p>
+<p><span class="math inline">\(\color{blue}{\text{summarize_all()}}\)</span> - apply summary function to all <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{blue}{\text{summarize_at()}}\)</span> - apply summary function to selected <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{blue}{\text{rename()}}\)</span> - rename <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+<p><span class="math inline">\(\color{blue}{\text{recode()}}\)</span> - modify values of <span class="math inline">\(\color{blue}{\text{variables}}\)</span></p>
+</center>
+</div>
+</div>
+<div id="factors" class="section level1">
+<h1>Factors</h1>
+<p>Factors are variables which take on a limited number of values, aka categorical variables. In R, factors are stored as a vector of integer values with the corresponding set of character values you’ll see when displayed (colloquially, labels; in R, levels).</p>
+<pre class="r"><code>homes %&gt;% count(condition) # currently a character</code></pre>
+<pre><code>## # A tibble: 7 x 2
+##   condition       n
+##   &lt;chr&gt;       &lt;int&gt;
+## 1 Average     17346
+## 2 Excellent    2296
+## 3 Fair          917
+## 4 Good        11679
+## 5 None          317
+## 6 Poor          175
+## 7 Substandard    16</code></pre>
+<pre class="r"><code>homes %&gt;% 
+  mutate(condition = factor(condition)) %&gt;% # make a factor
+  count(condition)</code></pre>
+<pre><code>## # A tibble: 7 x 2
+##   condition       n
+##   &lt;fct&gt;       &lt;int&gt;
+## 1 Average     17346
+## 2 Excellent    2296
+## 3 Fair          917
+## 4 Good        11679
+## 5 None          317
+## 6 Poor          175
+## 7 Substandard    16</code></pre>
+<pre class="r"><code># assert the ordering of the factor levels
+cond_levels &lt;- c(&quot;Excellent&quot;, &quot;Good&quot;, &quot;Average&quot;, &quot;Fair&quot;, &quot;Poor&quot;, &quot;Substandard&quot;)
+homes %&gt;% 
+  mutate(condition = factor(condition, levels = cond_levels)) %&gt;% 
+  count(condition)</code></pre>
+<pre><code>## Warning: Factor `condition` contains implicit NA, consider using
+## `forcats::fct_explicit_na`</code></pre>
+<pre><code>## # A tibble: 7 x 2
+##   condition       n
+##   &lt;fct&gt;       &lt;int&gt;
+## 1 Excellent    2296
+## 2 Good        11679
+## 3 Average     17346
+## 4 Fair          917
+## 5 Poor          175
+## 6 Substandard    16
+## 7 &lt;NA&gt;          317</code></pre>
+<div id="forcats" class="section level2">
+<h2>forcats</h2>
+<p>The <a href="https://forcats.tidyverse.org/"><code>forcats</code></a> package, part of the <code>tidyverse</code>, provides helper functions for working with factors. Including</p>
+<ul>
+<li><strong>fct_infreq()</strong>: reorder factor levels by frequency of levels</li>
+<li><strong>fct_reorder()</strong>: reorder factor levels by another variable</li>
+<li><strong>fct_relevel()</strong>: change order of factor levels by hand</li>
+<li><strong>fct_recode()</strong>: change factor levels by hand</li>
+<li><strong>fct_collapse()</strong>: collapse factor levels into defined groups</li>
+<li><strong>fct_lump()</strong>: collapse least/most frequent levels of factor into “other”</li>
+</ul>
+</div>
+</div>
+<div id="dplyr-joins" class="section level1">
+<h1>dplyr: Joins</h1>
+<p>Often, a single data set won’t contain all of the information or attributes necessary to address your questions. Instead, we have to join or combine multiple data sets. The Albermarle homes data came from multiple data tables; and we could consider adding data from additional sources to answer yet more questions.</p>
+<p>The variables used to connect data sets are called keys. A key (a single variable or multiple variables) uniquely identifies an observation.</p>
+<center>
+<p><span class="math inline">\(\color{blue}{\text{Mutating joins}}\)</span> use information from one data set to add <span class="math inline">\(\color{blue}{\text{variables}}\)</span> to another data set (like <span class="math inline">\(\color{blue}{\text{mutate())}}\)</span>.</p>
+<p><span class="math inline">\(\color{green}{\text{Filtering joins}}\)</span> use information from one data set to extract <span class="math inline">\(\color{green}{\text{rows}}\)</span> from another data set (like <span class="math inline">\(\color{green}{\text{filter())}}\)</span>.</p>
+</center>
+<p>The syntax is always <code>name_join(x, y, by = &quot;key&quot;)</code></p>
+<div id="mutating-joins" class="section level2">
+<h2>mutating joins</h2>
+<p>A visual explanation is in Grolemund’s and Wickham’s <a href="https://r4ds.had.co.nz/relational-data.html#understanding-joins">R for Data Science</a>.</p>
+<ul>
+<li><strong>full_join()</strong>: keeps all observations in x and y</li>
+<li><strong>left_join()</strong>: keeps all observations in x</li>
+<li><strong>right_join()</strong>: keeps all observations in y</li>
+<li><strong>inner_join()</strong>: keeps observations in both x and y</li>
+</ul>
+</div>
+<div id="filtering-joins" class="section level2">
+<h2>filtering joins</h2>
+<p>Filtering joins match observations in the same way, but rather than adding variables, it extracts observations.</p>
+<ul>
+<li><strong>semi_join()</strong>: keeps all observations in x that have a match in y</li>
+<li><strong>anti_join()</strong>: drops all observations in x that have a match in y</li>
+</ul>
+</div>
+</div>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<ul>
+<li>RStudio’s <a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">dplyr cheat sheet</a></li>
+<li>Garrett Grolemund and Hadley Wickham. 2018. <a href="https://r4ds.had.co.nz/">R for Data Science</a>.</li>
+<li><a href="intror.html#finding_help_online">Finding Help</a> resources from Introduction to R</li>
+</ul>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Way to be classist NYT…<a href="#fnref1">↩</a></p></li>
+</ol>
 </div>
 
 
