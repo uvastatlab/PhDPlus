@@ -441,7 +441,7 @@ div.tocify {
 <p>Before we dive in with the data, let’s get to know the <code>dplyr</code> package. Part of the the <a href="https://www.tidyverse.org/"><code>tidyverse</code></a>, <a href="https://dplyr.tidyverse.org/"><code>dplyr</code></a> is a package for data manipulation. The package implements a <em>grammar</em> for transforming data, based on verbs/functions that define a set of common tasks.</p>
 <div id="functionsverbs" class="section level2">
 <h2>Functions/Verbs</h2>
-<p><code>dplyr</code> functions are for <code>d</code>ata frames</p>
+<p><code>dplyr</code> functions are for <code>d</code>ata frames.</p>
 <ul>
 <li>first argument of <code>dplyr</code> functions is always a data frame</li>
 <li>followed by function specific arguments that detail what to do</li>
@@ -477,7 +477,7 @@ homes</code></pre>
 ## #   med_age &lt;dbl&gt;, fp &lt;dbl&gt;, landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
 <div id="select" class="section level2">
 <h2>select()</h2>
-<p>Extract columns by name</p>
+<p>Extract columns by name.</p>
 <pre class="r"><code>select(homes, totalvalue)</code></pre>
 <pre><code>## # A tibble: 32,746 x 1
 ##   totalvalue
@@ -542,7 +542,7 @@ homes</code></pre>
 </div>
 <div id="filter" class="section level2">
 <h2>filter()</h2>
-<p>Extract rows that meet logical condition</p>
+<p>Extract rows that meet logical condition.</p>
 <pre class="r"><code>filter(homes, yearbuilt == 2016)</code></pre>
 <pre><code>## # A tibble: 351 x 26
 ##   tmp   yearbuilt yearremodeled usecode condition finsqft cooling fp_num

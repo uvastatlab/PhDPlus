@@ -33,7 +33,7 @@ Before we dive in with the data, let's get to know the `dplyr` package. Part of 
 
 ## Functions/Verbs
 
-`dplyr` functions are for `d`ata frames
+`dplyr` functions are for `d`ata frames.
 
 * first argument of `dplyr` functions is always a data frame
 * followed by function specific arguments that detail what to do
@@ -62,7 +62,7 @@ homes
 
 
 ## select()
-Extract columns by name
+Extract columns by name.
 
 ```{r}
 select(homes, totalvalue)
@@ -83,7 +83,7 @@ select(homes, contains("year"))
 ```
 
 ## filter()
-Extract rows that meet logical condition
+Extract rows that meet logical condition.
 
 ```{r}
 filter(homes, yearbuilt == 2016)
