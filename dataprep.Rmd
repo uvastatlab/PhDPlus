@@ -10,7 +10,7 @@ output:
 # Get Ready!
 
 * Download the data files and R scripts:  
-    + [Go to GitHub](https://github.com/uvastatlab/phdplus/blob/master/dataprepR.zip), and click "Download". The folder contains  two data files (CAMA_CardLevelData.txt, CAMA_ParcelInfo.txt) and two R scripts (intro_dplyr.R and data_prep.R).
+    + [Go to GitHub](https://github.com/uvastatlab/phdplus/blob/master/dataprepR.zip), and click "Download". The folder containstwo data files (CAMA_CardLevelData.txt, CAMA_ParcelInfo.txt) and an R script (data_prep.R).
     + Unzip it and put it somwehere you can locate it on your machine.
 
 
@@ -19,8 +19,8 @@ We'll be working with real estate data from Albemarle county [Office of Geograph
 
 The data includes
 
-*  [Real Estate Information - Primary Card Level Data](http://people.virginia.edu/~mpc8t/dser/CAMA_CardLevelData.txt.htm)
-* [Real Estate Information - Parcel Level Data](http://people.virginia.edu/~mpc8t/dser/CAMA_ParcelInfo.txt.htm)
+*  [Real Estate Information - Primary Card Level Data](CAMA_CardLevelData.txt.htm)
+* [Real Estate Information - Parcel Level Data](CAMA_ParcelInfo.txt.htm)
 
 We'll be using this data to understand more about housing assessments and value, so we'll focus on properties that are inhabited as homes.
 
@@ -65,8 +65,8 @@ homes
 Extract columns by name
 
 ```{r}
-select(homes, TotalValue)
-select(homes, TotalValue, city)
+select(homes, totalvalue)
+select(homes, totalvalue, city)
 ```
 
 select() helpers include
@@ -77,16 +77,16 @@ select() helpers include
 * select(.data, **contains("string")**): select columns whose names contain...
 
 ```{r}
-select(homes, FinSqFt:FP_Num)
-select(homes, -c(FinSqFt:FP_Num))
-select(homes, contains("Year"))
+select(homes, finsqft:fp_num)
+select(homes, -c(finsqft:fp_num))
+select(homes, contains("year"))
 ```
 
 ## filter()
 Extract rows that meet logical condition
 
 ```{r}
-filter(homes, YearBuilt == 2016)
+filter(homes, yearbuilt == 2016)
 ```
 
 Logical tests
@@ -102,8 +102,8 @@ Logical tests
 * **!is.na(**x**)**: is not NA
 
 ```{r}
-filter(homes, YearRemodeled > 0)
-filter(homes, Bedroom == max(Bedroom))
+filter(homes, yearremodeled > 0)
+filter(homes, bedroom == max(bedroom))
 filter(homes, city %in% c("SCOTTSVILLE", "CROZET"))
 ```
 
@@ -115,7 +115,7 @@ Boolean operators for multiple conditions
 * **!**a: not
 
 ```{r}
-filter(homes, city == "SCOTTSVILLE" & FinSqFt > mean(FinSqFt))
+filter(homes, city == "SCOTTSVILLE" & finsqft > mean(finsqft))
 ```
 
 
@@ -123,13 +123,13 @@ filter(homes, city == "SCOTTSVILLE" & FinSqFt > mean(FinSqFt))
 Order rows from smallest to largest values for designated column/s.
 
 ```{r}
-arrange(homes, FinSqFt)
+arrange(homes, finsqft)
 ```
 
 * **desc()**: reverses order, largest to smallest.
 
 ```{r}
-arrange(homes, desc(FinSqFt))
+arrange(homes, desc(finsqft))
 ```
 
 ## and more...
@@ -147,22 +147,22 @@ $\color{green}{\text{sample_n()/sample_frac()}}$ - randomly sample $\color{green
 # Pipes!
 The `%>%` is the pipe operator. It passes the result on left into the first argument of the function on the right, or "pipes" the previous output as the input for the next function. Read it in your head as *then*
 
-For example, if we just want the TotalValue and LotSize for homes in Scottsville arranged in descending order of LotSize, without the pipe, we'd:
+For example, if we just want the `totalvalue` and `lotsize` for homes in Scottsville arranged in descending order of `lotsize`, without the pipe, we'd:
 
 ```{r}
 scottsville <- filter(homes, city == "SCOTTSVILLE")
-scottsville <- select(scottsville, TotalValue, LotSize)
-scottsville <- arrange(scottsville, desc(LotSize))
+scottsville <- select(scottsville, totalvalue, lotsize)
+scottsville <- arrange(scottsville, desc(lotsize))
 scottsville
 ```
 
-With the pipe, we can start with homes, *then* filter only the rows for Scottsville, *then* select only the variables TotalValue and LotSize, *then* arrange the rows by descending order of LotSize.
+With the pipe, we can start with homes, *then* filter only the rows for Scottsville, *then* select only the variables `totalvalue` and `lotsize`, *then* arrange the rows by descending order of `lotsize`.
 
 ```{r}
 homes %>% 
   filter(city == "SCOTTSVILLE") %>% 
-  select(TotalValue, LotSize) %>% 
-  arrange(desc(LotSize))
+  select(totalvalue, lotsize) %>% 
+  arrange(desc(lotsize))
 ```
 
 
@@ -189,8 +189,8 @@ Create new columns.
 
 ```{r}
 homes %>% 
-  mutate(value_sqft = TotalValue/FinSqFt) %>% 
-  select(YearBuilt, condition, FinSqFt, TotalValue, city, value_sqft) %>% 
+  mutate(value_sqft = totalvalue/finsqft) %>% 
+  select(yearbuilt, condition, finsqft, totalvalue, city, value_sqft) %>% 
   arrange(desc(value_sqft))
 ```
 
@@ -198,17 +198,19 @@ We can create new variables as functions of other variables (ratios, conditions,
 
 ```{r}
 homes %>% 
-  mutate(value_sqft = TotalValue/FinSqFt,
-         remodel = if_else(YearRemodeled > 0, 1, 0)) %>% 
+  mutate(value_sqft = totalvalue/finsqft,
+         remodel = if_else(yearremodeled > 0, 1, 0)) %>% 
   select(value_sqft, remodel, city) %>% 
   arrange(value_sqft)
 ```
 
-* `if_else(**condition, value_if_true, value_if_false, value_if_na**)`: mutate based on condition
-* `case_when(condition1 ~ value1, 
-            condition2 ~ value2, 
-            condition3 ~ value3,
-            TRUE ~ value_everything_else)`: vectorize multiple `if_else()` statements
+* mutate based on condition
+
+`if_else(condition, value_if_true, value_if_false, value_if_na)`
+
+* vectorize multiple `if_else()`
+
+`case_when(condition1 ~ value1, condition2 ~ value2, condition3 ~ value3, TRUE ~ value_everything_else)`  
 
 
 ## summarize()
@@ -216,8 +218,9 @@ Compute table of summaries.
 
 ```{r}
 homes %>% 
-  summarize(oldest = min(YearBuilt), 
-            newest = max(YearBuilt), 
+  filter(yearbuilt > 0) %>% 
+  summarize(oldest = min(yearbuilt), 
+            newest = max(yearbuilt), 
             total = n())
 ```
 
@@ -245,9 +248,10 @@ Groups cases by common values of one or more columns.
 
 ```{r}
 homes %>% 
+  filter(yearbuilt > 0) %>% 
   group_by(city) %>% 
-  summarize(oldest = min(YearBuilt), 
-            newest = max(YearBuilt), 
+  summarize(oldest = min(yearbuilt), 
+            newest = max(yearbuilt), 
             total = n())
 ```
 

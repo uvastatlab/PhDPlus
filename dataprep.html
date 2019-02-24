@@ -420,7 +420,7 @@ div.tocify {
 <ul>
 <li>Download the data files and R scripts:
 <ul>
-<li><a href="https://github.com/uvastatlab/phdplus/blob/master/dataprepR.zip">Go to GitHub</a>, and click “Download”. The folder contains two data files (CAMA_CardLevelData.txt, CAMA_ParcelInfo.txt) and two R scripts (intro_dplyr.R and data_prep.R).</li>
+<li><a href="https://github.com/uvastatlab/phdplus/blob/master/dataprepR.zip">Go to GitHub</a>, and click “Download”. The folder containstwo data files (CAMA_CardLevelData.txt, CAMA_ParcelInfo.txt) and an R script (data_prep.R).</li>
 <li>Unzip it and put it somwehere you can locate it on your machine.</li>
 </ul></li>
 </ul>
@@ -430,8 +430,8 @@ div.tocify {
 <p>We’ll be working with real estate data from Albemarle county <a href="http://www.albemarle.org/department.asp?department=gds&amp;relpage=3914#Parcels">Office of Geographic Data Services</a>, though the links are not currently visible.</p>
 <p>The data includes</p>
 <ul>
-<li><a href="http://people.virginia.edu/~mpc8t/dser/CAMA_CardLevelData.txt.htm">Real Estate Information - Primary Card Level Data</a></li>
-<li><a href="http://people.virginia.edu/~mpc8t/dser/CAMA_ParcelInfo.txt.htm">Real Estate Information - Parcel Level Data</a></li>
+<li><a href="CAMA_CardLevelData.txt.htm">Real Estate Information - Primary Card Level Data</a></li>
+<li><a href="CAMA_ParcelInfo.txt.htm">Real Estate Information - Parcel Level Data</a></li>
 </ul>
 <p>We’ll be using this data to understand more about housing assessments and value, so we’ll focus on properties that are inhabited as homes.</p>
 </div>
@@ -462,25 +462,25 @@ options(tibble.print_min = 5)
 
 homes &lt;- read_csv(&quot;https://raw.githubusercontent.com/uvastatlab/phdplus/master/data/albemarle_homes.csv&quot;)
 homes</code></pre>
-<pre><code>## # A tibble: 32,746 x 24
-##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
-##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-## 1 0060…      2006             0 Single…    1922 Centra…      1       3
-## 2 0060…      2003             0 Single…    1848 Centra…      0       3
-## 3 0070…      1974             0 Single…    1368 No Cen…      0       3
-## 4 0070…      1954             0 Single…    1092 No Cen…      0       4
-## 5 0070…      1987             0 Single…    1344 Centra…      0       3
-## # … with 3.274e+04 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
-## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
-## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
-## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
-## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre><code>## # A tibble: 32,746 x 26
+##   tmp   yearbuilt yearremodeled usecode condition finsqft cooling fp_num
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 0060…      2006             0 Single… Average      1922 Centra…      1
+## 2 0060…      2003             0 Single… Average      1848 Centra…      0
+## 3 0070…      1974             0 Single… Average      1368 No Cen…      0
+## 4 0070…      1954             0 Single… Average      1092 No Cen…      0
+## 5 0070…      1987             0 Single… Average      1344 Centra…      0
+## # … with 3.274e+04 more rows, and 18 more variables: bedroom &lt;dbl&gt;,
+## #   fullbath &lt;dbl&gt;, halfbath &lt;dbl&gt;, totalrooms &lt;dbl&gt;, city &lt;chr&gt;,
+## #   zip &lt;dbl&gt;, lotsize &lt;dbl&gt;, landvalue &lt;dbl&gt;, improvementsvalue &lt;dbl&gt;,
+## #   totalvalue &lt;dbl&gt;, lastsaleprice &lt;dbl&gt;, lastsaledate &lt;dttm&gt;, age &lt;dbl&gt;,
+## #   med_age &lt;dbl&gt;, fp &lt;dbl&gt;, landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
 <div id="select" class="section level2">
 <h2>select()</h2>
 <p>Extract columns by name</p>
-<pre class="r"><code>select(homes, TotalValue)</code></pre>
+<pre class="r"><code>select(homes, totalvalue)</code></pre>
 <pre><code>## # A tibble: 32,746 x 1
-##   TotalValue
+##   totalvalue
 ##        &lt;dbl&gt;
 ## 1     409900
 ## 2     523100
@@ -488,9 +488,9 @@ homes</code></pre>
 ## 4     177900
 ## 5     232400
 ## # … with 3.274e+04 more rows</code></pre>
-<pre class="r"><code>select(homes, TotalValue, city)</code></pre>
+<pre class="r"><code>select(homes, totalvalue, city)</code></pre>
 <pre><code>## # A tibble: 32,746 x 2
-##   TotalValue city  
+##   totalvalue city  
 ##        &lt;dbl&gt; &lt;chr&gt; 
 ## 1     409900 CROZET
 ## 2     523100 CROZET
@@ -505,9 +505,9 @@ homes</code></pre>
 <li>select(.data, <strong>starts_with(“string”)</strong>): select columns that start with…</li>
 <li>select(.data, <strong>contains(“string”)</strong>): select columns whose names contain…</li>
 </ul>
-<pre class="r"><code>select(homes, FinSqFt:FP_Num)</code></pre>
+<pre class="r"><code>select(homes, finsqft:fp_num)</code></pre>
 <pre><code>## # A tibble: 32,746 x 3
-##   FinSqFt Cooling        FP_Num
+##   finsqft cooling        fp_num
 ##     &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;
 ## 1    1922 Central Air         1
 ## 2    1848 Central Air         0
@@ -515,23 +515,23 @@ homes</code></pre>
 ## 4    1092 No Central Air      0
 ## 5    1344 Central Air         0
 ## # … with 3.274e+04 more rows</code></pre>
-<pre class="r"><code>select(homes, -c(FinSqFt:FP_Num))</code></pre>
-<pre><code>## # A tibble: 32,746 x 21
-##   TMP   YearBuilt YearRemodeled UseCode Bedroom FullBath HalfBath
-##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1 0060…      2006             0 Single…       3        3        0
-## 2 0060…      2003             0 Single…       3        2        0
-## 3 0070…      1974             0 Single…       3        1        0
-## 4 0070…      1954             0 Single…       4        1        0
-## 5 0070…      1987             0 Single…       3        2        0
-## # … with 3.274e+04 more rows, and 14 more variables: TotalRooms &lt;dbl&gt;,
-## #   City &lt;chr&gt;, Zip &lt;dbl&gt;, LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;,
-## #   ImprovementsValue &lt;dbl&gt;, TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;,
-## #   LastSaleDate &lt;dttm&gt;, condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;,
-## #   landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
-<pre class="r"><code>select(homes, contains(&quot;Year&quot;))</code></pre>
+<pre class="r"><code>select(homes, -c(finsqft:fp_num))</code></pre>
+<pre><code>## # A tibble: 32,746 x 23
+##   tmp   yearbuilt yearremodeled usecode condition bedroom fullbath halfbath
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1 0060…      2006             0 Single… Average         3        3        0
+## 2 0060…      2003             0 Single… Average         3        2        0
+## 3 0070…      1974             0 Single… Average         3        1        0
+## 4 0070…      1954             0 Single… Average         4        1        0
+## 5 0070…      1987             0 Single… Average         3        2        0
+## # … with 3.274e+04 more rows, and 15 more variables: totalrooms &lt;dbl&gt;,
+## #   city &lt;chr&gt;, zip &lt;dbl&gt;, lotsize &lt;dbl&gt;, landvalue &lt;dbl&gt;,
+## #   improvementsvalue &lt;dbl&gt;, totalvalue &lt;dbl&gt;, lastsaleprice &lt;dbl&gt;,
+## #   lastsaledate &lt;dttm&gt;, age &lt;dbl&gt;, med_age &lt;dbl&gt;, fp &lt;dbl&gt;,
+## #   landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
+<pre class="r"><code>select(homes, contains(&quot;year&quot;))</code></pre>
 <pre><code>## # A tibble: 32,746 x 2
-##   YearBuilt YearRemodeled
+##   yearbuilt yearremodeled
 ##       &lt;dbl&gt;         &lt;dbl&gt;
 ## 1      2006             0
 ## 2      2003             0
@@ -543,20 +543,20 @@ homes</code></pre>
 <div id="filter" class="section level2">
 <h2>filter()</h2>
 <p>Extract rows that meet logical condition</p>
-<pre class="r"><code>filter(homes, YearBuilt == 2016)</code></pre>
-<pre><code>## # A tibble: 351 x 24
-##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
-##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-## 1 0100…      2016             0 Single…    2842 Centra…      1       3
-## 2 060K…      2016             0 Single…    2766 Centra…      1       4
-## 3 060L…      2016             0 Single…    2271 Centra…      1       3
-## 4 061A…      2016             0 Single…    1880 Centra…      0       3
-## 5 032G…      2016             0 Single…    2496 Centra…      0       4
-## # … with 346 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
-## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
-## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
-## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
-## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre class="r"><code>filter(homes, yearbuilt == 2016)</code></pre>
+<pre><code>## # A tibble: 351 x 26
+##   tmp   yearbuilt yearremodeled usecode condition finsqft cooling fp_num
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 0100…      2016             0 Single… Good         2842 Centra…      1
+## 2 060K…      2016             0 Single… None         2766 Centra…      1
+## 3 060L…      2016             0 Single… Average      2271 Centra…      1
+## 4 061A…      2016             0 Single… Average      1880 Centra…      0
+## 5 032G…      2016             0 Single… Good         2496 Centra…      0
+## # … with 346 more rows, and 18 more variables: bedroom &lt;dbl&gt;,
+## #   fullbath &lt;dbl&gt;, halfbath &lt;dbl&gt;, totalrooms &lt;dbl&gt;, city &lt;chr&gt;,
+## #   zip &lt;dbl&gt;, lotsize &lt;dbl&gt;, landvalue &lt;dbl&gt;, improvementsvalue &lt;dbl&gt;,
+## #   totalvalue &lt;dbl&gt;, lastsaleprice &lt;dbl&gt;, lastsaledate &lt;dttm&gt;, age &lt;dbl&gt;,
+## #   med_age &lt;dbl&gt;, fp &lt;dbl&gt;, landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
 <p>Logical tests</p>
 <ul>
 <li>x <strong>&lt;</strong> y: less than</li>
@@ -569,44 +569,44 @@ homes</code></pre>
 <li><strong>is.na(</strong>x<strong>)</strong>: is NA</li>
 <li><strong>!is.na(</strong>x<strong>)</strong>: is not NA</li>
 </ul>
-<pre class="r"><code>filter(homes, YearRemodeled &gt; 0)</code></pre>
-<pre><code>## # A tibble: 2,288 x 24
-##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
-##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-## 1 0070…      1920          1987 Single…    2131 No Cen…      0       5
-## 2 0080…      1850          1969 Single…    2024 No Cen…      5       4
-## 3 0090…      1976          1983 Single…    1560 No Cen…      1       4
-## 4 0090…      1823          1968 Single…    5226 Centra…      8       3
-## 5 0140…      1975          1982 Single…    1520 No Cen…      1       3
-## # … with 2,283 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
-## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
-## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
-## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
-## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
-<pre class="r"><code>filter(homes, Bedroom == max(Bedroom))</code></pre>
-<pre><code>## # A tibble: 1 x 24
-##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
-##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-## 1 0760…      1973             0 Single…     940 Centra…      0      20
-## # … with 16 more variables: FullBath &lt;dbl&gt;, HalfBath &lt;dbl&gt;,
-## #   TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;, LotSize &lt;dbl&gt;,
-## #   LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;, TotalValue &lt;dbl&gt;,
-## #   LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;, condition &lt;chr&gt;, fp &lt;dbl&gt;,
-## #   city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre class="r"><code>filter(homes, yearremodeled &gt; 0)</code></pre>
+<pre><code>## # A tibble: 2,288 x 26
+##   tmp   yearbuilt yearremodeled usecode condition finsqft cooling fp_num
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 0070…      1920          1987 Single… Fair         2131 No Cen…      0
+## 2 0080…      1850          1969 Single… Average      2024 No Cen…      5
+## 3 0090…      1976          1983 Single… Average      1560 No Cen…      1
+## 4 0090…      1823          1968 Single… Good         5226 Centra…      8
+## 5 0140…      1975          1982 Single… Average      1520 No Cen…      1
+## # … with 2,283 more rows, and 18 more variables: bedroom &lt;dbl&gt;,
+## #   fullbath &lt;dbl&gt;, halfbath &lt;dbl&gt;, totalrooms &lt;dbl&gt;, city &lt;chr&gt;,
+## #   zip &lt;dbl&gt;, lotsize &lt;dbl&gt;, landvalue &lt;dbl&gt;, improvementsvalue &lt;dbl&gt;,
+## #   totalvalue &lt;dbl&gt;, lastsaleprice &lt;dbl&gt;, lastsaledate &lt;dttm&gt;, age &lt;dbl&gt;,
+## #   med_age &lt;dbl&gt;, fp &lt;dbl&gt;, landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
+<pre class="r"><code>filter(homes, bedroom == max(bedroom))</code></pre>
+<pre><code>## # A tibble: 1 x 26
+##   tmp   yearbuilt yearremodeled usecode condition finsqft cooling fp_num
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 0760…      1973             0 Single… Good          940 Centra…      0
+## # … with 18 more variables: bedroom &lt;dbl&gt;, fullbath &lt;dbl&gt;, halfbath &lt;dbl&gt;,
+## #   totalrooms &lt;dbl&gt;, city &lt;chr&gt;, zip &lt;dbl&gt;, lotsize &lt;dbl&gt;,
+## #   landvalue &lt;dbl&gt;, improvementsvalue &lt;dbl&gt;, totalvalue &lt;dbl&gt;,
+## #   lastsaleprice &lt;dbl&gt;, lastsaledate &lt;dttm&gt;, age &lt;dbl&gt;, med_age &lt;dbl&gt;,
+## #   fp &lt;dbl&gt;, landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
 <pre class="r"><code>filter(homes, city %in% c(&quot;SCOTTSVILLE&quot;, &quot;CROZET&quot;))</code></pre>
-<pre><code>## # A tibble: 4,095 x 24
-##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
-##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-## 1 0060…      2006             0 Single…    1922 Centra…      1       3
-## 2 0060…      2003             0 Single…    1848 Centra…      0       3
-## 3 0140…      1998             0 Single…    1244 Centra…      1       1
-## 4 0150…      1997             0 Single…     924 No Cen…      0       3
-## 5 0070…      1886             0 Single…    1861 No Cen…      1       4
-## # … with 4,090 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
-## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
-## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
-## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
-## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre><code>## # A tibble: 4,095 x 26
+##   tmp   yearbuilt yearremodeled usecode condition finsqft cooling fp_num
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 0060…      2006             0 Single… Average      1922 Centra…      1
+## 2 0060…      2003             0 Single… Average      1848 Centra…      0
+## 3 0140…      1998             0 Single… Good         1244 Centra…      1
+## 4 0150…      1997             0 Single… Average       924 No Cen…      0
+## 5 0070…      1886             0 Single… Average      1861 No Cen…      1
+## # … with 4,090 more rows, and 18 more variables: bedroom &lt;dbl&gt;,
+## #   fullbath &lt;dbl&gt;, halfbath &lt;dbl&gt;, totalrooms &lt;dbl&gt;, city &lt;chr&gt;,
+## #   zip &lt;dbl&gt;, lotsize &lt;dbl&gt;, landvalue &lt;dbl&gt;, improvementsvalue &lt;dbl&gt;,
+## #   totalvalue &lt;dbl&gt;, lastsaleprice &lt;dbl&gt;, lastsaledate &lt;dttm&gt;, age &lt;dbl&gt;,
+## #   med_age &lt;dbl&gt;, fp &lt;dbl&gt;, landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
 <p>Boolean operators for multiple conditions</p>
 <ul>
 <li>a <strong>&amp;</strong> b: and</li>
@@ -614,55 +614,55 @@ homes</code></pre>
 <li><strong>xor(</strong>a,b<strong>)</strong>: exactly or</li>
 <li><strong>!</strong>a: not</li>
 </ul>
-<pre class="r"><code>filter(homes, city == &quot;SCOTTSVILLE&quot; &amp; FinSqFt &gt; mean(FinSqFt))</code></pre>
-<pre><code>## # A tibble: 256 x 24
-##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
-##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-## 1 1050…      1995             0 Single…    3326 Centra…      2       3
-## 2 1150…      2004             0 Single…    2250 Centra…      1       4
-## 3 1230…      2011             0 Single…    1966 Centra…      0       4
-## 4 1240…      1993             0 Single…    2008 Centra…      0       3
-## 5 1310…      1998             0 Single…    2287 Centra…      1       3
-## # … with 251 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
-## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
-## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
-## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
-## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre class="r"><code>filter(homes, city == &quot;SCOTTSVILLE&quot; &amp; finsqft &gt; mean(finsqft))</code></pre>
+<pre><code>## # A tibble: 256 x 26
+##   tmp   yearbuilt yearremodeled usecode condition finsqft cooling fp_num
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 1050…      1995             0 Single… Average      3326 Centra…      2
+## 2 1150…      2004             0 Single… Average      2250 Centra…      1
+## 3 1230…      2011             0 Single… Good         1966 Centra…      0
+## 4 1240…      1993             0 Single… None         2008 Centra…      0
+## 5 1310…      1998             0 Single… Good         2287 Centra…      1
+## # … with 251 more rows, and 18 more variables: bedroom &lt;dbl&gt;,
+## #   fullbath &lt;dbl&gt;, halfbath &lt;dbl&gt;, totalrooms &lt;dbl&gt;, city &lt;chr&gt;,
+## #   zip &lt;dbl&gt;, lotsize &lt;dbl&gt;, landvalue &lt;dbl&gt;, improvementsvalue &lt;dbl&gt;,
+## #   totalvalue &lt;dbl&gt;, lastsaleprice &lt;dbl&gt;, lastsaledate &lt;dttm&gt;, age &lt;dbl&gt;,
+## #   med_age &lt;dbl&gt;, fp &lt;dbl&gt;, landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
 </div>
 <div id="arrange" class="section level2">
 <h2>arrange()</h2>
 <p>Order rows from smallest to largest values for designated column/s.</p>
-<pre class="r"><code>arrange(homes, FinSqFt)</code></pre>
-<pre><code>## # A tibble: 32,746 x 24
-##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
-##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-## 1 0380…      1952             0 Single…     144 No Cen…      0       1
-## 2 0410…         0             0 Single…     221 No Cen…      0       0
-## 3 0380…      1995             0 Single…     231 No Cen…      0       0
-## 4 0620…      1982             0 Single…     261 No Cen…      1       0
-## 5 0140…      1955             0 Single…     300 No Cen…      0       1
-## # … with 3.274e+04 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
-## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
-## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
-## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
-## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre class="r"><code>arrange(homes, finsqft)</code></pre>
+<pre><code>## # A tibble: 32,746 x 26
+##   tmp   yearbuilt yearremodeled usecode condition finsqft cooling fp_num
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 0380…      1952             0 Single… Poor          144 No Cen…      0
+## 2 0410…         0             0 Single… None          221 No Cen…      0
+## 3 0380…      1995             0 Single… Average       231 No Cen…      0
+## 4 0620…      1982             0 Single… Average       261 No Cen…      1
+## 5 0140…      1955             0 Single… Average       300 No Cen…      0
+## # … with 3.274e+04 more rows, and 18 more variables: bedroom &lt;dbl&gt;,
+## #   fullbath &lt;dbl&gt;, halfbath &lt;dbl&gt;, totalrooms &lt;dbl&gt;, city &lt;chr&gt;,
+## #   zip &lt;dbl&gt;, lotsize &lt;dbl&gt;, landvalue &lt;dbl&gt;, improvementsvalue &lt;dbl&gt;,
+## #   totalvalue &lt;dbl&gt;, lastsaleprice &lt;dbl&gt;, lastsaledate &lt;dttm&gt;, age &lt;dbl&gt;,
+## #   med_age &lt;dbl&gt;, fp &lt;dbl&gt;, landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
 <ul>
 <li><strong>desc()</strong>: reverses order, largest to smallest.</li>
 </ul>
-<pre class="r"><code>arrange(homes, desc(FinSqFt))</code></pre>
-<pre><code>## # A tibble: 32,746 x 24
-##   TMP   YearBuilt YearRemodeled UseCode FinSqFt Cooling FP_Num Bedroom
-##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-## 1 0440…      1998             0 Single…    8982 Centra…      3       5
-## 2 0450…      1940          1980 Single…    8897 Centra…      3       6
-## 3 0860…      2015             0 Single…    8878 Centra…      3       4
-## 4 0160…      2009             0 Single…    8849 Centra…      1       4
-## 5 0430…      2008             0 Single…    8829 Centra…      3       6
-## # … with 3.274e+04 more rows, and 16 more variables: FullBath &lt;dbl&gt;,
-## #   HalfBath &lt;dbl&gt;, TotalRooms &lt;dbl&gt;, City &lt;chr&gt;, Zip &lt;dbl&gt;,
-## #   LotSize &lt;dbl&gt;, LandValue &lt;dbl&gt;, ImprovementsValue &lt;dbl&gt;,
-## #   TotalValue &lt;dbl&gt;, LastSalePrice &lt;dbl&gt;, LastSaleDate &lt;dttm&gt;,
-## #   condition &lt;chr&gt;, fp &lt;dbl&gt;, city &lt;chr&gt;, landuse &lt;dbl&gt;, remodel &lt;dbl&gt;</code></pre>
+<pre class="r"><code>arrange(homes, desc(finsqft))</code></pre>
+<pre><code>## # A tibble: 32,746 x 26
+##   tmp   yearbuilt yearremodeled usecode condition finsqft cooling fp_num
+##   &lt;chr&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 0440…      1998             0 Single… Good         8982 Centra…      3
+## 2 0450…      1940          1980 Single… Good         8897 Centra…      3
+## 3 0860…      2015             0 Single… Average      8878 Centra…      3
+## 4 0160…      2009             0 Single… Average      8849 Centra…      1
+## 5 0430…      2008             0 Single… Excellent    8829 Centra…      3
+## # … with 3.274e+04 more rows, and 18 more variables: bedroom &lt;dbl&gt;,
+## #   fullbath &lt;dbl&gt;, halfbath &lt;dbl&gt;, totalrooms &lt;dbl&gt;, city &lt;chr&gt;,
+## #   zip &lt;dbl&gt;, lotsize &lt;dbl&gt;, landvalue &lt;dbl&gt;, improvementsvalue &lt;dbl&gt;,
+## #   totalvalue &lt;dbl&gt;, lastsaleprice &lt;dbl&gt;, lastsaledate &lt;dttm&gt;, age &lt;dbl&gt;,
+## #   med_age &lt;dbl&gt;, fp &lt;dbl&gt;, landuse &lt;dbl&gt;, insub &lt;dbl&gt;, remode &lt;dbl&gt;</code></pre>
 </div>
 <div id="and-more" class="section level2">
 <h2>and more…</h2>
@@ -676,13 +676,13 @@ homes</code></pre>
 <div id="pipes" class="section level1">
 <h1>Pipes!</h1>
 <p>The <code>%&gt;%</code> is the pipe operator. It passes the result on left into the first argument of the function on the right, or “pipes” the previous output as the input for the next function. Read it in your head as <em>then</em></p>
-<p>For example, if we just want the TotalValue and LotSize for homes in Scottsville arranged in descending order of LotSize, without the pipe, we’d:</p>
+<p>For example, if we just want the <code>totalvalue</code> and <code>lotsize</code> for homes in Scottsville arranged in descending order of <code>lotsize</code>, without the pipe, we’d:</p>
 <pre class="r"><code>scottsville &lt;- filter(homes, city == &quot;SCOTTSVILLE&quot;)
-scottsville &lt;- select(scottsville, TotalValue, LotSize)
-scottsville &lt;- arrange(scottsville, desc(LotSize))
+scottsville &lt;- select(scottsville, totalvalue, lotsize)
+scottsville &lt;- arrange(scottsville, desc(lotsize))
 scottsville</code></pre>
 <pre><code>## # A tibble: 1,077 x 2
-##   TotalValue LotSize
+##   totalvalue lotsize
 ##        &lt;dbl&gt;   &lt;dbl&gt;
 ## 1    2156700    612.
 ## 2    2665700    511.
@@ -690,13 +690,13 @@ scottsville</code></pre>
 ## 4    2800800    315.
 ## 5     892300    294.
 ## # … with 1,072 more rows</code></pre>
-<p>With the pipe, we can start with homes, <em>then</em> filter only the rows for Scottsville, <em>then</em> select only the variables TotalValue and LotSize, <em>then</em> arrange the rows by descending order of LotSize.</p>
+<p>With the pipe, we can start with homes, <em>then</em> filter only the rows for Scottsville, <em>then</em> select only the variables <code>totalvalue</code> and <code>lotsize</code>, <em>then</em> arrange the rows by descending order of <code>lotsize</code>.</p>
 <pre class="r"><code>homes %&gt;% 
   filter(city == &quot;SCOTTSVILLE&quot;) %&gt;% 
-  select(TotalValue, LotSize) %&gt;% 
-  arrange(desc(LotSize))</code></pre>
+  select(totalvalue, lotsize) %&gt;% 
+  arrange(desc(lotsize))</code></pre>
 <pre><code>## # A tibble: 1,077 x 2
-##   TotalValue LotSize
+##   totalvalue lotsize
 ##        &lt;dbl&gt;   &lt;dbl&gt;
 ## 1    2156700    612.
 ## 2    2665700    511.
@@ -723,11 +723,11 @@ scottsville</code></pre>
 <h2>mutate()</h2>
 <p>Create new columns.</p>
 <pre class="r"><code>homes %&gt;% 
-  mutate(value_sqft = TotalValue/FinSqFt) %&gt;% 
-  select(YearBuilt, condition, FinSqFt, TotalValue, city, value_sqft) %&gt;% 
+  mutate(value_sqft = totalvalue/finsqft) %&gt;% 
+  select(yearbuilt, condition, finsqft, totalvalue, city, value_sqft) %&gt;% 
   arrange(desc(value_sqft))</code></pre>
 <pre><code>## # A tibble: 32,746 x 6
-##   YearBuilt condition FinSqFt TotalValue city            value_sqft
+##   yearbuilt condition finsqft totalvalue city            value_sqft
 ##       &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt;
 ## 1         0 Average      1210   10351200 KESWICK              8555.
 ## 2      1935 Average       475    3931500 OTHER                8277.
@@ -737,8 +737,8 @@ scottsville</code></pre>
 ## # … with 3.274e+04 more rows</code></pre>
 <p>We can create new variables as functions of other variables (ratios, conditions, ranks, etc.). We can mutate multiple variables in the same command.</p>
 <pre class="r"><code>homes %&gt;% 
-  mutate(value_sqft = TotalValue/FinSqFt,
-         remodel = if_else(YearRemodeled &gt; 0, 1, 0)) %&gt;% 
+  mutate(value_sqft = totalvalue/finsqft,
+         remodel = if_else(yearremodeled &gt; 0, 1, 0)) %&gt;% 
   select(value_sqft, remodel, city) %&gt;% 
   arrange(value_sqft)</code></pre>
 <pre><code>## # A tibble: 32,746 x 3
@@ -751,21 +751,26 @@ scottsville</code></pre>
 ## 5      13.7        0 OTHER          
 ## # … with 3.274e+04 more rows</code></pre>
 <ul>
-<li><code>if_else(**condition, value_if_true, value_if_false, value_if_na**)</code>: mutate based on condition</li>
-<li><code>case_when(condition1 ~ value1,          condition2 ~ value2,          condition3 ~ value3,         TRUE ~ value_everything_else)</code>: vectorize multiple <code>if_else()</code> statements</li>
+<li>mutate based on condition</li>
 </ul>
+<p><code>if_else(condition, value_if_true, value_if_false, value_if_na)</code></p>
+<ul>
+<li>vectorize multiple <code>if_else()</code></li>
+</ul>
+<p><code>case_when(condition1 ~ value1, condition2 ~ value2, condition3 ~ value3, TRUE ~ value_everything_else)</code></p>
 </div>
 <div id="summarize" class="section level2">
 <h2>summarize()</h2>
 <p>Compute table of summaries.</p>
 <pre class="r"><code>homes %&gt;% 
-  summarize(oldest = min(YearBuilt), 
-            newest = max(YearBuilt), 
+  filter(yearbuilt &gt; 0) %&gt;% 
+  summarize(oldest = min(yearbuilt), 
+            newest = max(yearbuilt), 
             total = n())</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   oldest newest total
 ##    &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
-## 1      0   2016 32746</code></pre>
+## 1   1668   2016 32299</code></pre>
 <p><code>summarize</code> takes a single vector as input (a variable) and returns a single value as output (the requested summary of the variable).</p>
 <p>Summary functions include</p>
 <ul>
@@ -788,23 +793,24 @@ scottsville</code></pre>
 <h2>group_by()</h2>
 <p>Groups cases by common values of one or more columns.</p>
 <pre class="r"><code>homes %&gt;% 
+  filter(yearbuilt &gt; 0) %&gt;% 
   group_by(city) %&gt;% 
-  summarize(oldest = min(YearBuilt), 
-            newest = max(YearBuilt), 
+  summarize(oldest = min(yearbuilt), 
+            newest = max(yearbuilt), 
             total = n())</code></pre>
 <pre><code>## # A tibble: 10 x 4
 ##    city            oldest newest total
 ##    &lt;chr&gt;            &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
-##  1 AFTON                0   2015   519
-##  2 BARBOURSVILLE        0   2016   422
-##  3 CHARLOTTESVILLE      0   2016 21113
-##  4 CROZET               0   2016  3018
-##  5 EARLYSVILLE          0   2016  1920
-##  6 ESMONT               0   2016   538
-##  7 KESWICK              0   2016  1619
-##  8 NORTH GARDEN         0   2016   620
-##  9 OTHER                0   2016  1900
-## 10 SCOTTSVILLE          0   2016  1077</code></pre>
+##  1 AFTON             1756   2015   495
+##  2 BARBOURSVILLE     1800   2016   405
+##  3 CHARLOTTESVILLE   1668   2016 21006
+##  4 CROZET            1700   2016  2978
+##  5 EARLYSVILLE       1735   2016  1909
+##  6 ESMONT            1740   2016   478
+##  7 KESWICK           1724   2016  1574
+##  8 NORTH GARDEN      1700   2016   603
+##  9 OTHER             1730   2016  1811
+## 10 SCOTTSVILLE       1732   2016  1040</code></pre>
 </div>
 <div id="and-more-1" class="section level2">
 <h2>and more…</h2>
