@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Get Ready!
 
-- Download this zipped folder (CF: need to link). It contains an R script (ggplot-workshop-2019.R) and the content of this page as a slide deck (ggplot2-pres.pdf).
+- Download this zipped folder (CF: need to link). It contains an R script (dat_viz.R) and the content of this page as a slide deck (ggplot2-pres.pdf).
 - Unzip it and put it somwehere you can locate it on your machine.
 
 ## Data Visualization
@@ -82,7 +82,7 @@ library(tidyverse)
 ```
 
 
-We'll demonstrate `ggplot2` using the Albemarle County real estate data, which was downloaded from Office of Geographic Data Services. See Michele Claibourn's workshop for how data were obtained and prepared: https://uvastatlab.github.io/phdplus/dataprep.html
+We'll demonstrate `ggplot2` using the Albemarle County real estate data, which was downloaded from Office of Geographic Data Services. See Michele Claibourn's session for how data were obtained and prepared: https://uvastatlab.github.io/phdplus/dataprep.html
 
 
 ```{r cache=TRUE}
@@ -99,7 +99,7 @@ str(homes)
 
 We can see quite a few variables that might benefit from some visualization.
 
-In this workshop we'll focus on the six largest cities in Albemarle county.
+In this session we'll focus on the six largest cities in Albemarle county.
 
 ```{r cache=TRUE}
 vars <- c("CHARLOTTESVILLE", "CROZET", "EARLYSVILLE", 
@@ -132,7 +132,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
   geom_point() 
 ```
 
-Since we have so much data our plot suffers from an enormous amount of overplotting. Later in the workshop we'll review some strategies to address this.
+Since we have so much data our plot suffers from an enormous amount of overplotting. Later in the session we'll review some strategies to address this.
 
 
 ### scatter plot colored by condition, size by Bedroom
@@ -205,6 +205,36 @@ ggplot(homes, aes(x=finsqft, y = stat(density))) +
 
 ```
 
+
+
+## Modifying the coordinate system
+
+- `coord_cartesian` allows us to zoom in on a plot, as if using magnifying glass
+- `coord_fixed` allows us to control "aspect ratio"
+- `coord_flip` allows us to flip the x and y axis
+
+### zoom in on plot
+
+This plot "zooms in" on the x-axis from 2000 to 3000 and on the y-axis from 200,000 to 500,000.
+
+```{r, message=FALSE, cache=TRUE}
+ggplot(homes, aes(x=finsqft, y=totalvalue, 
+                 color=city)) + geom_point() +
+  coord_cartesian(xlim = c(2000,3000), ylim = c(2e5, 5e5))
+```
+
+### flip coordinate axes
+
+This is our boxplot from earlier rotated. 
+
+```{r, message=FALSE, cache=TRUE}
+ggplot(homes, aes(x=city, y=finsqft)) + 
+  geom_boxplot() + 
+  coord_flip()
+
+```
+
+
 ## Customizing scales
 
 Scales control the mapping from data to aesthetics and provide tools to read the plot (ie, axes and legends).
@@ -243,33 +273,6 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
 
 ```
 
-
-## Modifying the coordinate system
-
-- `coord_cartesian` allows us to zoom in on a plot, as if using magnifying glass
-- `coord_fixed` allows us to control "aspect ratio"
-- `coord_flip` allows us to flip the x and y axis
-
-### zoom in on plot
-
-This plot "zooms in" on the x-axis from 2000 to 3000 and on the y-axis from 200,000 to 500,000.
-
-```{r, message=FALSE, cache=TRUE}
-ggplot(homes, aes(x=finsqft, y=totalvalue, 
-                 color=city)) + geom_point() +
-  coord_cartesian(xlim = c(2000,3000), ylim = c(2e5, 5e5))
-```
-
-### flip coordinate axes
-
-This is our boxplot from earlier rotated. 
-
-```{r, message=FALSE, cache=TRUE}
-ggplot(homes, aes(x=city, y=finsqft)) + 
-  geom_boxplot() + 
-  coord_flip()
-
-```
 
 
 ## Updating themes and labels

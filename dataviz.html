@@ -418,7 +418,7 @@ div.tocify {
 <div id="get-ready" class="section level2">
 <h2>Get Ready!</h2>
 <ul>
-<li>Download this zipped folder (CF: need to link). It contains an R script (ggplot-workshop-2019.R) and the content of this page as a slide deck (ggplot2-pres.pdf).</li>
+<li>Download this zipped folder (CF: need to link). It contains an R script (dat_viz.R) and the content of this page as a slide deck (ggplot2-pres.pdf).</li>
 <li>Unzip it and put it somwehere you can locate it on your machine.</li>
 </ul>
 </div>
@@ -469,7 +469,7 @@ div.tocify {
 </div>
 <div id="the-albemarle-county-homes-data" class="section level2">
 <h2>The Albemarle County homes data</h2>
-<p>We’ll demonstrate <code>ggplot2</code> using the Albemarle County real estate data, which was downloaded from Office of Geographic Data Services. See Michele Claibourn’s workshop for how data were obtained and prepared: <a href="https://uvastatlab.github.io/phdplus/dataprep.html" class="uri">https://uvastatlab.github.io/phdplus/dataprep.html</a></p>
+<p>We’ll demonstrate <code>ggplot2</code> using the Albemarle County real estate data, which was downloaded from Office of Geographic Data Services. See Michele Claibourn’s session for how data were obtained and prepared: <a href="https://uvastatlab.github.io/phdplus/dataprep.html" class="uri">https://uvastatlab.github.io/phdplus/dataprep.html</a></p>
 <pre class="r"><code>github_url &lt;- &quot;https://github.com/uvastatlab/phdplus/raw/master/data/albemarle_homes.rds&quot;
 homes &lt;- readRDS(url(github_url))</code></pre>
 <p>The <code>str</code> function allows us to take a peek at the structure of the data.</p>
@@ -502,7 +502,7 @@ homes &lt;- readRDS(url(github_url))</code></pre>
 ##  $ insub            : num  0 0 0 0 0 0 0 0 0 0 ...
 ##  $ remodel          : num  0 0 0 0 0 1 0 0 0 0 ...</code></pre>
 <p>We can see quite a few variables that might benefit from some visualization.</p>
-<p>In this workshop we’ll focus on the six largest cities in Albemarle county.</p>
+<p>In this session we’ll focus on the six largest cities in Albemarle county.</p>
 <pre class="r"><code>vars &lt;- c(&quot;CHARLOTTESVILLE&quot;, &quot;CROZET&quot;, &quot;EARLYSVILLE&quot;, 
           &quot;KESWICK&quot;, &quot;SCOTTSVILLE&quot;, &quot;NORTH GARDEN&quot;)
 homes &lt;- homes %&gt;% 
@@ -523,7 +523,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
                  color=city, shape=city)) + 
   geom_point() </code></pre>
 <p><img src="dataviz_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>Since we have so much data our plot suffers from an enormous amount of overplotting. Later in the workshop we’ll review some strategies to address this.</p>
+<p>Since we have so much data our plot suffers from an enormous amount of overplotting. Later in the session we’ll review some strategies to address this.</p>
 </div>
 <div id="scatter-plot-colored-by-condition-size-by-bedroom" class="section level3">
 <h3>scatter plot colored by condition, size by Bedroom</h3>
@@ -575,6 +575,30 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
 <p><img src="dataviz_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 </div>
 </div>
+<div id="modifying-the-coordinate-system" class="section level2">
+<h2>Modifying the coordinate system</h2>
+<ul>
+<li><code>coord_cartesian</code> allows us to zoom in on a plot, as if using magnifying glass</li>
+<li><code>coord_fixed</code> allows us to control “aspect ratio”</li>
+<li><code>coord_flip</code> allows us to flip the x and y axis</li>
+</ul>
+<div id="zoom-in-on-plot" class="section level3">
+<h3>zoom in on plot</h3>
+<p>This plot “zooms in” on the x-axis from 2000 to 3000 and on the y-axis from 200,000 to 500,000.</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue, 
+                 color=city)) + geom_point() +
+  coord_cartesian(xlim = c(2000,3000), ylim = c(2e5, 5e5))</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="flip-coordinate-axes" class="section level3">
+<h3>flip coordinate axes</h3>
+<p>This is our boxplot from earlier rotated.</p>
+<pre class="r"><code>ggplot(homes, aes(x=city, y=finsqft)) + 
+  geom_boxplot() + 
+  coord_flip()</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+</div>
 <div id="customizing-scales" class="section level2">
 <h2>Customizing scales</h2>
 <p>Scales control the mapping from data to aesthetics and provide tools to read the plot (ie, axes and legends).</p>
@@ -589,7 +613,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
                  color=city)) + geom_point() +
   scale_y_continuous(labels = scales::dollar) +
   scale_x_continuous(labels = scales::comma)</code></pre>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 <div id="update-scale-for-color" class="section level3">
 <h3>update scale for color</h3>
@@ -599,30 +623,6 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
   scale_color_manual(name=&quot;Fireplace&quot;,
                      labels = c(&quot;No fireplace&quot;, &quot;At least one fireplace&quot;),
                      values=c(&quot;red&quot;,&quot;blue&quot;))</code></pre>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-</div>
-</div>
-<div id="modifying-the-coordinate-system" class="section level2">
-<h2>Modifying the coordinate system</h2>
-<ul>
-<li><code>coord_cartesian</code> allows us to zoom in on a plot, as if using magnifying glass</li>
-<li><code>coord_fixed</code> allows us to control “aspect ratio”</li>
-<li><code>coord_flip</code> allows us to flip the x and y axis</li>
-</ul>
-<div id="zoom-in-on-plot" class="section level3">
-<h3>zoom in on plot</h3>
-<p>This plot “zooms in” on the x-axis from 2000 to 3000 and on the y-axis from 200,000 to 500,000.</p>
-<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue, 
-                 color=city)) + geom_point() +
-  coord_cartesian(xlim = c(2000,3000), ylim = c(2e5, 5e5))</code></pre>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-</div>
-<div id="flip-coordinate-axes" class="section level3">
-<h3>flip coordinate axes</h3>
-<p>This is our boxplot from earlier rotated.</p>
-<pre class="r"><code>ggplot(homes, aes(x=city, y=finsqft)) + 
-  geom_boxplot() + 
-  coord_flip()</code></pre>
 <p><img src="dataviz_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 </div>
