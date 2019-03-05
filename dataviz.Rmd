@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Get Ready!
 
-- Download this zipped folder (CF: need to link). It contains an R script (dat_viz.R) and the content of this page as a slide deck (ggplot2-pres.pdf).
+- Download [datavizR.zip](https://github.com/uvastatlab/phdplus/raw/master/datavizR.zip). It contains an R script (dat_viz.R) and the content of this page as a slide deck (ggplot2-pres.pdf).
 - Unzip it and put it somwehere you can locate it on your machine.
 
 ## Data Visualization
