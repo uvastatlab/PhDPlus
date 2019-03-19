@@ -415,9 +415,568 @@ div.tocify {
 </div>
 
 
+<div id="get-ready" class="section level1">
+<h1>Get Ready!</h1>
+<ul>
+<li>Download <a href="https://github.com/uvastatlab/phdplus/raw/master/linearmodel.zip">linearmodel.zip</a>. It contains the R script we’ll use today (linearmodel.R), an R script to recreate the introductory example here (intro_model.R), and a project file.</li>
+</ul>
+</div>
 <div id="linear-modeling" class="section level1">
 <h1>Linear Modeling</h1>
-<p>TBA</p>
+<p>We’ll focus on inferential models today, and gesture toward predictive models at the end.</p>
+<div id="what-are-models" class="section level2">
+<h2>What are models?</h2>
+<p>By a model, we mean a mathematical representation about the process that generated our observed data (aka data generation process). That is, how an outcome of interest (a response variable, dependent variable, <span class="math inline">\(Y\)</span>) is related to (is a function of) one or more predictor (explanatory, independent, <span class="math inline">\(X\)</span>) variables. For example, <span class="math display">\[Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \epsilon\]</span></p>
+<p>where <span class="math inline">\(Y\)</span> is the outcome/response variable, <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> are the predictors/explanatory variables, <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> are coefficients to be estimated, and <span class="math inline">\(\epsilon\)</span> is random error (more below).</p>
+</div>
+<div id="what-are-linear-models" class="section level2">
+<h2>What are linear models?</h2>
+<p>Linear models, or regression models, trace the the distribution of the dependent variable (<span class="math inline">\(Y\)</span>) – or some characteristic of the distribution (the mean) – as a function of the independent variables (<span class="math inline">\(X\)</span>s).In other words, the regression function/linear model is the curve determined by the conditional means (conditional expectation) of the response variable for fixed values of explanatory variables.</p>
+<p>Using our Albemarle Homes data, I’ve plotted the “improvement value” of a property as a function of the square feet of the property – with square feet collapsed into bins ranging from 0-250, 250-500, 500-750, etc.</p>
+<pre class="r"><code># plot with bins
+p &lt;- ggplot(homes_tmp, aes(x = bin_medx, y = improvementsvalue)) 
+p + geom_point(alpha = 1/10) </code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>This shows the conditional distribution of improvement value. Let’s add the conditional mean for each square foot bin.</p>
+<pre class="r"><code># plot with conditional means
+p + geom_point(alpha = 1/10) + 
+  geom_point(aes(x=bin_medx, y=bin_meany), color = &quot;orange&quot;, size = 3) </code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>If we connect these dots, we’ve traced the curve of the conditional mean of improvement value.</p>
+<pre class="r"><code># plot with line connecting conditional means
+p + geom_point(alpha = 1/10) + 
+  geom_point(aes(x=bin_medx, y=bin_meany), color = &quot;orange&quot;, size = 3) +
+  geom_line(aes(x=bin_medx, y=bin_meany), color = &quot;orange&quot;)</code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>In linear regression analysis, we add the additional caveat that (the mean of) <span class="math inline">\(Y\)</span> is some <strong>linear</strong> function of <span class="math inline">\(X\)</span>.</p>
+<pre class="r"><code># plot with regression line
+p + geom_point(alpha = 1/10) + 
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;blue&quot;) +
+  geom_point(aes(x = bin_medx, y = bin_meany), color = &quot;orange&quot;, size = 3) +
+  geom_line(aes(x = bin_medx, y = bin_meany), color = &quot;orange&quot;) </code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>We represent the relationship mathematically <span class="math display">\[E(Y|X_i) = \beta_0 + \beta_1 X_1 + \beta_2 X_2\]</span></p>
+<p>Here, <span class="math inline">\(\beta_1\)</span> represents the expected unit change in <span class="math inline">\(Y\)</span> for a unit change in <span class="math inline">\(X_1\)</span>.</p>
+<p>For example,</p>
+<p><span class="math display">\[Improvement~value = -185679 + 208 * Square~feet\]</span></p>
+<p>For every unit change in square feet bins – in this case, a 250 increase – we expect improvement value to increase by 208 dollars. The intercept, in this case, is essentially meaningless – why?</p>
+</div>
+<div id="linearity" class="section level2">
+<h2>Linearity</h2>
+<p>Linearity doesn’t necessarily imply that the curve connecting the mean of <span class="math inline">\(Y\)</span> conditional on values of <span class="math inline">\(X\)</span> is a straight line (though that is often what we impose), but that the <em>parameters</em> that describe the function relating <span class="math inline">\(Y\)</span> to the <span class="math inline">\(X\)</span>s are linear. The equation is additive – the weights aren’t multipled or raised to a power other than 1.</p>
+<p>This <strong>is not</strong> additive <span class="math display">\[E(Y|X_i) = \beta_0 + \beta_1 X_1^{\beta_2}\]</span></p>
+<p>… and so <strong>not</strong> a linear model. But this is additive <span class="math display">\[E(Y|X_i) = \beta_0 + \beta_1 X_1 + \beta_2 X_2^2\]</span></p>
+<p>… and so <strong>is</strong> a linear model, though not a straight line.</p>
+</div>
+<div id="model-error" class="section level2">
+<h2>Model error</h2>
+<p>Models are probabilistic, not deterministic.</p>
+<ul>
+<li>The regression tells us about the average assessed value for homes of a given size; any given home will deviate from the conditional expectation (conditional mean), much like a home’s value will deviate from the overall mean in the sample.</li>
+<li>A home’s assessed value isn’t perfectly predicted by size, or even size and a lot of other important variables.</li>
+<li>And if the data collection process was repeated, the assessed values would vary from those we observe here.</li>
+</ul>
+<p>No model will perfectly predict an outcome of interest, so regression models are laregely about quantifying our uncertainty. The error term is meant to capture this stochastic element</p>
+</div>
+<div id="box" class="section level2">
+<h2>An aside (sort of)</h2>
+<p>All statistical models are extreme simplifications of complex social reality, not literal representations of the social processes by which outcomes are realized and observed.</p>
+<p>Or, as George Box famously notes in his <a href="https://www-jstor-org.proxy01.its.virginia.edu/stable/2286713">1979 address to ASA</a> (via UVA):</p>
+<blockquote>
+<p>Models, of course, are never true, but fortunately it is only necessary that they be useful. For this it is usually needful only that they not be grossly wrong.</p>
+</blockquote>
+<p>More succintly, in <a href="https://search.lib.virginia.edu/catalog/u770409">1987</a></p>
+<blockquote>
+<p>All models are wrong, but some are useful.</p>
+</blockquote>
+<p>Avoid reifying statistical models; they are descriptive summaries, not literal accounts of social processes.</p>
+</div>
+<div id="residuals" class="section level2">
+<h2>Residuals</h2>
+<p><span class="math inline">\(\epsilon\)</span> is our random (stochastic) element, the error or disturbance term. It represents the deviation of a particular value of <span class="math inline">\(Y_i\)</span> from the conditional mean. <span class="math display">\[\epsilon_i = Y_i - E(Y|X_i)\]</span></p>
+<p>Regression partitions variation in <span class="math inline">\(Y\)</span> into the systematic component (that accounted for by variation in <span class="math inline">\(X\)</span>s) and the stochastic component (not explained).</p>
+<p>Error is estimated by the residuals – the difference between the predicted value and actual value (shown here for a sample of 500 homes)</p>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The model parameters are estimated to generate a mean residual value of 0. What we use the residuals to estimate, then, is the variance of the error, <span class="math inline">\(\sigma^2_{\epsilon}\)</span> – that is, how much a typical observation’s actual value deviates from the expected value.</p>
+<p>Theoretically <span class="math inline">\(\epsilon_i\)</span> represents the aggregated omitted variables, measurement error in <span class="math inline">\(Y\)</span>, and inherently random elements of <span class="math inline">\(Y\)</span>.</p>
+</div>
+<div id="estimation-briefly" class="section level2">
+<h2>Estimation (briefly)</h2>
+<p>We estimate the regression coefficients (weights, parameters) by minimizing the residual sum of squares (RSS, or the squared-error loss function). This generates estimates that define a line as close to the actual data points as possible.</p>
+<p><span class="math display">\[min \sum (\hat{\epsilon}_i)^2\\
+min \sum(Y_i - \hat{Y}_i)^2\\
+min \sum(Y_i - \hat{\beta}_0 + \hat{\beta}_1 X_i)^2\]</span></p>
+<p>This <strong>least-squares criterion</strong> is a quadratic and symmetric function:</p>
+<ul>
+<li>Quadratic: deviations farther from the line are weighted more heavily by the squaring process so atypical observations can have a big effect on the placement of the line.</li>
+<li>Symmetric: deviations above the least-squares line and those below it are treated the same.</li>
+</ul>
+</div>
+</div>
+<div id="before-you-model" class="section level1">
+<h1>Before you model</h1>
+<p>Explore and clean the data</p>
+<ul>
+<li>numbers are read as numbers; factors are read as factors</li>
+<li>values are in expected range</li>
+<li>how much missingness, how are missing obs coded</li>
+<li>how variables are distributed (histograms, density plots, etc.)</li>
+</ul>
+<p>Explore and visualize relationships</p>
+<ul>
+<li>approximately linear? scatterplots and smoothers</li>
+<li>interactions? conditioning plots and facetting</li>
+</ul>
+<center>
+<img src="images/tukey_bulge.png" width="250" />
+</center>
+</div>
+<div id="linear-models-in-r" class="section level1">
+<h1>Linear Models in R</h1>
+<div id="implementation-in-r" class="section level2">
+<h2>Implementation in R</h2>
+<p>To fit a linear model we propose a model and then estimate the coefficients and the standard deviation of the error term. For the model <span class="math inline">\(Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \epsilon\)</span>, this means estimating <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span>, and <span class="math inline">\(\sigma\)</span>.</p>
+<p>The basic function is <code>lm</code>; required arguments are <code>formula</code> and <code>data</code>.</p>
+<center>
+<code>lm(Y ~ X1 + X2, data = mydata)</code>
+</center>
+<pre class="r"><code>lm_impvalue &lt;- lm(improvementsvalue ~ finsqft + age + lotsize, 
+                  data = homes)</code></pre>
+</div>
+<div id="model-summary" class="section level2">
+<h2>Model summary</h2>
+<p>The saved linear model object contains various quantities of interest. Extractor functions provide those quantities, e.g.,</p>
+<pre class="r"><code>summary(lm_impvalue)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = improvementsvalue ~ finsqft + age + lotsize, data = homes)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -983506  -52254     -14   41003 8832959 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -132087.07    2174.03  -60.76   &lt;2e-16 ***
+## finsqft         199.53       0.86  232.00   &lt;2e-16 ***
+## age            -374.91      29.77  -12.59   &lt;2e-16 ***
+## lotsize        1169.92      36.60   31.96   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 142600 on 32741 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.6453, Adjusted R-squared:  0.6452 
+## F-statistic: 1.985e+04 on 3 and 32741 DF,  p-value: &lt; 2.2e-16</code></pre>
+<ul>
+<li><strong>Call:</strong> The model formula, useful if result is saved for later</li>
+<li><strong>Residuals:</strong> A quick check of the distribution of residuals. Ideally, median is near 0, max and min, and 1Q and 3Q, are approximately equivalent.</li>
+<li><strong>Coefficients:</strong></li>
+<li><strong>Estimate:</strong> <span class="math inline">\(\hat{\beta}\)</span></li>
+<li><strong>Std. error:</strong> standard error of <span class="math inline">\(\hat{\beta}\)</span></li>
+<li><strong>t value:</strong> test statistic for <span class="math inline">\(H_0: \hat{\beta} = 0\)</span>, calculated by <span class="math inline">\(\left(\frac{estimate}{std. error}\right)\)</span></li>
+<li><span class="math inline">\(\mathbf{Pr(&gt;|t|)}\)</span>: <span class="math inline">\(p\)</span>-value of hypothesis test (2-sided)</li>
+<li><strong>Signif. codes:</strong> indicate statistical significance</li>
+<li><strong>Residual standard error:</strong> <span class="math inline">\(\hat{\sigma}\)</span></li>
+<li><strong>degrees of freedom:</strong> # of obs - # of estimated parameters</li>
+<li><strong>Multiple R-squared:</strong> measure of model fit (0,1)</li>
+<li><strong>Adjusted R-squared:</strong> measure of model fit adjusted for number of parameters (0,1)</li>
+<li><strong>F-statistic:</strong> test statistic for hypothesis that all coefficients (other than intercept) simultaneously equal zero</li>
+<li><strong>p-value:</strong> <span class="math inline">\(p\)</span>-value for F-statistics</li>
+</ul>
+</div>
+<div id="extraction" class="section level2">
+<h2>Extraction</h2>
+<p>To extract specific quantities of interest:</p>
+<pre class="r"><code>coef(lm_impvalue)</code></pre>
+<pre><code>##  (Intercept)      finsqft          age      lotsize 
+## -132087.0703     199.5313    -374.9117    1169.9181</code></pre>
+<pre class="r"><code>confint(lm_impvalue)</code></pre>
+<pre><code>##                    2.5 %       97.5 %
+## (Intercept) -136348.2491 -127825.8916
+## finsqft         197.8456     201.2170
+## age            -433.2709    -316.5524
+## lotsize        1098.1808    1241.6554</code></pre>
+<pre class="r"><code>head(fitted(lm_impvalue))</code></pre>
+<pre><code>##         1         2         3         4         5         6 
+## 253512.60 303359.07 131431.34  69342.13 127952.87 298186.77</code></pre>
+<pre class="r"><code># or save summary information
+ms_impvalue &lt;- summary(lm_impvalue)
+# and extract quantitites
+ms_impvalue$coefficients</code></pre>
+<pre><code>##                 Estimate   Std. Error   t value      Pr(&gt;|t|)
+## (Intercept) -132087.0703 2174.0303644 -60.75677  0.000000e+00
+## finsqft         199.5313    0.8600424 232.00173  0.000000e+00
+## age            -374.9117   29.7745718 -12.59167  2.848072e-36
+## lotsize        1169.9181   36.5999935  31.96498 8.371306e-221</code></pre>
+<pre class="r"><code>ms_impvalue$adj.r.squared</code></pre>
+<pre><code>## [1] 0.6452184</code></pre>
+<pre class="r"><code>ms_impvalue$sigma </code></pre>
+<pre><code>## [1] 142615.2</code></pre>
+</div>
+</div>
+<div id="specifying-models" class="section level1">
+<h1>Specifying Models</h1>
+<p>R uses the Wilkinson-Rogers notation for specifying models:</p>
+<center>
+<code>response variable ~ explanatory variables</code>
+</center>
+<p>The tilde (~) is read as “is modelled as a function of” or “regressed on.” Additional model symbols are include:</p>
+<ul>
+<li><code>+</code> inclusion of variable</li>
+<li><code>-</code> exclusion of variable (not subtraction)</li>
+<li><code>∗</code> include variables and their interactions</li>
+<li><code>:</code> interact variables</li>
+<li><code>∧</code> interaction of variables to specified degree (not an exponent)</li>
+</ul>
+<p>To override a model symbol, use the <code>I()</code> function.</p>
+<p>Some examples</p>
+<ul>
+<li><code>y ~ x1 + x2 + x3</code> (multiple regression)</li>
+<li><code>y ~ .</code> (regress y on all variables in data set)</li>
+<li><code>y ~ x1 + x2 - 1</code> (exclude intercept)</li>
+<li><code>y ~ x1 + x2 + x2:x2</code> (interact x1 and x2)</li>
+<li><code>y ~ x1 * x2</code> (same as above)</li>
+<li><code>y ~ x1 + x2 + x3 + x1:x2 + x1:x3 + x2:x3 + x1:x2:x3</code> (all two and three-way interactions)</li>
+<li><code>y ~ x1 * x2 * x3</code> (same as above)</li>
+<li><code>y ~ (x1 + x2 + x3)ˆ2</code> (all 2-way interactions)</li>
+<li><code>y ~ x1 + I(x1ˆ2) + x3</code> (polynomial regression)</li>
+<li><code>y ~ poly(x1, 2, raw = TRUE) + x3</code> (polynomial regresion)</li>
+</ul>
+<div id="factors" class="section level2">
+<h2>Factors</h2>
+<p>For inclusion in a model, R requires categorical predictors – like city or condition in the Albemarle housing data – to be encoded as factors. A factor is a set of integer codes (1, 2, 3) with associated levels (Fair, Average, Good).</p>
+<p>By default, coefficients for factors are modeled using treatment contrasts – one level is treated as the baseline and the other levels have coefficients that express differences from that baseline. For example, let’s add the city address of the property.</p>
+<pre class="r"><code>table(homes$city)</code></pre>
+<pre><code>## 
+## CHARLOTTESVILLE          CROZET     EARLYSVILLE         KESWICK 
+##           21113            3018            1920            1619 
+##     SCOTTSVILLE    NORTH GARDEN          ESMONT           AFTON 
+##            1077             620             538             519 
+##   BARBOURSVILLE           OTHER 
+##             422            1900</code></pre>
+<pre class="r"><code>lm_impvalue &lt;- lm(improvementsvalue ~ city + finsqft + age + lotsize, 
+                  data = homes)
+summary(lm_impvalue)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = improvementsvalue ~ city + finsqft + age + lotsize, 
+##     data = homes)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1045070   -52926     -795    40964  8808218 
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -1.260e+05  2.218e+03 -56.785  &lt; 2e-16 ***
+## cityCROZET        -2.367e+04  2.769e+03  -8.550  &lt; 2e-16 ***
+## cityEARLYSVILLE   -2.441e+04  3.404e+03  -7.171 7.58e-13 ***
+## cityKESWICK       -2.178e+04  3.714e+03  -5.865 4.55e-09 ***
+## citySCOTTSVILLE   -2.439e+04  4.477e+03  -5.448 5.13e-08 ***
+## cityNORTH GARDEN  -2.173e+04  5.820e+03  -3.733 0.000190 ***
+## cityESMONT        -3.002e+04  6.245e+03  -4.808 1.53e-06 ***
+## cityAFTON         -2.099e+04  6.336e+03  -3.314 0.000922 ***
+## cityBARBOURSVILLE -3.510e+04  7.001e+03  -5.013 5.37e-07 ***
+## cityOTHER         -2.681e+04  3.446e+03  -7.781 7.41e-15 ***
+## finsqft            2.000e+02  8.752e-01 228.523  &lt; 2e-16 ***
+## age               -3.326e+02  3.003e+01 -11.076  &lt; 2e-16 ***
+## lotsize            1.235e+03  3.689e+01  33.468  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 142200 on 32732 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.6476, Adjusted R-squared:  0.6475 
+## F-statistic:  5014 on 12 and 32732 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>The effect of the baseline category – Charlottesville – is not listed, but is part of the intercept. The coefficients on the remaining levels represent how the value of homes in the other cities differ, on average, from the value of homes in Charlottesville.</p>
+</div>
+<div id="interactions" class="section level2">
+<h2>Interactions</h2>
+<p>Inclusion of a factor variable tests for varying intercepts between categories, but assumes any numerical variables influence the outcome variable for each category in the same way – e.g., the baseline value of homes in Charlottesville may be higher, but the relation between home size and home value is the same across all cities.</p>
+<p>If, instead, the effect of a variable <em>depends</em> on another variable – e.g., the effect of home size on home value depends on which city the home is in – we say the variables interact. Interactions are one way of expressing potential causal heterogeneity, when an outcome is structured differently for different types of observations.</p>
+<pre class="r"><code>lm_impvalue &lt;- lm(improvementsvalue ~ city*finsqft + age + lotsize, 
+                  data = homes)
+summary(lm_impvalue)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = improvementsvalue ~ city * finsqft + age + lotsize, 
+##     data = homes)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1076410   -52942      -55    41156  8782602 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)               -1.395e+05  2.528e+03 -55.176  &lt; 2e-16 ***
+## cityCROZET                 2.484e+04  7.041e+03   3.528 0.000419 ***
+## cityEARLYSVILLE            1.632e+04  8.627e+03   1.892 0.058517 .  
+## cityKESWICK                7.216e+03  8.699e+03   0.830 0.406803    
+## citySCOTTSVILLE            5.050e+04  1.005e+04   5.023 5.10e-07 ***
+## cityNORTH GARDEN          -5.818e+04  1.273e+04  -4.570 4.89e-06 ***
+## cityESMONT                -4.164e+04  1.400e+04  -2.975 0.002936 ** 
+## cityAFTON                 -3.451e+03  1.424e+04  -0.242 0.808545    
+## cityBARBOURSVILLE          2.586e+04  1.676e+04   1.543 0.122902    
+## cityOTHER                  2.620e+04  7.104e+03   3.689 0.000226 ***
+## finsqft                    2.073e+02  1.094e+00 189.513  &lt; 2e-16 ***
+## age                       -3.473e+02  3.010e+01 -11.537  &lt; 2e-16 ***
+## lotsize                    1.264e+03  3.740e+01  33.788  &lt; 2e-16 ***
+## cityCROZET:finsqft        -2.468e+01  3.264e+00  -7.563 4.04e-14 ***
+## cityEARLYSVILLE:finsqft   -1.923e+01  3.570e+00  -5.386 7.24e-08 ***
+## cityKESWICK:finsqft       -1.315e+01  3.127e+00  -4.203 2.64e-05 ***
+## citySCOTTSVILLE:finsqft   -4.464e+01  5.499e+00  -8.117 4.93e-16 ***
+## cityNORTH GARDEN:finsqft   1.992e+01  6.127e+00   3.251 0.001150 ** 
+## cityESMONT:finsqft         1.003e+01  8.515e+00   1.178 0.238889    
+## cityAFTON:finsqft         -9.260e+00  6.820e+00  -1.358 0.174552    
+## cityBARBOURSVILLE:finsqft -3.115e+01  7.710e+00  -4.040 5.36e-05 ***
+## cityOTHER:finsqft         -2.952e+01  3.504e+00  -8.424  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 141700 on 32723 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:   0.65,  Adjusted R-squared:  0.6498 
+## F-statistic:  2894 on 21 and 32723 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Here we have varying intercepts and varying slopes. We can have interactions between two factors, between a factor and numeric variable (as above), between two numeric variables, between three variables! And polynomial regression, where a predictor is included as a squared or cubed (or higher exponent) term, works the same way – with a variable interacted with itself.</p>
+<p>Is this interaction significant?</p>
+<pre class="r"><code>anova(lm_impvalue)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: improvementsvalue
+##                 Df     Sum Sq    Mean Sq   F value    Pr(&gt;F)    
+## city             9 4.4915e+13 4.9906e+12   248.564 &lt; 2.2e-16 ***
+## finsqft          1 1.1476e+15 1.1476e+15 57156.561 &lt; 2.2e-16 ***
+## age              1 6.2751e+11 6.2751e+11    31.255 2.281e-08 ***
+## lotsize          1 2.2634e+13 2.2634e+13  1127.321 &lt; 2.2e-16 ***
+## city:finsqft     9 4.4236e+12 4.9152e+11    24.481 &lt; 2.2e-16 ***
+## Residuals    32723 6.5700e+14 2.0078e+10                        
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Come back next week for more on interpreting interactions!</p>
+</div>
+<div id="nonlinearities" class="section level2">
+<h2>Nonlinearities</h2>
+<p>If data exploration suggested relationships aren’t reasonably linear, transformations of the variables can accommodate a variety of nonlinearities. Logs and polynomials are the most widely used.</p>
+<p>Adding a squared X term:</p>
+<pre class="r"><code>lm_impvalue &lt;- lm(improvementsvalue ~ city + poly(finsqft, 2, raw = TRUE) + age + lotsize, 
+                data = homes)
+summary(lm_impvalue)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = improvementsvalue ~ city + poly(finsqft, 2, raw = TRUE) + 
+##     age + lotsize, data = homes)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1382644   -38314    -6285    27454  8923965 
+## 
+## Coefficients:
+##                                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                    7.936e+04  3.346e+03  23.719  &lt; 2e-16 ***
+## cityCROZET                    -1.536e+04  2.548e+03  -6.031 1.65e-09 ***
+## cityEARLYSVILLE               -1.270e+04  3.134e+03  -4.053 5.06e-05 ***
+## cityKESWICK                   -2.422e+04  3.415e+03  -7.094 1.33e-12 ***
+## citySCOTTSVILLE               -3.069e+04  4.117e+03  -7.454 9.26e-14 ***
+## cityNORTH GARDEN              -2.244e+04  5.351e+03  -4.194 2.74e-05 ***
+## cityESMONT                    -4.414e+04  5.745e+03  -7.683 1.60e-14 ***
+## cityAFTON                     -1.976e+04  5.825e+03  -3.393 0.000692 ***
+## cityBARBOURSVILLE             -2.919e+04  6.437e+03  -4.535 5.78e-06 ***
+## cityOTHER                     -3.512e+04  3.170e+03 -11.077  &lt; 2e-16 ***
+## poly(finsqft, 2, raw = TRUE)1  1.450e+01  2.528e+00   5.735 9.86e-09 ***
+## poly(finsqft, 2, raw = TRUE)2  3.491e-02  4.510e-04  77.404  &lt; 2e-16 ***
+## age                           -5.280e+02  2.772e+01 -19.047  &lt; 2e-16 ***
+## lotsize                        1.000e+03  3.405e+01  29.368  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 130700 on 32731 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.7022, Adjusted R-squared:  0.702 
+## F-statistic:  5936 on 13 and 32731 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Logging Y:</p>
+<pre class="r"><code>homes2 &lt;- homes %&gt;% filter(improvementsvalue &gt; 0)
+lm_logimpvalue &lt;- lm(log(improvementsvalue) ~ city*finsqft + age + lotsize, 
+                  data = homes2)
+summary(lm_logimpvalue)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = log(improvementsvalue) ~ city * finsqft + age + 
+##     lotsize, data = homes2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -7.8419 -0.1492  0.0405  0.2186  3.9351 
+## 
+## Coefficients:
+##                             Estimate Std. Error  t value Pr(&gt;|t|)    
+## (Intercept)                1.111e+01  8.720e-03 1274.053  &lt; 2e-16 ***
+## cityCROZET                -1.338e-01  2.428e-02   -5.510 3.61e-08 ***
+## cityEARLYSVILLE            9.612e-02  2.973e-02    3.233 0.001228 ** 
+## cityKESWICK               -3.602e-02  3.000e-02   -1.201 0.229780    
+## citySCOTTSVILLE           -5.222e-02  3.465e-02   -1.507 0.131778    
+## cityNORTH GARDEN          -3.298e-01  4.415e-02   -7.471 8.13e-14 ***
+## cityESMONT                -5.182e-01  4.825e-02  -10.741  &lt; 2e-16 ***
+## cityAFTON                 -5.722e-01  4.912e-02  -11.648  &lt; 2e-16 ***
+## cityBARBOURSVILLE         -2.632e-01  5.794e-02   -4.542 5.59e-06 ***
+## cityOTHER                 -4.397e-01  2.475e-02  -17.768  &lt; 2e-16 ***
+## finsqft                    6.293e-04  3.772e-06  166.831  &lt; 2e-16 ***
+## age                       -4.459e-03  1.040e-04  -42.886  &lt; 2e-16 ***
+## lotsize                    7.520e-04  1.291e-04    5.824 5.79e-09 ***
+## cityCROZET:finsqft         3.818e-05  1.126e-05    3.392 0.000695 ***
+## cityEARLYSVILLE:finsqft   -4.924e-05  1.230e-05   -4.002 6.28e-05 ***
+## cityKESWICK:finsqft       -3.928e-05  1.079e-05   -3.641 0.000272 ***
+## citySCOTTSVILLE:finsqft   -3.471e-05  1.895e-05   -1.831 0.067087 .  
+## cityNORTH GARDEN:finsqft   8.819e-05  2.130e-05    4.139 3.49e-05 ***
+## cityESMONT:finsqft         7.848e-05  2.935e-05    2.674 0.007490 ** 
+## cityAFTON:finsqft          2.020e-04  2.351e-05    8.592  &lt; 2e-16 ***
+## cityBARBOURSVILLE:finsqft  5.391e-05  2.661e-05    2.026 0.042771 *  
+## cityOTHER:finsqft          9.483e-05  1.216e-05    7.801 6.31e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.4883 on 32651 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.6281, Adjusted R-squared:  0.6278 
+## F-statistic:  2625 on 21 and 32651 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Other possibilites include piecewise approaches (e.g., GAMs/splines).</p>
+</div>
+</div>
+<div id="evaluating-models" class="section level1">
+<h1>Evaluating Models</h1>
+<div id="diagnostics" class="section level2">
+<h2>Diagnostics</h2>
+<p>The linear model makes several assumptions that enable estimation or inference; if these assumptions are strongly violated, estimates or inferences are suspect. <span class="math display">\[\epsilon_i \sim \mathcal{N}_{iid}(0,\sigma^2)\]</span> In prose, errors are independently and identically distributed (iid) around a mean of 0 with a constant variance (<span class="math inline">\(\sigma^2\)</span>) and drawn from a normal distribution.</p>
+<p>As a partial check of these assumptions, we can examine the residuals.</p>
+<pre class="r"><code>plot(lm_impvalue, which = 1) # </code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><strong>Residuals vs Fitted values</strong>: checks linearity and constant variance, should have a horizontal line with uniform scatter of points.</p>
+<pre class="r"><code>plot(lm_impvalue, which = 3)</code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><strong>Scale-Location</strong>: checks constant variance, should have a horizontal line with a uniform scatter of points.</p>
+<pre class="r"><code>plot(lm_impvalue, which = 2)</code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><strong>Normal Q-Q</strong>: checks normality, points should lie close to diagonal line.</p>
+<pre class="r"><code>plot(lm_impvalue, which = 5)</code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><strong>Residuals vs Leverage</strong>: checks for influential observations, points should lie within contour lines.</p>
+</div>
+<div id="evaluating-model-specification-model-fit" class="section level2">
+<h2>Evaluating model specification, model fit</h2>
+<p>What should be included in a model, and in what form, are questions of model specification (aka feature selection). Ideally, it’s based on theory; in practice, we often employ hypothesis tests comparing nested models or criteron-based approaches based on goodness-of-fit metrics.</p>
+<p>To test whether inclusion of a subset of variables substantially improves a model, we can use a partial F-test to compare models with and without this subset of variables.</p>
+<pre class="r"><code>lm_imp_full &lt;- lm(improvementsvalue ~ city*finsqft + age + lotsize, 
+                  data = homes)
+lm_imp_red &lt;- lm(improvementsvalue ~ city + finsqft + age + lotsize, 
+                  data = homes)
+anova(lm_imp_red, lm_imp_full)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: improvementsvalue ~ city + finsqft + age + lotsize
+## Model 2: improvementsvalue ~ city * finsqft + age + lotsize
+##   Res.Df        RSS Df  Sum of Sq      F    Pr(&gt;F)    
+## 1  32732 6.6142e+14                                   
+## 2  32723 6.5700e+14  9 4.4236e+12 24.481 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>The null hypothesis is that the models are essentially the same, that the reduced model fits as well as the more fully specified model. A low p-value is a rejection of that null: the fuller model has more explanatory power.</p>
+<p>Alternatively, we can compare models on a goodness-of-fit measure like the Akaike Information Criteria (AIC). When comparing models fitted <em>to the same data,</em> the smaller the AIC, the better the fit.</p>
+<pre class="r"><code>extractAIC(lm_imp_full)</code></pre>
+<pre><code>## [1]     22.0 776827.3</code></pre>
+<pre class="r"><code>extractAIC(lm_imp_red)</code></pre>
+<pre><code>## [1]     13.0 777029.1</code></pre>
+<p>Some recommend using cross-validation for model evaluation –- estimate, diagnose, build the model with half of your sample, and proceed with inference by estimating the “good” model on the second half of your data. We’ll get to an example of that at the end.</p>
+<center>
+<a href="#box">Nota Bene</a>
+</center>
+</div>
+<div id="interpretation-and-visualization" class="section level2">
+<h2>Interpretation and visualization</h2>
+<p><strong>Interpretation:</strong> In multiple regression the coefficient represents the amount of change in <span class="math inline">\(Y\)</span> for a unit change in each predictor, <em>holding all other included variables contant</em>. That is, interpretation proceeds as if one predictor could change with no other variables changing.</p>
+<p><strong>Visualization:</strong> models are often best conveyed visually. The <code>broom</code> package tidies model summaries into a <code>tibble</code> that we can plot.</p>
+<pre class="r"><code>tidy_imp &lt;- tidy(lm_imp_full, conf.int = TRUE)
+# coeffcient plot for intercept/factors
+ggplot(tidy_imp[1:10,], aes(x = estimate, y = term, 
+                     xmin = conf.low, 
+                     xmax = conf.high)) +
+  geom_point() +
+  geom_vline(xintercept = 0) +
+  geom_errorbarh() +
+  labs(x = &quot;Coefficient Estimate&quot;, y = &quot;Intercept and Factors&quot;,
+       title = &quot;Effect of City on Intercept&quot;)</code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<pre class="r"><code># coeffcient plot for slopes/interactions
+ggplot(tidy_imp[11:22,], aes(x = estimate, y = term, 
+                            xmin = conf.low, 
+                            xmax = conf.high)) +
+  geom_point() +
+  geom_vline(xintercept = 0) +
+  geom_errorbarh() + 
+  labs(x = &quot;Coefficient Estimate&quot;, y = &quot;Slopes and Interactions&quot;,
+       title = &quot;Effect of Lot Size, Age, and Square Feet&quot;)</code></pre>
+<p><img src="linearmodel_files/figure-html/unnamed-chunk-22-2.png" width="672" /></p>
+</div>
+</div>
+<div id="regression-as-machine-learning" class="section level1">
+<h1>Regression as Machine Learning</h1>
+<p>We’ve been using regression as a statistical model; it is also one of the more widely used machine learning algorithms.</p>
+<div id="machine-learning" class="section level2">
+<h2>Machine learning</h2>
+<p>As mathematical representations, statistical models and machine learning algorithms are often indistinguishable. In practice, they tend to be used differently. Machine learning focuses on data-driven prediction, whereas statistical modeling focuses on theory-driven knowledge discovery.</p>
+<p>Machine learning algorithms learn a target function (<span class="math inline">\(f\)</span>) that best maps input variables (<span class="math inline">\(X\)</span>) to an output variable (<span class="math inline">\(Y\)</span>) – <span class="math inline">\(Y = f(X)\)</span> – in order to make predictions of <span class="math inline">\(Y\)</span> for new <span class="math inline">\(X\)</span>, aka predictive modeling/analytics. The goal is to maximize prediction accuracy/minimize model error, without reference to explainability (or theory, hypotheses).</p>
+<table>
+<thead>
+<tr class="header">
+<th>Statistical models</th>
+<th>Machine learning models</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Theory driven</td>
+<td>Data driven</td>
+</tr>
+<tr class="even">
+<td>Explanation</td>
+<td>Prediction</td>
+</tr>
+<tr class="odd">
+<td>Researcher-curated data</td>
+<td>Machine-generated data</td>
+</tr>
+<tr class="even">
+<td>Evaluation via goodness of fit</td>
+<td>Evaluation via prediction accuracy</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="some-definitions" class="section level2">
+<h2>Some definitions</h2>
+<p>For the example in the R script…</p>
+<ul>
+<li><strong>RMSE:</strong> Root Mean Squared Error, measures the average prediction error made by the model; i.e., the average difference between the observed outcome values and the values predicted by the model.</li>
+<li><strong>Cross validation:</strong> split data into a training set and test set; build/learn the model on the training set; calculate RMSE/prediction error of the model using the test/held-out data.</li>
+<li><strong><span class="math inline">\(k\)</span>-fold cross validation:</strong> divide data into <span class="math inline">\(k\)</span> sets, hold out 1 set and fit model with remaining <span class="math inline">\(k-1\)</span> sets; calculate RMSE/prediction error on the held-out data; repeat with each <span class="math inline">\(k\)</span> set; take average RMSE across <span class="math inline">\(k\)</span>.</li>
+</ul>
+</div>
+</div>
+<div id="friends-of-the-linear-model" class="section level1">
+<h1>Friends of the Linear Model</h1>
+<p>Many models expand on the basic linear regression model</p>
+<ul>
+<li>Genearlized linear models (e.g., logit, poisson, multinomial, etc.)</li>
+<li>Mixed effects models (random coefficients, hierarchical models)</li>
+<li>Penalized regression (shrinkage or regulariziation, e.g., Ridge, Lasso, ElasticNet)</li>
+<li>and more!</li>
+</ul>
+</div>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<ul>
+<li>Garrett Grolemund and Hadley Wickham. 2018. <a href="https://r4ds.had.co.nz/model-intro.html">R for Data Science</a>, Chapters 22-25</li>
+<li>James, G., et al. 2013. <a href="http://www-bcf.usc.edu/~gareth/ISL/">An Introduction to Statistical Learning.</a> New York: Springer.</li>
+</ul>
 </div>
 
 

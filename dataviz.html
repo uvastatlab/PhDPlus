@@ -11,7 +11,7 @@
 
 
 
-<title>Data Visualization</title>
+<title>(Exploratory) Data Visualization in R</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -410,14 +410,274 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Data Visualization</h1>
+<h1 class="title toc-ignore">(Exploratory) Data Visualization in R</h1>
 
 </div>
 
 
-<div id="exploratory-data-visualization" class="section level1">
-<h1>(Exploratory) Data Visualization</h1>
-<p>TBA</p>
+<div id="get-ready" class="section level2">
+<h2>Get Ready!</h2>
+<ul>
+<li>Download this <a href="http://static.lib.virginia.edu/statlab/materials/workshops/ggplot2_2019.zip">zipped folder</a>. It contains an R script (ggplot-workshop-2019.R) and the content of this page as a slide deck (ggplot2-pres.pdf).</li>
+<li>Unzip it and put it somwehere you can locate it on your machine.</li>
+</ul>
+</div>
+<div id="data-visualization" class="section level2">
+<h2>Data Visualization</h2>
+<p>Patterns, trends, variability, connections, groups, remarkable data, and wrong data are hard to see in a tabular or raw data. Representing or summarizing data in pictures allows us to easily see patterns, trends, errors, etc</p>
+<p>Data visualization (ie “graphing” or “plotting”) is an essential component of an effective data analysis. R was specifically designed to make data visualization fast, easy and practical.</p>
+<p>R comes with a <code>graphics</code> package, but we will use a package called <code>ggplot2</code></p>
+</div>
+<div id="about-ggplot2" class="section level2">
+<h2>About ggplot2</h2>
+<ul>
+<li><p>Developed by Hadley Wickham in 2005.</p></li>
+<li><p>Implements the graphics scheme described in the book <em>The Grammar of Graphics</em> by Leland Wilkinson.</p></li>
+<li><p>Uses a standardized system of syntax that makes it easy(-ish) to learn</p></li>
+<li><p>It takes care of a lot fiddly details such as colors, scales, and legend placement</p></li>
+<li><p>It does not do 3D or interactive graphics</p></li>
+</ul>
+<div id="the-grammar-of-graphics" class="section level3">
+<h3>The Grammar of Graphics</h3>
+<p>The <em>Grammar of Graphics</em> boiled down to 5 bullets, courtesy of Wickham (2016, p. 4):</p>
+<ul>
+<li><p>a statistical graphic is a mapping from data to <strong>aes</strong>thetic attributes (location, color, shape, size) of <strong>geom</strong>etric objects (points, lines, bars).</p></li>
+<li><p>the geometric objects are drawn in a specific <strong>coord</strong>inate system.</p></li>
+<li><p><strong>scale</strong>s control the mapping from data to aesthetics and provide tools to read the plot (ie, axes and legends).</p></li>
+<li><p>the plot may also contain <strong>stat</strong>istical transformations of the data (means, medians, bins of data, trend lines).</p></li>
+<li><p><strong>facet</strong>ing can be used to generate the same plot for different subsets of the data.</p></li>
+</ul>
+<div class="figure">
+<img src="images/ggbasics.jpg" />
+
+</div>
+<p>Source: github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf</p>
+</div>
+</div>
+<div id="basic-ggplot2-syntax" class="section level2">
+<h2>Basic ggplot2 syntax</h2>
+<p>The basic ggplot2 syntax specifies data, aesthetics and geometric shapes:</p>
+<p><code>ggplot(data, aes(x=, y=, color=, shape=, size=)) +</code><br />
+<code>geom_point()</code>, or <code>geom_histogram()</code>, or <code>geom_boxplot()</code>, etc.</p>
+<ul>
+<li><p>This combination is very effective for exploratory graphs.</p></li>
+<li><p>The data must be a data frame.</p></li>
+<li><p>The <code>aes()</code> function maps columns of the data frame to aesthetic properties of geometric shapes to be plotted.</p></li>
+<li><p><code>ggplot()</code> defines the plot; the <code>geoms</code> show the data; layers are added with <code>+</code></p></li>
+<li><p>Some examples should make this clear</p></li>
+</ul>
+</div>
+<div id="the-albemarle-county-homes-data" class="section level2">
+<h2>The Albemarle County homes data</h2>
+<p>We’ll demonstrate <code>ggplot2</code> using the Albemarle County real estate data, which was downloaded from Office of Geographic Data Services. See Michele Claibourn’s workshop for how data were obtained and prepared: <a href="https://uvastatlab.github.io/phdplus/dataprep.html" class="uri">https://uvastatlab.github.io/phdplus/dataprep.html</a></p>
+<pre class="r"><code>github_url &lt;- &quot;https://github.com/uvastatlab/phdplus/raw/master/data/albemarle_homes.rds&quot;
+homes &lt;- readRDS(url(github_url))</code></pre>
+<p>The <code>str</code> function allows us to take a peek at the structure of the data.</p>
+<pre class="r"><code>str(homes)</code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    32746 obs. of  24 variables:
+##  $ TMP              : chr  &quot;006000000011B0&quot; &quot;00600000003800&quot; &quot;007000000018B0&quot; &quot;007000000042A0&quot; ...
+##  $ YearBuilt        : num  2006 2003 1974 1954 1987 ...
+##  $ YearRemodeled    : num  0 0 0 0 0 ...
+##  $ UseCode          : chr  &quot;Single Family&quot; &quot;Single Family&quot; &quot;Single Family&quot; &quot;Single Family&quot; ...
+##  $ FinSqFt          : num  1922 1848 1368 1092 1344 ...
+##  $ Cooling          : Factor w/ 2 levels &quot;No Central Air&quot;,..: 2 2 1 1 2 1 2 1 1 2 ...
+##  $ FP_Num           : num  1 0 0 0 0 0 1 0 0 2 ...
+##  $ Bedroom          : num  3 3 3 4 3 5 3 2 4 3 ...
+##  $ FullBath         : num  3 2 1 1 2 2 2 1 1 3 ...
+##  $ HalfBath         : num  0 0 0 0 0 0 0 1 0 0 ...
+##  $ TotalRooms       : num  10 7 5 6 5 8 7 5 6 6 ...
+##  $ City             : chr  &quot;CROZET&quot; &quot;CROZET&quot; &quot;FREE UNION&quot; &quot;FREE UNION&quot; ...
+##  $ Zip              : num  22932 22932 22940 22940 22940 ...
+##  $ LotSize          : num  5 61.19 5.39 5.8 2.34 ...
+##  $ LandValue        : num  109800 444100 100400 100700 66500 ...
+##  $ ImprovementsValue: num  300100 79000 128400 77200 165900 ...
+##  $ TotalValue       : num  409900 523100 228800 177900 232400 ...
+##  $ LastSalePrice    : num  0 0 0 0 0 0 0 47000 0 0 ...
+##  $ LastSaleDate     : POSIXct, format: &quot;2009-08-05&quot; &quot;1991-05-20&quot; ...
+##  $ condition        : Factor w/ 7 levels &quot;None&quot;,&quot;Substandard&quot;,..: 5 5 5 5 5 4 5 5 5 5 ...
+##  $ fp               : num  1 0 0 0 0 0 1 0 0 1 ...
+##  $ city             : Factor w/ 10 levels &quot;CHARLOTTESVILLE&quot;,..: 2 2 10 10 10 10 10 10 10 10 ...
+##  $ landuse          : num  0 0 0 0 0 1 1 1 0 0 ...
+##  $ remodel          : num  0 0 0 0 0 1 0 0 0 0 ...</code></pre>
+<p>We can see quite a few variables that might benefit from some visualization.</p>
+<p>In this workshop we’ll focus on the six largest cities in Albemarle county.</p>
+<pre class="r"><code>vars &lt;- c(&quot;CHARLOTTESVILLE&quot;, &quot;CROZET&quot;, &quot;EARLYSVILLE&quot;, 
+          &quot;KESWICK&quot;, &quot;SCOTTSVILLE&quot;, &quot;NORTH GARDEN&quot;)
+homes &lt;- homes %&gt;% 
+  filter(city %in% vars)
+homes$city &lt;- droplevels(homes$city)</code></pre>
+</div>
+<div id="ggplot2-examples" class="section level2">
+<h2>ggplot2 examples</h2>
+<div id="scatter-plot-of-totalvalue-vs-finsqft-colored-by-city" class="section level3">
+<h3>scatter plot of TotalValue vs FinSqFt colored by city</h3>
+<p>The first argument to <code>ggplot</code> is a data frame. In this case that’s the <code>homes</code> data frame. The next argument maps data to aesthetics using the <code>aes</code> function. It says map <code>FinSqFt</code> to the x-axis, <code>TotalValue</code> to the y-axis, and colors to <code>city</code>. Then we add points to the plot using <code>geom_point()</code>. The position and color of the points are determined by the aesthetic mappings we defined. Notice the open and closing parentheses for <code>geom_point()</code>. Don’t forget those! <code>geom_point</code> is a function and can take additional arguments.</p>
+<pre class="r"><code>library(ggplot2) # or library(tidyverse)
+ggplot(homes, aes(x=FinSqFt, y=TotalValue, 
+                 color=city)) + geom_point() </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>This scatter plot uses both shapes and colors to identify cities.</p>
+<pre class="r"><code>ggplot(homes, aes(x=FinSqFt, y=TotalValue, 
+                 color=city, shape=city)) + 
+  geom_point() </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Since we have so much data our plot suffers from an enormous amount of overplotting. Later in the workshop we’ll review some strategies to address this.</p>
+</div>
+<div id="scatter-plot-coded-by-condition-size-by-bedroom" class="section level3">
+<h3>scatter plot coded by condition, size by Bedroom</h3>
+<p>In this plot we look just at Scottsville. Here condition is mapped to color and size to number of Bedrooms, which creates a second legend.</p>
+<pre class="r"><code>ggplot(filter(homes, city == &quot;SCOTTSVILLE&quot;), aes(x=FinSqFt, y=TotalValue, 
+                 color=condition, size=Bedroom)) + 
+  geom_point() </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Again overplotting is a bit of an issue.</p>
+</div>
+<div id="add-multiple-geoms-points-and-smooth-line" class="section level3">
+<h3>add multiple geoms (points and smooth line)</h3>
+<p>We are not restricted to one geometric shape. Here we add a smooth trend line to summarize the relationship between <code>FinSqFt</code> and <code>TotalValue</code>.</p>
+<pre class="r"><code>ggplot(homes, aes(x=FinSqFt, y=TotalValue, color=city)) + 
+  geom_point() + 
+  geom_smooth()</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="boxplot-statistical-transformation" class="section level3">
+<h3>boxplot (statistical transformation)</h3>
+<p>Some geoms refer to specific plots, such as boxplots. This plot allows us to examine the distribution of <code>FinSqFt</code> by <code>city</code>. The top of the box is the 75th percentile, the bottom is the 25th percentile, and the line in the middle is the median. The “whiskers” extended to the largest point not to exceed 1.5 times the interquartile range (the difference between the 75th and 25th percentile) from the median. Any points lying beyond this range <em>might</em> be considered unusual relative to the rest of the data. In this data, which is <em>very</em> skewed, we have many homes that appear “unusual” relative to the majority of homes.</p>
+<pre class="r"><code>ggplot(homes, aes(x=city, y=FinSqFt)) + 
+  geom_boxplot() </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+</div>
+<div id="moving-beyond-ggplot-geoms" class="section level2">
+<h2>Moving beyond <code>ggplot</code> + <code>geoms</code></h2>
+<p>A natural next step in exploratory graphing is to create plots of subsets of data. These are called facets in ggplot2.</p>
+<p>Use <code>facet_wrap()</code> if you want to facet by one variable and have <code>ggplot2</code> control the layout. Example:</p>
+<p><code>+ facet_wrap( ~ var)</code></p>
+<p>Use <code>facet_grid()</code> if you want to facet by one and/or two variables and control layout yourself.</p>
+<p>Examples:<br />
+<code>+ facet_grid(. ~ var1)</code> - facets in columns<br />
+<code>+ facet_grid(var1 ~ .)</code> - facets in rows<br />
+<code>+ facet_grid(var1 ~ var2)</code> - facets in rows and columns</p>
+<div id="facet_wrap-example" class="section level3">
+<h3><code>facet_wrap</code> example</h3>
+<p>Scatterplots of <code>TotalValue</code> versus <code>FinSqFt</code> conditioned on <code>city</code>.</p>
+<pre class="r"><code>ggplot(homes, aes(x=FinSqFt, y=TotalValue)) + 
+  geom_point() + facet_wrap(~ city)</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="facet_grid-example-with-histograms" class="section level3">
+<h3><code>facet_grid</code> example with histograms</h3>
+<p>Here we use <code>facet_grid(city ~ .)</code> to place the plots on their own row, which shows distribution of FinSqFt. Note the use of <code>stat(density)</code> in <code>aes</code>, which maps the relative frequency to the y axis (instead of raw counts).</p>
+<pre class="r"><code>ggplot(homes, aes(x=FinSqFt, y = stat(density))) +
+  geom_histogram() + facet_grid(city ~ .) </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+</div>
+<div id="customizing-scales" class="section level2">
+<h2>Customizing scales</h2>
+<p>Scales control the mapping from data to aesthetics and provide tools to read the plot (ie, axes and legends).</p>
+<p>Every aesthetic has a default scale. To modify a scale, use a <code>scale</code> function.</p>
+<p>All scale functions have a common naming scheme: <code>scale</code> <code>_</code> name of aesthetic <code>_</code> name of scale</p>
+<p>Examples: <code>scale_y_continuous</code>, <code>scale_color_discrete</code>, <code>scale_fill_manual</code></p>
+<p>Heads up: The documentation for <code>ggplot2</code> scale functions will frequently use functions from the <code>scales</code> package (also by Wickham)!</p>
+<div id="update-scales-for-the-x-and-y-axis" class="section level3">
+<h3>update scales for the x and y-axis</h3>
+<p>Here we customize the x and y-axis by changing the labels. We use the <code>dollar</code> and <code>comma</code> functions from the scales package to format the labels.</p>
+<pre class="r"><code>ggplot(homes, aes(x=FinSqFt, y=TotalValue, 
+                 color=city)) + geom_point() +
+  scale_y_continuous(labels = scales::dollar) +
+  scale_x_continuous(labels = scales::comma)</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="update-scale-for-color" class="section level3">
+<h3>update scale for color</h3>
+<p>Here we change the point colors, which in turn updates the legend. Notice that because the <code>fp</code> variable was stored as 0/1, we needed to convert it to a factor on-the-fly to map it to color.</p>
+<pre class="r"><code>ggplot(homes, aes(x=FinSqFt, y=TotalValue, 
+                 color=factor(fp))) + geom_point() +
+  scale_color_manual(name=&quot;Fireplace&quot;,
+                     labels = c(&quot;No fireplace&quot;, &quot;At least one fireplace&quot;),
+                     values=c(&quot;red&quot;,&quot;blue&quot;))</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+</div>
+<div id="modifying-the-coordinate-system" class="section level2">
+<h2>Modifying the coordinate system</h2>
+<ul>
+<li><code>coord_cartesian</code> allows us to zoom in on a plot, as if using magnifying glass</li>
+<li><code>coord_fixed</code> allows us to control “aspect ratio”</li>
+<li><code>coord_flip</code> allows us to flip the x and y axis</li>
+</ul>
+<div id="zoom-in-on-plot" class="section level3">
+<h3>zoom in on plot</h3>
+<p>This plot “zooms in” on the y-axis from 100,000 to 300,000.</p>
+<pre class="r"><code>ggplot(homes, aes(x=FinSqFt, y=TotalValue, 
+                 color=city)) + geom_point() +
+  coord_cartesian(ylim = c(1e5, 3e5))</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="flip-coordinate-axes" class="section level3">
+<h3>flip coordinate axes</h3>
+<p>This is our boxplot from earlier rotated.</p>
+<pre class="r"><code>ggplot(homes, aes(x=city, y=FinSqFt)) + 
+  geom_boxplot() + 
+  coord_flip()</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+</div>
+<div id="update-themes-and-labels" class="section level2">
+<h2>Update themes and labels</h2>
+<p>The default ggplot2 theme is excellent. It follows the advice of several landmark papers regarding statistics and visual perception. (Wickham 2016, p. 176)</p>
+<p>However you can change the theme using ggplot2’s themeing system. To date, there are seven built-in themes:</p>
+<ul>
+<li><code>theme_gray</code> (<em>default</em>)</li>
+<li><code>theme_bw</code></li>
+<li><code>theme_linedraw</code></li>
+<li><code>theme_light</code></li>
+<li><code>theme_dark</code></li>
+<li><code>theme_minimal</code></li>
+<li><code>theme_classic</code></li>
+</ul>
+<p>You can also update axis labels and titles using the <code>labs</code> function.</p>
+<div id="change-theme" class="section level3">
+<h3>change theme</h3>
+<p>Adding <code>theme_minimal()</code> produces a minimal plot with no background annotations.</p>
+<pre class="r"><code>ggplot(homes, aes(x=FinSqFt, y=TotalValue, 
+                 color = city)) + geom_point() +
+  theme_minimal()</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+<div id="update-labels" class="section level3">
+<h3>update labels</h3>
+<p>Here we update the x and y-axis labels and add a title.</p>
+<pre class="r"><code>ggplot(homes, aes(x=FinSqFt, y=TotalValue, 
+                 color = city)) + geom_point() +
+  labs(title=&quot;Total Value versus Finished Square Feet&quot;, 
+       x=&quot;Finished Square Feet&quot;, y=&quot;Total Value (USD)&quot;) </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+</div>
+<div id="ggplot2-tips" class="section level2">
+<h2>ggplot2 tips</h2>
+<ul>
+<li>Can do a lot with <code>ggplot(data, aes()) + geom</code>!</li>
+<li>Data must be a data frame (not a matrix or collection of vectors)</li>
+<li>The <code>ggplot2</code> documentation has many good examples</li>
+<li>Prepare to invest some time if you want master ggplot2; <a href="https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf">the RStudio ggplot2 cheat sheet</a> can help.</li>
+</ul>
+</div>
+<div id="resources" class="section level2">
+<h2>Resources</h2>
+<ul>
+<li><p>Chang, W. (2013), <em>R Graphics Cookbook</em>, O’Reilly.</p></li>
+<li><p>Wickham, H. (2016), <em>ggplot2: Elegant Graphics for Data Analysis</em> (2nd ed), Springer.</p></li>
+<li><p>Wickham, H. and Grolemund G. (2017), <em>R for Data Science</em>. O’Reilly. <a href="http://r4ds.had.co.nz/" class="uri">http://r4ds.had.co.nz/</a></p></li>
+</ul>
+<p><strong>ggplot2 cheat sheet</strong><br />
+<a href="https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf" class="uri">https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf</a></p>
+<p><strong>Cookbook for R - Graphs</strong><br />
+<a href="http://www.cookbook-r.com/Graphs/" class="uri">http://www.cookbook-r.com/Graphs/</a></p>
+<p><strong>Official ggplot2 web site</strong><br />
+<a href="https://ggplot2.tidyverse.org/" class="uri">https://ggplot2.tidyverse.org/</a></p>
 </div>
 
 
