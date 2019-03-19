@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Data Visualization</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">PhD+ Module: Data Science Essentials in R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="intror.html">1. Intro to R</a>
+</li>
+<li>
+  <a href="dataprep.html">2. Data Prep</a>
+</li>
+<li>
+  <a href="dataviz.html">3. Data Viz</a>
+</li>
+<li>
+  <a href="linearmodel.html">4. Linear Models</a>
+</li>
+<li>
+  <a href="modelviz.html">5. Model Viz</a>
+</li>
+<li>
+  <a href="shinyr.html">6. Interactive Viz</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Data Visualization</h1>
+
+</div>
+
+
+<div id="get-ready" class="section level1">
+<h1>Get Ready!</h1>
+<ul>
+<li>Download <a href="https://github.com/uvastatlab/phdplus/raw/master/datavizR.zip">datavizR.zip</a>. It contains an R script (dat_viz.R) and the content of this page as a slide deck (ggplot2-pres.pdf).</li>
+<li>Unzip it and put it somwehere you can locate it on your machine.</li>
+</ul>
+</div>
+<div id="data-visualization" class="section level1">
+<h1>Data Visualization</h1>
+<p>Patterns, trends, variability, connections, groups, remarkable data, and wrong data are hard to see in a tabular or raw data. Representing or summarizing data in pictures allows us to easily see patterns, trends, errors, etc</p>
+<p>Data visualization (ie “graphing” or “plotting”) is an essential component of an effective data analysis. R was specifically designed to make data visualization fast, easy and practical.</p>
+<p>R comes with a <code>graphics</code> package, but we will use a package called <code>ggplot2</code></p>
+</div>
+<div id="about-ggplot2" class="section level1">
+<h1>About ggplot2</h1>
+<ul>
+<li><p>Developed by Hadley Wickham in 2005.</p></li>
+<li><p>Implements the graphics scheme described in the book <em>The Grammar of Graphics</em> by Leland Wilkinson.</p></li>
+<li><p>Uses a standardized system of syntax that makes it easy(-ish) to learn</p></li>
+<li><p>It takes care of a lot fiddly details such as colors, scales, and legend placement</p></li>
+<li><p>It does not do 3D or interactive graphics</p></li>
+</ul>
+<div id="the-grammar-of-graphics" class="section level2">
+<h2>The Grammar of Graphics</h2>
+<p>The <em>Grammar of Graphics</em> boiled down to 5 bullets, courtesy of Wickham (2016, p. 4):</p>
+<ul>
+<li><p>a statistical graphic is a mapping from data to <strong>aes</strong>thetic attributes (location, color, shape, size) of <strong>geom</strong>etric objects (points, lines, bars).</p></li>
+<li><p>the geometric objects are drawn in a specific <strong>coord</strong>inate system.</p></li>
+<li><p><strong>scale</strong>s control the mapping from data to aesthetics and provide tools to read the plot (ie, axes and legends).</p></li>
+<li><p>the plot may also contain <strong>stat</strong>istical transformations of the data (means, medians, bins of data, trend lines).</p></li>
+<li><p><strong>facet</strong>ing can be used to generate the same plot for different subsets of the data.</p></li>
+</ul>
+<div class="figure">
+<img src="images/ggbasics.jpg" />
+
+</div>
+<p>Source: github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf</p>
+</div>
+</div>
+<div id="basic-ggplot2-syntax" class="section level1">
+<h1>Basic ggplot2 syntax</h1>
+<p>The basic ggplot2 syntax specifies data, aesthetics and geometric shapes:</p>
+<p><code>ggplot(data, aes(x=, y=, color=, shape=, size=)) +</code><br />
+<code>geom_point()</code>, or <code>geom_histogram()</code>, or <code>geom_boxplot()</code>, etc.</p>
+<ul>
+<li><p>This combination is very effective for exploratory graphs.</p></li>
+<li><p>The data must be a data frame.</p></li>
+<li><p>The <code>aes()</code> function maps columns of the data frame to aesthetic properties of geometric shapes to be plotted.</p></li>
+<li><p><code>ggplot()</code> defines the plot; the <code>geoms</code> show the data; layers are added with <code>+</code></p></li>
+<li><p>Some examples should make this clear</p></li>
+</ul>
+</div>
+<div id="the-albemarle-county-homes-data" class="section level1">
+<h1>The Albemarle County homes data</h1>
+<p>We’ll demonstrate <code>ggplot2</code> using the Albemarle County real estate data, which was downloaded from Office of Geographic Data Services. See Michele Claibourn’s session for how data were obtained and prepared: <a href="https://uvastatlab.github.io/phdplus/dataprep.html" class="uri">https://uvastatlab.github.io/phdplus/dataprep.html</a></p>
+<pre class="r"><code>github_url &lt;- &quot;https://github.com/uvastatlab/phdplus/raw/master/data/albemarle_homes.rds&quot;
+homes &lt;- readRDS(url(github_url))</code></pre>
+<p>The <code>str</code> function allows us to take a peek at the structure of the data.</p>
+<pre class="r"><code>str(homes)</code></pre>
+<pre><code>## Classes &#39;spec_tbl_df&#39;, &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;: 32746 obs. of  26 variables:
+##  $ tmp              : chr  &quot;006000000011B0&quot; &quot;00600000003800&quot; &quot;007000000018B0&quot; &quot;007000000042A0&quot; ...
+##  $ yearbuilt        : num  2006 2003 1974 1954 1987 ...
+##  $ yearremodeled    : num  0 0 0 0 0 ...
+##  $ usecode          : chr  &quot;Single Family&quot; &quot;Single Family&quot; &quot;Single Family&quot; &quot;Single Family&quot; ...
+##  $ condition        : Factor w/ 7 levels &quot;None&quot;,&quot;Substandard&quot;,..: 5 5 5 5 5 4 5 5 5 5 ...
+##  $ finsqft          : num  1922 1848 1368 1092 1344 ...
+##  $ cooling          : Factor w/ 2 levels &quot;No Central Air&quot;,..: 2 2 1 1 2 1 2 1 1 2 ...
+##  $ fp_num           : num  1 0 0 0 0 0 1 0 0 2 ...
+##  $ bedroom          : num  3 3 3 4 3 5 3 2 4 3 ...
+##  $ fullbath         : num  3 2 1 1 2 2 2 1 1 3 ...
+##  $ halfbath         : num  0 0 0 0 0 0 0 1 0 0 ...
+##  $ totalrooms       : num  10 7 5 6 5 8 7 5 6 6 ...
+##  $ city             : Factor w/ 10 levels &quot;CHARLOTTESVILLE&quot;,..: 2 2 10 10 10 10 10 10 10 10 ...
+##  $ zip              : num  22932 22932 22940 22940 22940 ...
+##  $ lotsize          : num  5 61.19 5.39 5.8 2.34 ...
+##  $ landvalue        : num  109800 444100 100400 100700 66500 ...
+##  $ improvementsvalue: num  300100 79000 128400 77200 165900 ...
+##  $ totalvalue       : num  409900 523100 228800 177900 232400 ...
+##  $ lastsaleprice    : num  0 0 0 0 0 0 0 47000 0 0 ...
+##  $ lastsaledate     : POSIXct, format: &quot;2009-08-05&quot; &quot;1991-05-20&quot; ...
+##  $ age              : num  10 13 42 62 29 96 35 18 66 53 ...
+##  $ med_age          : num  17 17 33 33 33 33 33 37 37 40 ...
+##  $ fp               : num  1 0 0 0 0 0 1 0 0 1 ...
+##  $ landuse          : num  0 0 0 0 0 1 1 1 0 0 ...
+##  $ insub            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ remodel          : num  0 0 0 0 0 1 0 0 0 0 ...</code></pre>
+<p>We can see quite a few variables that might benefit from some visualization.</p>
+<p>In this session we’ll focus on the six largest cities in Albemarle county.</p>
+<pre class="r"><code>vars &lt;- c(&quot;CHARLOTTESVILLE&quot;, &quot;CROZET&quot;, &quot;EARLYSVILLE&quot;, 
+          &quot;KESWICK&quot;, &quot;SCOTTSVILLE&quot;, &quot;NORTH GARDEN&quot;)
+homes &lt;- homes %&gt;% 
+  filter(city %in% vars)
+homes$city &lt;- droplevels(homes$city)</code></pre>
+</div>
+<div id="ggplot2-examples" class="section level1">
+<h1>ggplot2 examples</h1>
+<div id="scatter-plot-of-totalvalue-vs-finsqft-colored-by-city" class="section level2">
+<h2>scatter plot of totalvalue vs finsqft colored by city</h2>
+<p>The first argument to <code>ggplot</code> is a data frame. In this case that’s the <code>homes</code> data frame. The next argument maps data to aesthetics using the <code>aes</code> function. It says map <code>finsqft</code> to the x-axis, <code>totalvalue</code> to the y-axis, and colors to <code>city</code>. Then we add points to the plot using <code>geom_point()</code>. The position and color of the points are determined by the aesthetic mappings we defined. Notice the open and closing parentheses for <code>geom_point()</code>. Don’t forget those! <code>geom_point</code> is a function and can take additional arguments.</p>
+<pre class="r"><code>library(ggplot2) # or library(tidyverse)
+ggplot(homes, aes(x=finsqft, y=totalvalue, 
+                 color=city)) + geom_point() </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>This scatter plot uses both shapes and colors to identify cities.</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue, 
+                 color=city, shape=city)) + 
+  geom_point() </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Since we have so much data our plot suffers from an enormous amount of overplotting. Later in the session we’ll review some strategies to address this.</p>
+</div>
+<div id="scatter-plot-colored-by-condition-size-by-bedroom" class="section level2">
+<h2>scatter plot colored by condition, size by Bedroom</h2>
+<p>In this plot we look just at Scottsville. Here condition is mapped to color and size to number of Bedrooms, which creates a second legend.</p>
+<pre class="r"><code>ggplot(filter(homes, city == &quot;SCOTTSVILLE&quot;), aes(x=finsqft, y=totalvalue, 
+                 color=condition, size=bedroom)) + 
+  geom_point() </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Again overplotting is a bit of an issue.</p>
+</div>
+<div id="add-multiple-geoms-points-and-smooth-line" class="section level2">
+<h2>add multiple geoms (points and smooth line)</h2>
+<p>We are not restricted to one geometric shape. Here we add a smooth trend line to summarize the relationship between <code>finsqft</code> and <code>totalvalue</code>.</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue, color=city)) + 
+  geom_point() + 
+  geom_smooth()</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="boxplot-statistical-transformation" class="section level2">
+<h2>boxplot (statistical transformation)</h2>
+<p>Some geoms refer to specific plots, such as boxplots. This plot allows us to examine the distribution of <code>finsqft</code> by <code>city</code>. The top of the box is the 75th percentile, the bottom is the 25th percentile, and the line in the middle is the median. The “whiskers” extended to the largest point not to exceed 1.5 times the interquartile range (the difference between the 75th and 25th percentile) from the median. Any points lying beyond this range <em>might</em> be considered unusual relative to the rest of the data. In this data, which is <em>very</em> skewed, we have many homes that appear “unusual” relative to the majority of homes.</p>
+<pre class="r"><code>ggplot(homes, aes(x=city, y=finsqft)) + 
+  geom_boxplot() </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+</div>
+<div id="moving-beyond-ggplot-geoms" class="section level1">
+<h1>Moving beyond <code>ggplot</code> + <code>geoms</code></h1>
+<p>A natural next step in exploratory graphing is to create plots of subsets of data. These are called facets in ggplot2.</p>
+<p>Use <code>facet_wrap()</code> if you want to facet by one variable and have <code>ggplot2</code> control the layout. Example:</p>
+<p><code>+ facet_wrap( ~ var)</code></p>
+<p>Use <code>facet_grid()</code> if you want to facet by one and/or two variables and control layout yourself.</p>
+<p>Examples:<br />
+<code>+ facet_grid(. ~ var1)</code> - facets in columns<br />
+<code>+ facet_grid(var1 ~ .)</code> - facets in rows<br />
+<code>+ facet_grid(var1 ~ var2)</code> - facets in rows and columns</p>
+<div id="facet_wrap-example" class="section level2">
+<h2><code>facet_wrap</code> example</h2>
+<p>Scatterplots of <code>totalvalue</code> versus <code>finsqft</code> conditioned on <code>city</code>.</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue)) + 
+  geom_point() + facet_wrap(~ city)</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="facet_grid-example-with-histograms" class="section level2">
+<h2><code>facet_grid</code> example with histograms</h2>
+<p>Here we use <code>facet_grid(city ~ .)</code> to place the plots on their own row, which shows distribution of <code>finsqft</code>. Note the use of <code>stat(density)</code> in <code>aes</code>, which maps the relative frequency to the y axis (instead of raw counts).</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y = stat(density))) +
+  geom_histogram() + facet_grid(city ~ .) </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+</div>
+<div id="modifying-the-coordinate-system" class="section level1">
+<h1>Modifying the coordinate system</h1>
+<ul>
+<li><code>coord_cartesian</code> allows us to zoom in on a plot, as if using magnifying glass</li>
+<li><code>coord_fixed</code> allows us to control “aspect ratio”</li>
+<li><code>coord_flip</code> allows us to flip the x and y axis</li>
+</ul>
+<div id="zoom-in-on-plot" class="section level2">
+<h2>zoom in on plot</h2>
+<p>This plot “zooms in” on the x-axis from 2000 to 3000 and on the y-axis from 200,000 to 500,000.</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue, 
+                 color=city)) + geom_point() +
+  coord_cartesian(xlim = c(2000,3000), ylim = c(2e5, 5e5))</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="flip-coordinate-axes" class="section level2">
+<h2>flip coordinate axes</h2>
+<p>This is our boxplot from earlier rotated.</p>
+<pre class="r"><code>ggplot(homes, aes(x=city, y=finsqft)) + 
+  geom_boxplot() + 
+  coord_flip()</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+</div>
+<div id="customizing-scales" class="section level1">
+<h1>Customizing scales</h1>
+<p>Scales control the mapping from data to aesthetics and provide tools to read the plot (ie, axes and legends).</p>
+<p>Every aesthetic has a default scale. To modify a scale, use a <code>scale</code> function.</p>
+<p>All scale functions have a common naming scheme: <code>scale</code> <code>_</code> name of aesthetic <code>_</code> name of scale</p>
+<p>Examples: <code>scale_y_continuous</code>, <code>scale_color_discrete</code>, <code>scale_fill_manual</code></p>
+<p>Heads up: The documentation for <code>ggplot2</code> scale functions will frequently use functions from the <code>scales</code> package (also by Wickham)!</p>
+<div id="update-scales-for-the-x-and-y-axis" class="section level2">
+<h2>update scales for the x and y-axis</h2>
+<p>Here we customize the x and y-axis by changing the labels. We use the <code>dollar</code> and <code>comma</code> functions from the scales package to format the labels.</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue, 
+                 color=city)) + geom_point() +
+  scale_y_continuous(labels = scales::dollar) +
+  scale_x_continuous(labels = scales::comma)</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="update-scale-for-color" class="section level2">
+<h2>update scale for color</h2>
+<p>Here we change the point colors, which in turn updates the legend. Notice that because the <code>fp</code> variable was stored as 0/1, we needed to convert it to a factor on-the-fly to map it to color.</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue, 
+                 color=factor(fp))) + geom_point() +
+  scale_color_manual(name=&quot;Fireplace&quot;,
+                     labels = c(&quot;No fireplace&quot;, &quot;At least one fireplace&quot;),
+                     values=c(&quot;red&quot;,&quot;blue&quot;))</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+</div>
+<div id="updating-themes-and-labels" class="section level1">
+<h1>Updating themes and labels</h1>
+<p>The default ggplot2 theme is excellent. It follows the advice of several landmark papers regarding statistics and visual perception. (Wickham 2016, p. 176)</p>
+<p>However you can change the theme using ggplot2’s themeing system. To date, there are seven built-in themes:</p>
+<ul>
+<li><code>theme_gray</code> (<em>default</em>)</li>
+<li><code>theme_bw</code></li>
+<li><code>theme_linedraw</code></li>
+<li><code>theme_light</code></li>
+<li><code>theme_dark</code></li>
+<li><code>theme_minimal</code></li>
+<li><code>theme_classic</code></li>
+</ul>
+<p>You can also update axis labels and titles using the <code>labs</code> function.</p>
+<div id="change-theme" class="section level2">
+<h2>change theme</h2>
+<p>Adding <code>theme_minimal()</code> produces a minimal plot with no background annotations.</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue, 
+                 color = city)) + geom_point() +
+  theme_minimal()</code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+<div id="update-labels" class="section level2">
+<h2>update labels</h2>
+<p>Here we update the x and y-axis labels and add a title.</p>
+<pre class="r"><code>ggplot(homes, aes(x=finsqft, y=totalvalue, 
+                 color = city)) + geom_point() +
+  labs(title=&quot;Total Value versus Finished Square Feet&quot;, 
+       x=&quot;Finished Square Feet&quot;, y=&quot;Total Value (USD)&quot;) </code></pre>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+</div>
+<div id="ggplot2-tips" class="section level1">
+<h1>ggplot2 tips</h1>
+<ul>
+<li>Can do a lot with <code>ggplot(data, aes()) + geom</code>!</li>
+<li>Data must be a data frame (not a matrix or collection of vectors)</li>
+<li>The <code>ggplot2</code> documentation has many good examples</li>
+<li>Prepare to invest some time if you want master ggplot2; <a href="https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf">the RStudio ggplot2 cheat sheet</a> can help.</li>
+</ul>
+</div>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<ul>
+<li><p>Chang, W. (2013), <em>R Graphics Cookbook</em>, O’Reilly.</p></li>
+<li><p>Wickham, H. (2016), <em>ggplot2: Elegant Graphics for Data Analysis</em> (2nd ed), Springer.</p></li>
+<li><p>Wickham, H. and Grolemund G. (2017), <em>R for Data Science</em>. O’Reilly. <a href="http://r4ds.had.co.nz/" class="uri">http://r4ds.had.co.nz/</a></p></li>
+</ul>
+<p><strong>ggplot2 cheat sheet</strong><br />
+<a href="https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf" class="uri">https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf</a></p>
+<p><strong>Cookbook for R - Graphs</strong><br />
+<a href="http://www.cookbook-r.com/Graphs/" class="uri">http://www.cookbook-r.com/Graphs/</a></p>
+<p><strong>Official ggplot2 web site</strong><br />
+<a href="https://ggplot2.tidyverse.org/" class="uri">https://ggplot2.tidyverse.org/</a></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
