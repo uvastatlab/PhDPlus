@@ -1,6 +1,12 @@
 # Exploratory data visualization with ggplot2
+<<<<<<< HEAD
 # phdplus - Spring 2019
 # Clay Ford: clayford@virginia.edu
+=======
+# Spring 2019
+# UVa StatLab
+# Clay Ford
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 
 
 # Helpful RStudio commands ------------------------------------------------
@@ -52,11 +58,16 @@ homes <- homes %>%
   filter(city %in% vars)
 
 # drop the empty city levels
+<<<<<<< HEAD
 levels(homes$city)
 table(homes$city)
 homes$city <- droplevels(homes$city)
   
 
+=======
+homes$city <- droplevels(homes$city)
+  
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 # One Variable - Continuous -----------------------------------------------
 
 
@@ -118,12 +129,29 @@ ggplot(homes, aes(x=finsqft, y = stat(density))) +
 
 # (1) Create a "true" histogram of totalvalue, the total value of the home. That
 # is, set y = stat(density). Set bins = 150.
+<<<<<<< HEAD
 
 
 # (2) repeat #1 but now also facet by zip
 
 
 # (3) repeat #3 but now also zoom in on x-axis from $0 to $1,000,000
+=======
+ggplot(homes, aes(x = totalvalue, y = stat(density))) + 
+  geom_histogram(bins = 150)
+
+# (2) repeat #1 but now also facet by zip
+ggplot(homes, aes(x = totalvalue, y = stat(density))) + 
+  geom_histogram(bins = 150) +
+  facet_wrap(~zip)
+
+
+# (3) repeat #3 but now also zoom in on x-axis from $0 to $1,000,000
+ggplot(homes, aes(x = totalvalue, y = stat(density))) + 
+  geom_histogram(bins = 150) +
+  facet_wrap(~zip) +
+  coord_cartesian(xlim = c(1,1e6))
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 
 
 
@@ -211,7 +239,11 @@ ggplot(homes, aes(x=fct_relevel(condition, nl), fill=factor(fp))) +
   scale_fill_discrete(name="Fireplaces", labels = c("None","At least one"))
 
 # We could also modify the data
+<<<<<<< HEAD
 # homes <- homes %>%
+=======
+# homes <- homes %>% 
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 #   mutate(fp = factor(fp, labels = c("None","At least one")))
 
 # An example with manually defined colors
@@ -230,6 +262,7 @@ ggplot(homes, aes(x=fct_relevel(condition, nl), fill=factor(fp))) +
 # YOUR TURN #2 ------------------------------------------------------------
 
 # (1) Create a barplot of counts for zip. Tip: make zip a factor!
+<<<<<<< HEAD
 
 
 
@@ -238,6 +271,16 @@ ggplot(homes, aes(x=fct_relevel(condition, nl), fill=factor(fp))) +
 
 
 
+=======
+ggplot(homes, aes(x = factor(zip))) +
+  geom_bar()
+
+# (2) Create a stacked proportional bar chart (ie, set position = "fill") for
+# zip using cooling as the fill variable.
+ggplot(homes, aes(x = factor(zip), fill = cooling)) +
+  geom_bar(position = "fill")
+ 
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 # (3) The following code attempts to show a proportional bar plot of number of
 # bedrooms (1-5) by city, but it doesn't work. Can you fix it?
 ggplot(filter(homes, bedroom %in% 1:5), 
@@ -300,6 +343,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue, color=cooling)) +
 # YOUR TURN #3 ------------------------------------------------------------
 
 # (1) Plot age vs. finsqft with geom_point(). Put finsqft on the y axis. 
+<<<<<<< HEAD
 
 
 
@@ -310,6 +354,21 @@ ggplot(homes, aes(x=finsqft, y=totalvalue, color=cooling)) +
 
 # (3) Repeat 2 but now also map color of points to fp
 
+=======
+ggplot(homes, aes(x = age, y = finsqft)) +
+  geom_point()
+
+# (2) Repeat 1 but now also zoom in on the x and y axis. Look at the last 100
+# years for houses with less than 5000 finsqft. Also, set shape = 1.
+ggplot(homes, aes(x = age, y = finsqft)) +
+  geom_point(shape = 1) +
+  coord_cartesian(xlim=c(0,100), ylim=c(0,5000)) 
+
+# (3) Repeat 2 but now also map color of points to fp
+ggplot(homes, aes(x = age, y = finsqft, color = fp)) +
+  geom_point(shape = 1) +
+  coord_cartesian(xlim=c(0,100), ylim=c(0,5000)) 
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 
 
 
@@ -411,7 +470,15 @@ p2 +
 # - zoom in on plot: x-axis (0, 10) y-axis (0, 1e6)
 # - Fix the y-axis to show the amount in dollars. 
 
+<<<<<<< HEAD
 
+=======
+ggplot(homes, aes(x = lotsize, y = totalvalue)) +
+  geom_point() +
+  geom_smooth() +
+  scale_y_continuous(labels = dollar) +
+  coord_cartesian(xlim = c(0,5), ylim = c(0,1e6))
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 
 
 
@@ -479,14 +546,26 @@ ggplot(homes, aes(x = finsqft, y = fp)) +
 
 
 # (1) Make a boxplot totalvalue by zip. Tip: use factor(zip)
+<<<<<<< HEAD
 
 
+=======
+ggplot(homes, aes(x = factor(zip), y = totalvalue)) +
+  geom_boxplot()
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 
 # (2) Make a stripchart of totalvalue by zip. Tip: use factor(zip)
 # - in geom_jitter() set width = 0.4 and alpha = 1/5
 # - format y axis as dollar and set limits to 0 - $1,000,000
+<<<<<<< HEAD
 
 
+=======
+ggplot(homes, aes(x = factor(zip), y = totalvalue)) +
+  geom_jitter(width = 0.4, height = 0, alpha = 1/5) +
+  scale_y_continuous(labels = dollar) +
+  coord_cartesian(ylim = c(0,1e6))
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 
 
 # Plotting two discrete integer variables ---------------------------------
@@ -554,6 +633,7 @@ years2
 
 # (1) create a line plot using the years2 dataframe that shows number of
 # remodels by year.
+<<<<<<< HEAD
 
 
 
@@ -565,6 +645,20 @@ years2
 
 
 
+=======
+ggplot(years2, aes(x=yearremodeled, y=n)) + 
+  geom_line() 
+
+# (2) What year saw a spike in homes remodeled?
+filter(years2, n > 200)
+
+# (3) What year did the big decline begin?
+filter(years2, yearremodeled > 2000)
+
+
+plotly::ggplotly(ggplot(years2, aes(x=yearremodeled, y=n)) + 
+           geom_line())
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 
 # Plotting with two data frames -------------------------------------------
 
@@ -909,6 +1003,7 @@ ggplot(filter(homes, totalvalue < 1e6 &
 
 # Appendix: adding uncertainty to graphs ----------------------------------
 
+<<<<<<< HEAD
 # Let's sample 100 homes from each city.
 set.seed(1)
 homes_sample <- homes %>% 
@@ -1005,6 +1100,71 @@ ggplot(median_DF, aes(x = city, y = median)) +
               width = 0.1, height = 0, alpha = 0.3) +
   geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, color = "red") +
   scale_y_continuous(labels = scales::dollar)
+=======
+
+# Example: add means and CIs to strip chart 
+# Data: chickwts (An experiment was conducted to measure and compare the
+# effectiveness of various feed supplements on the growth rate of chickens.)
+str(chickwts)
+
+sc <- ggplot(chickwts, aes(x=feed, y=weight)) + 
+  geom_jitter(width = 0.1, height = 0)
+sc
+
+# now to calculate means and standard errors
+chick2 <- chickwts %>% 
+  group_by(feed) %>% 
+  summarise(fMean = mean(weight),
+            fSE = sd(weight)/sqrt(length(weight)))
+
+# now add mean and error bars
+sc + geom_point(data=chick2, aes(x=feed, y=fMean), color="red", size=3) +
+  geom_errorbar(data=chick2, aes(x = feed, y = fMean,
+                                 ymin=fMean - 2*fSE, 
+                                 ymax=fMean + 2*fSE), 
+                width=0.1, color="red") +
+  labs(title="Mean Weight by Feed Type with 2*SE error bars")
+
+# another way using stat_summary; fun.data="mean_cl_normal" actually calls the 
+# function smean.cl.normal() from the Hmisc package. It uses the t distribution
+# to determine the multiplier of the standard error.
+ggplot(chickwts, aes(x=feed, y=weight)) + 
+  geom_point(position = position_jitter(w = 0.1, h = 0)) +
+  stat_summary(fun.data = "mean_cl_normal", color="red", geom="errorbar", width=0.1) +
+  stat_summary(fun.y = "mean", geom="point", color="red", size=3) +
+  labs(title="Mean Weight by Feed Type with 95% error bars")
+
+
+
+# single line graph of means at each time point with SE bars
+
+# Indometh data (comes with R)
+# Six subjects were given an intravenous injection of indomethacin at 11 times,
+# and each time plasma concentrations of indometacin was measured.
+
+# Here we make a line plot for each subject:
+ggplot(Indometh, aes(x=time,y=conc, group=Subject)) +
+  geom_line()
+
+# Let's say we wanted to create a single line graph of means at each time point
+# with SE bars.
+
+# first calculate means and SEs
+Indo2 <- Indometh %>% 
+  group_by(time) %>% 
+  summarise(tMean = mean(conc),
+            tSE = sd(conc)/sqrt(length(conc)))
+
+# now ready to create plot
+ggplot(Indo2, aes(x=time,y=tMean)) +
+  geom_line() +
+  geom_errorbar(aes(ymin=tMean-2*tSE, ymax=tMean+2*tSE), width=0.1)
+
+# or again we can use stat_summary()
+ggplot(Indometh, aes(x=time,y=conc)) +
+  stat_summary(fun.data="mean_cl_normal", geom="errorbar", width=0.1) +
+  stat_summary(fun.y = "mean", geom = "line")
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 
 
 # Appendix: Log Transformations in scatter plots --------------------------
@@ -1053,6 +1213,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue)) +
 # The scale_*_date and scale_*_datetime functions provide extra control over
 # scales that involve dates and date-times.
 
+<<<<<<< HEAD
 # Read in some stock price data and format date column
 library(lubridate)
 stock_prices <- read_csv("http://people.virginia.edu/~jcf2d/data/foxa.csv")
@@ -1060,24 +1221,46 @@ stock_prices <- stock_prices %>% mutate(Date = dmy(Date))
 
 # default plot of closing price over time
 ggplot(stock_prices, aes(x = Date, y = Close)) + geom_line()
+=======
+# Read in stock price data and format date column
+stock_prices <- read.csv("http://people.virginia.edu/~jcf2d/data/foxa.csv", 
+                         col.names = c("date","open","high","low","close","volume"),
+                         stringsAsFactors = FALSE)
+stock_prices$date <- as.Date(stock_prices$date, format = "%d-%b-%y")
+
+# default plot of closing price over time
+ggplot(stock_prices, aes(x = date, y = close)) + geom_line()
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
 
 # Examples of using scale_x_date to change scale of x axis
 
 # Every 2 months
+<<<<<<< HEAD
 ggplot(stock_prices, aes(x = Date, y = Close)) + 
+=======
+ggplot(stock_prices, aes(x = date, y = close)) + 
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
   geom_line() +
   scale_x_date(date_breaks = "2 months")
 
 # Every 2 months with formatted labels as Month Year
 # see ?strptime for date codes such as %B and %Y
+<<<<<<< HEAD
 ggplot(stock_prices, aes(x = Date, y = Close)) + 
+=======
+ggplot(stock_prices, aes(x = date, y = close)) + 
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
   geom_line() +
   scale_x_date(date_breaks = "2 months", 
                date_labels = "%B %Y")
 
 # Every 6 weeks with minor breaks set to 1 week and labels formatted as
 # Abbreviated Month
+<<<<<<< HEAD
 ggplot(stock_prices, aes(x = Date, y = Close)) + 
+=======
+ggplot(stock_prices, aes(x = date, y = close)) + 
+>>>>>>> 6ef51cf5a27588a56f813e8352653c807d6f7343
   geom_line() +
   scale_x_date(date_breaks = "6 weeks", 
                minor_breaks = "1 week", 
