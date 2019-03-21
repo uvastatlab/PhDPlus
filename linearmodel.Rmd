@@ -28,7 +28,7 @@ homes_tmp <- homes %>%
 
 # Get Ready!
 
-* Download [linearmodel.zip](https://github.com/uvastatlab/phdplus/raw/master/linearmodel.zip). It contains the R script we'll use today (linearmodel.R), an R script to recreate the introductory example here (intro_model.R), and a project file. 
+* Download [linearmodels.zip](https://github.com/uvastatlab/phdplus/raw/master/linearmodels.zip). It contains the R script we'll use today (linearmodel.R), an R script to recreate the introductory example here (intro_model.R), and a project file. 
 
 # Linear Modeling
 
