@@ -12,12 +12,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Get Ready!
+# Get Ready!
 
 - Download [datavizR.zip](https://github.com/uvastatlab/phdplus/raw/master/datavizR.zip). It contains an R script (dat_viz.R) and the content of this page as a slide deck (ggplot2-pres.pdf).
 - Unzip it and put it somwehere you can locate it on your machine.
 
-## Data Visualization
+# Data Visualization
 
 Patterns, trends, variability, connections, groups, remarkable data, and wrong data are hard to see in a tabular or raw data. Representing or summarizing data in pictures allows us to easily see patterns, trends, errors, etc
 
@@ -26,7 +26,7 @@ Data visualization (ie "graphing" or "plotting") is an essential component of an
 R comes with a `graphics` package, but we will use a package called `ggplot2`
 
 
-## About ggplot2
+# About ggplot2
 
 - Developed by Hadley Wickham in 2005.
 
@@ -39,7 +39,7 @@ R comes with a `graphics` package, but we will use a package called `ggplot2`
 - It does not do 3D or interactive graphics
 
   
-### The Grammar of Graphics
+## The Grammar of Graphics
 
 The *Grammar of Graphics* boiled down to 5 bullets, courtesy of Wickham (2016, p. 4):
 
@@ -58,7 +58,7 @@ The *Grammar of Graphics* boiled down to 5 bullets, courtesy of Wickham (2016, p
 
 Source: github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf
 
-## Basic ggplot2 syntax
+# Basic ggplot2 syntax
 
 The basic ggplot2 syntax specifies data, aesthetics and geometric shapes:
 
@@ -75,7 +75,7 @@ The basic ggplot2 syntax specifies data, aesthetics and geometric shapes:
 
 - Some examples should make this clear
 
-## The Albemarle County homes data
+# The Albemarle County homes data
 
 ```{r echo=FALSE, message=FALSE}
 library(tidyverse)
@@ -110,9 +110,9 @@ homes$city <- droplevels(homes$city)
 ```
 
 
-## ggplot2 examples
+# ggplot2 examples
 
-### scatter plot of totalvalue vs finsqft colored by city
+## scatter plot of totalvalue vs finsqft colored by city
 
 The first argument to `ggplot` is a data frame. In this case that's the `homes` data frame. The next argument maps data to aesthetics using the `aes` function. It says map `finsqft` to the x-axis, `totalvalue` to the y-axis, and colors to `city`. Then we add points to the plot using `geom_point()`. The position and color of the points are determined by the aesthetic mappings we defined. Notice the open and closing parentheses for `geom_point()`. Don't forget those! `geom_point` is a function and can take additional arguments.
 
@@ -135,7 +135,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
 Since we have so much data our plot suffers from an enormous amount of overplotting. Later in the session we'll review some strategies to address this.
 
 
-### scatter plot colored by condition, size by Bedroom
+## scatter plot colored by condition, size by Bedroom
 
 In this plot we look just at Scottsville. Here condition is mapped to color and size to number of Bedrooms, which creates a second legend.
 
@@ -147,7 +147,7 @@ ggplot(filter(homes, city == "SCOTTSVILLE"), aes(x=finsqft, y=totalvalue,
 
 Again overplotting is a bit of an issue.
 
-### add multiple geoms (points and smooth line)
+## add multiple geoms (points and smooth line)
 
 We are not restricted to one geometric shape. Here we add a smooth trend line to summarize the relationship between `finsqft` and `totalvalue`. 
 
@@ -157,7 +157,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue, color=city)) +
   geom_smooth()
 ```
 
-### boxplot (statistical transformation)
+## boxplot (statistical transformation)
 
 Some geoms refer to specific plots, such as boxplots. This plot allows us to examine the distribution of `finsqft` by `city`. The top of the box is the 75th percentile, the bottom is the 25th percentile, and the line in the middle is the median. The "whiskers" extended to the largest point not to exceed 1.5 times the interquartile range (the difference between the 75th and 25th percentile) from the median. Any points lying beyond this range _might_ be considered unusual relative to the rest of the data. In this data, which is _very_ skewed, we have many homes that appear "unusual" relative to the majority of homes. 
 
@@ -167,7 +167,7 @@ ggplot(homes, aes(x=city, y=finsqft)) +
   geom_boxplot() 
 ```
 
-## Moving beyond `ggplot` + `geoms`
+# Moving beyond `ggplot` + `geoms`
 
 A natural next step in exploratory graphing is to create plots of subsets of data. These are called facets in ggplot2.
 
@@ -184,7 +184,7 @@ Examples:
 
 
 
-### `facet_wrap` example
+## `facet_wrap` example
 
 Scatterplots of `totalvalue` versus `finsqft` conditioned on `city`.
 
@@ -194,7 +194,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue)) +
 
 ```
 
-### `facet_grid` example with histograms
+## `facet_grid` example with histograms
 
 Here we use `facet_grid(city ~ .)` to place the plots on their own row, which shows distribution of `finsqft`. Note the use of `stat(density)` in `aes`, which maps the relative frequency to the y axis (instead of raw counts).
 
@@ -207,13 +207,13 @@ ggplot(homes, aes(x=finsqft, y = stat(density))) +
 
 
 
-## Modifying the coordinate system
+# Modifying the coordinate system
 
 - `coord_cartesian` allows us to zoom in on a plot, as if using magnifying glass
 - `coord_fixed` allows us to control "aspect ratio"
 - `coord_flip` allows us to flip the x and y axis
 
-### zoom in on plot
+## zoom in on plot
 
 This plot "zooms in" on the x-axis from 2000 to 3000 and on the y-axis from 200,000 to 500,000.
 
@@ -223,7 +223,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
   coord_cartesian(xlim = c(2000,3000), ylim = c(2e5, 5e5))
 ```
 
-### flip coordinate axes
+## flip coordinate axes
 
 This is our boxplot from earlier rotated. 
 
@@ -235,7 +235,7 @@ ggplot(homes, aes(x=city, y=finsqft)) +
 ```
 
 
-## Customizing scales
+# Customizing scales
 
 Scales control the mapping from data to aesthetics and provide tools to read the plot (ie, axes and legends).
 
@@ -248,7 +248,7 @@ Examples: `scale_y_continuous`, `scale_color_discrete`, `scale_fill_manual`
 
 Heads up: The documentation for `ggplot2` scale functions will frequently use functions from the `scales` package (also by Wickham)!
 
-### update scales for the x and y-axis
+## update scales for the x and y-axis
 
 Here we customize the x and y-axis by changing the labels. We use the `dollar` and `comma` functions from the scales package to format the labels.
 
@@ -260,7 +260,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
 
 ```
 
-### update scale for color
+## update scale for color
 
 Here we change the point colors, which in turn updates the legend. Notice that because the `fp` variable was stored as 0/1, we needed to convert it to a factor on-the-fly to map it to color. 
 
@@ -275,7 +275,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
 
 
 
-## Updating themes and labels
+# Updating themes and labels
 
 The default ggplot2 theme is excellent. It follows the advice of several landmark papers regarding statistics and visual perception. (Wickham 2016, p. 176)
 
@@ -292,7 +292,7 @@ However you can change the theme using ggplot2's themeing system. To date, there
 You can also update axis labels and titles using the `labs` function.
 
 
-### change theme
+## change theme
 
 Adding `theme_minimal()` produces a minimal plot with no background annotations.
 
@@ -303,7 +303,7 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
 
 ```
 
-### update labels
+## update labels
 
 Here we update the x and y-axis labels and add a title.
 
@@ -317,14 +317,14 @@ ggplot(homes, aes(x=finsqft, y=totalvalue,
 
 
 
-## ggplot2 tips
+# ggplot2 tips
 
 - Can do a lot with `ggplot(data, aes()) + geom`!
 - Data must be a data frame (not a matrix or collection of vectors)
 - The `ggplot2` documentation has many good examples
 - Prepare to invest some time if you want master ggplot2; [the RStudio ggplot2 cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) can help.
 
-## Resources
+# Resources
 
 * Chang, W. (2013), _R Graphics Cookbook_, O'Reilly.
 
