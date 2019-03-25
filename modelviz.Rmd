@@ -12,13 +12,13 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Get Ready!
+# Get Ready!
 
 
-- Download [modelvizR.zip](https://github.com/uvastatlab/phdplus/raw/master/datavizR.zip). It contains an R script (dat_viz.R) and the content of this page as a slide deck (vmcr-pres.pdf).
-- Unzip it and put it somwehere you can locate it on your machine.
+- Download [modelvizR.zip](https://github.com/uvastatlab/phdplus/raw/master/modelvizR.zip) to your computer. It contains an R script and the content of this page as a slide deck. Save it somewhere easy to find. 
+- Unzip modelvizR.zip. (*Mac*: Double click the zipped file. *Win*: Right-click on the zip file and select "Extract All...")
 
-## Motivation
+# Motivation
 
 Statistical modeling in R often produces a large table of coefficients. Some of these numbers can be hard to interpret because of...
 
@@ -30,7 +30,7 @@ In addition, while R prints these tables acceptably in the console, they're not 
 
 This session seeks to address these issues.
 
-## Goals 
+# Goals 
 
 Get you started with...
 
@@ -40,7 +40,7 @@ Get you started with...
 
 
 
-## Example: statistical model with non-linear effects
+# Example: statistical model with non-linear effects
 
 Modeling Pineo-Porter prestige score for occupation as a function of average occupation `income`, percentage of `women` in occupation, and average `education` of people in occupation. (example from `effects` package; n = 102; 1971)
 
@@ -59,7 +59,7 @@ mod.pres <- lm(prestige ~ log(income, 10) +
 Notice the model specifies the effects of education and women as non-linear (polynomials of degree 3 and 2, respectively). 
 
 
-### Summary of statistical model
+## Summary of statistical model
 
 What are we to make of these coefficients? It is apparent the effects are significant. We should shift focus to the pattern and magnitude of the effects, as well as the scientific significance. 
 
@@ -68,7 +68,7 @@ summary(mod.pres)
 ```
 
 
-### Getting expected values with our model
+## Getting expected values with our model
 
 Our model is just a math formula. Plug in some values for `income`, `education` and `women` and it will give an expected `prestige` score.
 
@@ -81,7 +81,7 @@ predict(mod.pres, data.frame(income = 6000,
 
 ```
 
-### Uncertainty in our expected values
+## Uncertainty in our expected values
 
 Our expected values are just estimates. There is uncertainty in how close our estimate is to the _true_ value. We can use `predict` to calculate 95% confidence intervals for our expected values
 
@@ -93,7 +93,7 @@ predict(mod.pres, data.frame(income = 6000,
 ```
 
 
-### An effect plot
+## An effect plot
 
 We can plot the expected `prestige` values for the varying levels of education along with the uncertainty, creating an _effect plot_. The _effect_ of education is more pronounced from 10 - 14. This is hard to see in the table of coefficients.
 
@@ -114,7 +114,7 @@ ggplot(as.data.frame(p.out), aes(x = 7:16, y = fit)) +
 ```
 
 
-### Using the `effects` package
+## Using the `effects` package
 
 The `effects` package provides functions to help us more easily create effect plots. Here's how we could create the effect plot on the previous slide.
 
@@ -123,7 +123,7 @@ library(effects)
 plot(Effect("education", mod.pres))
 ```
 
-### Creating a data frame for plotting
+## Creating a data frame for plotting
 
 The `effects` package has a `plot` method that generates plots using the `lattice` package.
 
@@ -138,7 +138,7 @@ head(e.df, n = 3)
 ```
 
 
-### Using an `effects` data frame for plotting
+## Using an `effects` data frame for plotting
 
 ```{r echo=TRUE, fig.height=4.5}
 ggplot(e.df, aes(x = education, y = fit)) + 
@@ -150,7 +150,7 @@ ggplot(e.df, aes(x = education, y = fit)) +
 
 
 
-## Another example: statistical model with interaction
+# Another example: statistical model with interaction
 
 Modeling the probability of volunteering for psychological research as function of `sex`, `neuroticism`, and `extraversion`. `neuroticism` and `extraversion` are numeric values from a personality inventory. Notice the interaction. (example from `effects` package; n = 1421; 1987)
 
@@ -161,7 +161,7 @@ mod.cowles <- glm(volunteer ~ sex +
                   data=Cowles, family=binomial)
 ```
 
-### Summary of statistical model
+## Summary of statistical model
 
 What are we to make of the interaction coefficient? It is apparent the interaction is significant, but how do `neuroticism` and `extraversion` interact to affect the probability of volunteering? 
 
@@ -170,7 +170,7 @@ summary(mod.cowles)
 ```
 
 
-### Examine interaction with an effect plot
+## Examine interaction with an effect plot
 
 Using the `effects` package. It appears the effect of `neuroticism` on `volunteer` is positive for lower values of `extraversion` but negative for higher values of `extraversion`.
 
@@ -179,7 +179,7 @@ plot(Effect(c("neuroticism","extraversion"), mod.cowles))
 ```
 
 
-### Create a data frame for plotting
+## Create a data frame for plotting
 
 Calling `as.data.frame` on an `Effect` object returns a data frame we can use to create our own plots.
 
@@ -191,7 +191,7 @@ head(eff.df, n = 3)
 ```
 
 
-### Effect plot using `ggplot`
+## Effect plot using `ggplot`
 
 ```{r echo=TRUE, fig.height=4.5}
 ggplot(eff.df, aes(x = neuroticism, y = fit)) +
@@ -201,7 +201,7 @@ ggplot(eff.df, aes(x = neuroticism, y = fit)) +
   facet_wrap(~extraversion, labeller = "label_both")
 ```
 
-### The `ggeffects` package
+## The `ggeffects` package
 
 This workshop focuses on the `effects` package by John Fox. 
 
@@ -209,11 +209,11 @@ Another package of interest is the `ggeffects` package by Daniel Lüdeck.
 
 The `ggeffects` package provides plotting functions that produces plots using `ggplot2`.
 
-`ggeffects` is a younger package, currently at version 0.8. The `effects` package is older, currently at version 4.0. 
+`ggeffects` is a younger package, currently at version 0.9. The `effects` package is older, currently at version 4.1. 
 
 
 
-## Customizing effect estimates
+# Customizing effect estimates
 
 We may want to set the levels of the predictors in our effect plots as opposed to letting the `effects` package do it for us.
 
@@ -223,7 +223,7 @@ We can do that with the `xlevels` and `fixed.predictors` arguments for the `Effe
 
 
 
-### Setting values of the focal predictors
+## Setting values of the focal predictors
 
 The `effects` package calls those predictors that appear in effect plots "focal predictors". We can set focal predictor values using the `xlevels` argument.
 
@@ -231,9 +231,9 @@ The `xlevels` argument requires a named list, where the names are the variables.
 
 By default numeric predictors are represented by five values equally spaced over their range and then rounded to 'nice' numbers
 
-### How to see the focal predictor values
+## How to see the focal predictor values
 
-The `Effect` function returns a list that contains an object called `x`. The `x` object is a data frame contains the focal predictor values.
+The `Effect` function returns a list that contains an object called `x`. The `x` object is a data frame that contains the focal predictor values.
 
 ```{r echo=TRUE}
 e <- Effect(c("neuroticism","extraversion"), mod.cowles)
@@ -241,7 +241,7 @@ sapply(e$x, unique)
 ```
 
 
-### Setting values of the focal predictors
+## Setting values of the focal predictors
 
 
 Set neuroticism to range from 2 - 20 and extraversion to 5, 10, 15, and 20.
@@ -254,7 +254,7 @@ e <- Effect(focal.predictors = c("neuroticism",
                            extraversion = c(5,10,15,20)))
 ```
 
-### The updated effect plot
+## The updated effect plot
 
 ```{r echo=TRUE}
 plot(e, rug=FALSE)
@@ -263,7 +263,7 @@ plot(e, rug=FALSE)
 
 
 
-### Setting values of the fixed predictors
+## Setting values of the fixed predictors
 
 The `effects` package calls those predictors that _do not_ appear in effect plots "fixed predictors". We can set fixed predictor values using the `fixed.predictors` argument.
 
@@ -274,7 +274,7 @@ The `fixed.predictors` argument requires a named list, where the names are eithe
 
 In most cases, the defaults for fixed predictors are probably fine. But is good to know what they're being set to and how to change them.
 
-### How to see the fixed predictor values
+## How to see the fixed predictor values
 
 The `Effect` function returns a list that contains an object called `model.matrix`. The `model.matrix` contains the values used to generate the effect estimates
 
@@ -284,7 +284,7 @@ head(e$model.matrix)
 
 Notice `sexmale` is set to 0.45, which is the proportion of males.
 
-### Example of setting values of fixed predictors
+## Example of setting values of fixed predictors
 
 Set the `sex` predictor to "male". Notice we have to use the label "sexmale" since that is what is used in the model output. We also have to use the number 1 since `sex` is a factor.
 
@@ -296,7 +296,7 @@ e <- Effect(focal.predictors = c("neuroticism",
               list(given.values = c(sexmale = 1)))
 ```
 
-### Example of setting values of fixed predictors
+## Example of setting values of fixed predictors
 
 Change the "typical" value from the mean to the median for the Prestige model.
 
@@ -311,7 +311,7 @@ The predictors _not_ in the model, `income` and `women`, will be set to their me
 
 
 
-## Communicating results
+# Communicating results
 
 Once we fit and visualize statistical models, we often need to communicate those results to an audience.
 
@@ -322,7 +322,7 @@ Two major drawbacks to that approach:
 1. manual and inefficient; prone to human error
 2. creates a lot of repeated steps if you need to update your analysis (ie, have to copy-and-paste stuff again)
 
-### R Markdown
+## R Markdown
 
 A better approach to communicating results is the R Markdown platform.
 
@@ -333,7 +333,7 @@ It is excellent and unrivaled for creating presentations and informal reports th
 It is also rapidly progressing as a platform for writing journal articles. 
 
 
-### What is R Markdown?
+## What is R Markdown?
 
 Markdown is a simple markup language. For example:
 
@@ -349,7 +349,7 @@ That previous line was generated with the following R Markdown syntax:
 `` The adjusted R-squared of the prestige model is `r knitr::inline_expr("round(summary(mod.pres)$adj.r.squared, 2)")` ``
 
 
-### Starting an R Markdown document
+## Starting an R Markdown document
 
 Writing out these instructions makes it appear more complicated than it really is.
 
@@ -361,16 +361,16 @@ Writing out these instructions makes it appear more complicated than it really i
 
 4. Select the output format (HTML, PDF, Word) and click OK. RStudio generates an `Rmd` file with some text and formatting to get you started. 
 
-### The R Markdown dialog
+## The R Markdown dialog
 
 ![](images/Rmd_dialog.jpg)
 
 
-### The R Markdown template
+## The R Markdown template
 
 ![](images/rmd_template.jpg)
 
-### Knitting an R Markdown document
+## Knitting an R Markdown document
 
 R Markdown uses the `knitr` package to compile the `Rmd` file into output. Hence, we "knit" the `Rmd` file.
 
@@ -385,11 +385,11 @@ Knit the file as often as you like to see your changes.
 - `Ctrl + Shift + K` (Win/Linux)
 - `Command + Shift + K` (Mac)
 
-### The result of knitting the Rmd template
+## The result of knitting the Rmd template
 
 ![](images/rmd_output.jpg)
 
-### Inserting an R code chunk
+## Inserting an R code chunk
 
 R Code in an R Markdown file is called a "chunk". To insert a code chunk:
 
@@ -402,7 +402,7 @@ The code chunk is highlighted and delimited by 3 backticks. The opening delimite
 
 Enter R code between the delimiters.
 
-### Entering R code 
+## Entering R code 
 
 After you enter R code and knit the Rmd file, the R code will execute and the output will be displayed.
 
@@ -417,7 +417,7 @@ hist(rnorm(100))
 ```
 
 
-### Using options with code chunks
+## Using options with code chunks
 
 We can add options after the `r` in `{r}` to change how code is executed. Separate multiple options with a comma.
 
@@ -431,14 +431,14 @@ Some common options:
 
 ![](images/code_chunk3.jpg)
 
-### Example of code chunk using specified options 
+## Example of code chunk using specified options 
 
 ```{r echo=TRUE, fig.height=5, fig.width=5}
 hist(rnorm(100))
 ```
 
 
-### R Markdown tips
+## R Markdown tips
 
 - R Markdown files are compiled in their own _environment_; that means any data or packages need to be loaded in the R Markdown file
 
@@ -451,7 +451,7 @@ hist(rnorm(100))
 - Remember, R Markdown generates an output file, such as an HTML or PDF file; the output file is usually what you want to show or send to your audience
 
 
-### Time to practice
+## Time to practice
 
 The best way to learn R Markdown is to start using it. Let's do an exercise:
 
@@ -466,7 +466,7 @@ R Markdown resources in RStudio:
 
 
 
-## Formatting coefficient tables with `stargazer`
+# Formatting coefficient tables with `stargazer`
 
 Recall the summary tables of our models.
 
@@ -475,7 +475,7 @@ They look OK in the console, but when it's time for publication or presentation 
 The `stargazer` package generates LaTeX code, HTML code and ASCII text for well-formatted tables.
 
 
-### `stargazer` basic usage
+## `stargazer` basic usage
 
 Use the `stargazer` function with a model object. For example:
 
@@ -492,12 +492,11 @@ Use the `type` argument to switch format to "text" or "html". For example:
 stargazer(mod.cowles, type = "text")
 ```
 
-
-### Example of default `stargazer` table (text)
+## Example of default `stargazer` table (text)
 
 ![](images/stargazer.jpg)
 
-### Common `stargazer` options
+## Common `stargazer` options
 
 - Using `stargazer` with multiple models produces a single table with results from multiple models
 - Use the `title` argument to give the table a title (eg: `title = "Regression results"`)
@@ -513,11 +512,11 @@ stargazer(mod.cowles, type = "text",
 ```
 
 
-### Example of `stargazer` table 
+## Example of `stargazer` table 
 
 ![](images/stargazer2.jpg)
 
-### Using `stargazer` with R Markdown
+## Using `stargazer` with R Markdown
 
 * To insert a `stargazer` table into R Markdown, add the following code chunk options 
     * `results ='asis'` (treat HTML as HTML, etc)
@@ -526,7 +525,7 @@ stargazer(mod.cowles, type = "text",
 * For PDF output, set `type = "latex"` and `header = FALSE` in `stargazer()`
 
 
-### Example of `stargazer` table in R Markdown
+## Example of `stargazer` table in R Markdown
 
 ```{r message = FALSE, results="asis", echo=TRUE}
 library(stargazer)
@@ -537,7 +536,7 @@ stargazer(mod.cowles, type = "html",
 ```
 
 
-### Modifying the coefficient names
+## Modifying the coefficient names
 
 The `covariate.labels` argument allows you to change the coefficient names. 
 
@@ -553,7 +552,7 @@ stargazer(mod.cowles, type = "html",
 
 
 
-### `stargazer` styles
+## `stargazer` styles
 
 `stargazer` provides built-in support for several social science academic journals. Use the following with the `style` argument:
 
@@ -569,7 +568,7 @@ stargazer(mod.cowles, type = "html",
 - `"qje"`	 Quarterly Journal of Economics
 
 
-### `stargazer` table with `apsr` style
+## `stargazer` table with `apsr` style
 
 ```{r results='asis', echo=TRUE}
 stargazer(mod.cowles, type = "html", 
@@ -582,7 +581,7 @@ stargazer(mod.cowles, type = "html",
 ```
 
 
-### `stargazer` has many more options
+## `stargazer` has many more options
 
 * The `stargazer` function is very powerful and has many arguments
 * Go to `?stargazer` and run the Examples
@@ -593,14 +592,14 @@ stargazer(mod.cowles, type = "html",
     * apsrtable
     * huxtable
     
-### Time to practice
+## Time to practice
 
 The best way to learn stargazer is to start using it. Let's do an exercise:
 
 https://at.virginia.edu/2IalVnD
 
 
-## References
+# References
 
 - Fox, J. and S. Weisberg (2018). Visualizing Fit and Lack of Fit in Complex Regression Models: Effect Plots with Partial Residuals. _Journal of Statistical Software_ 87:9, 1-27, <https://www.jstatsoft.org/article/view/v087i09>
 

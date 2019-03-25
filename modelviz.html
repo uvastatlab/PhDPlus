@@ -421,15 +421,15 @@ div.tocify {
 </div>
 
 
-<div id="get-ready" class="section level2">
-<h2>Get Ready!</h2>
+<div id="get-ready" class="section level1">
+<h1>Get Ready!</h1>
 <ul>
-<li>Download <a href="https://github.com/uvastatlab/phdplus/raw/master/datavizR.zip">modelvizR.zip</a>. It contains an R script (dat_viz.R) and the content of this page as a slide deck (vmcr-pres.pdf).</li>
-<li>Unzip it and put it somwehere you can locate it on your machine.</li>
+<li>Download <a href="https://github.com/uvastatlab/phdplus/raw/master/modelvizR.zip">modelvizR.zip</a> to your computer. It contains an R script and the content of this page as a slide deck. Save it somewhere easy to find.</li>
+<li>Unzip modelvizR.zip. (<em>Mac</em>: Double click the zipped file. <em>Win</em>: Right-click on the zip file and select “Extract All…”)</li>
 </ul>
 </div>
-<div id="motivation" class="section level2">
-<h2>Motivation</h2>
+<div id="motivation" class="section level1">
+<h1>Motivation</h1>
 <p>Statistical modeling in R often produces a large table of coefficients. Some of these numbers can be hard to interpret because of…</p>
 <ul>
 <li>scale (eg, log-odds)</li>
@@ -439,8 +439,8 @@ div.tocify {
 <p>In addition, while R prints these tables acceptably in the console, they’re not quite ready for papers and presentations.</p>
 <p>This session seeks to address these issues.</p>
 </div>
-<div id="goals" class="section level2">
-<h2>Goals</h2>
+<div id="goals" class="section level1">
+<h1>Goals</h1>
 <p>Get you started with…</p>
 <ul>
 <li>visualizing and communicating statistical models with effect plots</li>
@@ -448,8 +448,8 @@ div.tocify {
 <li>creating nicely-formatted tables of model summaries for papers and presentations</li>
 </ul>
 </div>
-<div id="example-statistical-model-with-non-linear-effects" class="section level2">
-<h2>Example: statistical model with non-linear effects</h2>
+<div id="example-statistical-model-with-non-linear-effects" class="section level1">
+<h1>Example: statistical model with non-linear effects</h1>
 <p>Modeling Pineo-Porter prestige score for occupation as a function of average occupation <code>income</code>, percentage of <code>women</code> in occupation, and average <code>education</code> of people in occupation. (example from <code>effects</code> package; n = 102; 1971)</p>
 <pre class="r"><code>library(effects)</code></pre>
 <pre class="r"><code>mod.pres &lt;- lm(prestige ~ log(income, 10) + 
@@ -457,8 +457,8 @@ div.tocify {
                  poly(women, 2),
                data=Prestige)</code></pre>
 <p>Notice the model specifies the effects of education and women as non-linear (polynomials of degree 3 and 2, respectively).</p>
-<div id="summary-of-statistical-model" class="section level3">
-<h3>Summary of statistical model</h3>
+<div id="summary-of-statistical-model" class="section level2">
+<h2>Summary of statistical model</h2>
 <p>What are we to make of these coefficients? It is apparent the effects are significant. We should shift focus to the pattern and magnitude of the effects, as well as the scientific significance.</p>
 <pre class="r"><code>summary(mod.pres)</code></pre>
 <pre><code>## 
@@ -486,8 +486,8 @@ div.tocify {
 ## Multiple R-squared:  0.8564, Adjusted R-squared:  0.8474 
 ## F-statistic: 94.46 on 6 and 95 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
-<div id="getting-expected-values-with-our-model" class="section level3">
-<h3>Getting expected values with our model</h3>
+<div id="getting-expected-values-with-our-model" class="section level2">
+<h2>Getting expected values with our model</h2>
 <p>Our model is just a math formula. Plug in some values for <code>income</code>, <code>education</code> and <code>women</code> and it will give an expected <code>prestige</code> score.</p>
 <p>To better understand the effect of <code>education</code>, we could set income to, say, 6000 and women to 20, and then get expected prestige scores for multiple values of <code>education</code> (say, 8 - 12)</p>
 <pre class="r"><code>predict(mod.pres, data.frame(income = 6000, 
@@ -496,8 +496,8 @@ div.tocify {
 <pre><code>##        1        2        3        4        5 
 ## 34.44333 36.58763 40.20733 44.81837 49.93670</code></pre>
 </div>
-<div id="uncertainty-in-our-expected-values" class="section level3">
-<h3>Uncertainty in our expected values</h3>
+<div id="uncertainty-in-our-expected-values" class="section level2">
+<h2>Uncertainty in our expected values</h2>
 <p>Our expected values are just estimates. There is uncertainty in how close our estimate is to the <em>true</em> value. We can use <code>predict</code> to calculate 95% confidence intervals for our expected values</p>
 <pre class="r"><code>predict(mod.pres, data.frame(income = 6000, 
                              women = 20, 
@@ -510,8 +510,8 @@ div.tocify {
 ## 4 44.81837 42.29673 47.34001
 ## 5 49.93670 47.00818 52.86521</code></pre>
 </div>
-<div id="an-effect-plot" class="section level3">
-<h3>An effect plot</h3>
+<div id="an-effect-plot" class="section level2">
+<h2>An effect plot</h2>
 <p>We can plot the expected <code>prestige</code> values for the varying levels of education along with the uncertainty, creating an <em>effect plot</em>. The <em>effect</em> of education is more pronounced from 10 - 14. This is hard to see in the table of coefficients.</p>
 <pre class="r"><code>library(ggplot2)
 p.out &lt;- predict(mod.pres, data.frame(income = 6000, 
@@ -526,15 +526,15 @@ ggplot(as.data.frame(p.out), aes(x = 7:16, y = fit)) +
   labs(x = &quot;education&quot;, y = &quot;prestige&quot;)</code></pre>
 <p><img src="modelviz_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
-<div id="using-the-effects-package" class="section level3">
-<h3>Using the <code>effects</code> package</h3>
+<div id="using-the-effects-package" class="section level2">
+<h2>Using the <code>effects</code> package</h2>
 <p>The <code>effects</code> package provides functions to help us more easily create effect plots. Here’s how we could create the effect plot on the previous slide.</p>
 <pre class="r"><code>library(effects)
 plot(Effect(&quot;education&quot;, mod.pres))</code></pre>
 <p><img src="modelviz_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
-<div id="creating-a-data-frame-for-plotting" class="section level3">
-<h3>Creating a data frame for plotting</h3>
+<div id="creating-a-data-frame-for-plotting" class="section level2">
+<h2>Creating a data frame for plotting</h2>
 <p>The <code>effects</code> package has a <code>plot</code> method that generates plots using the <code>lattice</code> package.</p>
 <p>However it’s straightforward to use <code>Effect</code> to create a data frame for creating your own plots.</p>
 <p>Call <code>as.data.frame</code> on an <code>Effect</code> object and save. Example:</p>
@@ -546,8 +546,8 @@ head(e.df, n = 3)</code></pre>
 ## 2       8.8 37.09672 1.721376 33.67936 40.51408
 ## 3      11.0 45.88984 1.464258 42.98292 48.79676</code></pre>
 </div>
-<div id="using-an-effects-data-frame-for-plotting" class="section level3">
-<h3>Using an <code>effects</code> data frame for plotting</h3>
+<div id="using-an-effects-data-frame-for-plotting" class="section level2">
+<h2>Using an <code>effects</code> data frame for plotting</h2>
 <pre class="r"><code>ggplot(e.df, aes(x = education, y = fit)) + 
   geom_line() +
   geom_ribbon(aes(ymin = lower, ymax = upper),
@@ -555,15 +555,15 @@ head(e.df, n = 3)</code></pre>
 <p><img src="modelviz_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 </div>
-<div id="another-example-statistical-model-with-interaction" class="section level2">
-<h2>Another example: statistical model with interaction</h2>
+<div id="another-example-statistical-model-with-interaction" class="section level1">
+<h1>Another example: statistical model with interaction</h1>
 <p>Modeling the probability of volunteering for psychological research as function of <code>sex</code>, <code>neuroticism</code>, and <code>extraversion</code>. <code>neuroticism</code> and <code>extraversion</code> are numeric values from a personality inventory. Notice the interaction. (example from <code>effects</code> package; n = 1421; 1987)</p>
 <pre class="r"><code>mod.cowles &lt;- glm(volunteer ~ sex + 
                     neuroticism + extraversion +
                     neuroticism:extraversion,
                   data=Cowles, family=binomial)</code></pre>
-<div id="summary-of-statistical-model-1" class="section level3">
-<h3>Summary of statistical model</h3>
+<div id="summary-of-statistical-model-1" class="section level2">
+<h2>Summary of statistical model</h2>
 <p>What are we to make of the interaction coefficient? It is apparent the interaction is significant, but how do <code>neuroticism</code> and <code>extraversion</code> interact to affect the probability of volunteering?</p>
 <pre class="r"><code>summary(mod.cowles)</code></pre>
 <pre><code>## 
@@ -593,14 +593,14 @@ head(e.df, n = 3)</code></pre>
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
 </div>
-<div id="examine-interaction-with-an-effect-plot" class="section level3">
-<h3>Examine interaction with an effect plot</h3>
+<div id="examine-interaction-with-an-effect-plot" class="section level2">
+<h2>Examine interaction with an effect plot</h2>
 <p>Using the <code>effects</code> package. It appears the effect of <code>neuroticism</code> on <code>volunteer</code> is positive for lower values of <code>extraversion</code> but negative for higher values of <code>extraversion</code>.</p>
 <pre class="r"><code>plot(Effect(c(&quot;neuroticism&quot;,&quot;extraversion&quot;), mod.cowles))</code></pre>
 <p><img src="modelviz_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
-<div id="create-a-data-frame-for-plotting" class="section level3">
-<h3>Create a data frame for plotting</h3>
+<div id="create-a-data-frame-for-plotting" class="section level2">
+<h2>Create a data frame for plotting</h2>
 <p>Calling <code>as.data.frame</code> on an <code>Effect</code> object returns a data frame we can use to create our own plots.</p>
 <pre class="r"><code>eff.out &lt;- Effect(c(&quot;neuroticism&quot;,&quot;extraversion&quot;), 
                   mod.cowles)
@@ -611,8 +611,8 @@ head(eff.df, n = 3)</code></pre>
 ## 2           6            2 0.1716423 0.03669815 0.1110644 0.2557552
 ## 3          12            2 0.2665883 0.03139195 0.2097077 0.3324076</code></pre>
 </div>
-<div id="effect-plot-using-ggplot" class="section level3">
-<h3>Effect plot using <code>ggplot</code></h3>
+<div id="effect-plot-using-ggplot" class="section level2">
+<h2>Effect plot using <code>ggplot</code></h2>
 <pre class="r"><code>ggplot(eff.df, aes(x = neuroticism, y = fit)) +
   geom_line() + 
   geom_ribbon(aes(ymin = lower, ymax = upper), 
@@ -620,28 +620,28 @@ head(eff.df, n = 3)</code></pre>
   facet_wrap(~extraversion, labeller = &quot;label_both&quot;)</code></pre>
 <p><img src="modelviz_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
-<div id="the-ggeffects-package" class="section level3">
-<h3>The <code>ggeffects</code> package</h3>
+<div id="the-ggeffects-package" class="section level2">
+<h2>The <code>ggeffects</code> package</h2>
 <p>This workshop focuses on the <code>effects</code> package by John Fox.</p>
 <p>Another package of interest is the <code>ggeffects</code> package by Daniel Lüdeck.</p>
 <p>The <code>ggeffects</code> package provides plotting functions that produces plots using <code>ggplot2</code>.</p>
-<p><code>ggeffects</code> is a younger package, currently at version 0.8. The <code>effects</code> package is older, currently at version 4.0.</p>
+<p><code>ggeffects</code> is a younger package, currently at version 0.9. The <code>effects</code> package is older, currently at version 4.1.</p>
 </div>
 </div>
-<div id="customizing-effect-estimates" class="section level2">
-<h2>Customizing effect estimates</h2>
+<div id="customizing-effect-estimates" class="section level1">
+<h1>Customizing effect estimates</h1>
 <p>We may want to set the levels of the predictors in our effect plots as opposed to letting the <code>effects</code> package do it for us.</p>
 <p>The same with those predictors that do <em>not</em> appear in the plot. Those are typically set to the mean values.</p>
 <p>We can do that with the <code>xlevels</code> and <code>fixed.predictors</code> arguments for the <code>Effect</code> function.</p>
-<div id="setting-values-of-the-focal-predictors" class="section level3">
-<h3>Setting values of the focal predictors</h3>
+<div id="setting-values-of-the-focal-predictors" class="section level2">
+<h2>Setting values of the focal predictors</h2>
 <p>The <code>effects</code> package calls those predictors that appear in effect plots “focal predictors”. We can set focal predictor values using the <code>xlevels</code> argument.</p>
 <p>The <code>xlevels</code> argument requires a named list, where the names are the variables.</p>
 <p>By default numeric predictors are represented by five values equally spaced over their range and then rounded to ‘nice’ numbers</p>
 </div>
-<div id="how-to-see-the-focal-predictor-values" class="section level3">
-<h3>How to see the focal predictor values</h3>
-<p>The <code>Effect</code> function returns a list that contains an object called <code>x</code>. The <code>x</code> object is a data frame contains the focal predictor values.</p>
+<div id="how-to-see-the-focal-predictor-values" class="section level2">
+<h2>How to see the focal predictor values</h2>
+<p>The <code>Effect</code> function returns a list that contains an object called <code>x</code>. The <code>x</code> object is a data frame that contains the focal predictor values.</p>
 <pre class="r"><code>e &lt;- Effect(c(&quot;neuroticism&quot;,&quot;extraversion&quot;), mod.cowles)
 sapply(e$x, unique)</code></pre>
 <pre><code>##      neuroticism extraversion
@@ -651,8 +651,8 @@ sapply(e$x, unique)</code></pre>
 ## [4,]          18         18.0
 ## [5,]          24         23.0</code></pre>
 </div>
-<div id="setting-values-of-the-focal-predictors-1" class="section level3">
-<h3>Setting values of the focal predictors</h3>
+<div id="setting-values-of-the-focal-predictors-1" class="section level2">
+<h2>Setting values of the focal predictors</h2>
 <p>Set neuroticism to range from 2 - 20 and extraversion to 5, 10, 15, and 20.</p>
 <pre class="r"><code>e &lt;- Effect(focal.predictors = c(&quot;neuroticism&quot;,
                                  &quot;extraversion&quot;), 
@@ -660,13 +660,13 @@ sapply(e$x, unique)</code></pre>
             xlevels = list(neuroticism = 2:20,
                            extraversion = c(5,10,15,20)))</code></pre>
 </div>
-<div id="the-updated-effect-plot" class="section level3">
-<h3>The updated effect plot</h3>
+<div id="the-updated-effect-plot" class="section level2">
+<h2>The updated effect plot</h2>
 <pre class="r"><code>plot(e, rug=FALSE)</code></pre>
 <p><img src="modelviz_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
-<div id="setting-values-of-the-fixed-predictors" class="section level3">
-<h3>Setting values of the fixed predictors</h3>
+<div id="setting-values-of-the-fixed-predictors" class="section level2">
+<h2>Setting values of the fixed predictors</h2>
 <p>The <code>effects</code> package calls those predictors that <em>do not</em> appear in effect plots “fixed predictors”. We can set fixed predictor values using the <code>fixed.predictors</code> argument.</p>
 <p>The <code>fixed.predictors</code> argument requires a named list, where the names are either <code>given.values</code> or <code>typical</code>.</p>
 <ul>
@@ -675,8 +675,8 @@ sapply(e$x, unique)</code></pre>
 </ul>
 <p>In most cases, the defaults for fixed predictors are probably fine. But is good to know what they’re being set to and how to change them.</p>
 </div>
-<div id="how-to-see-the-fixed-predictor-values" class="section level3">
-<h3>How to see the fixed predictor values</h3>
+<div id="how-to-see-the-fixed-predictor-values" class="section level2">
+<h2>How to see the fixed predictor values</h2>
 <p>The <code>Effect</code> function returns a list that contains an object called <code>model.matrix</code>. The <code>model.matrix</code> contains the values used to generate the effect estimates</p>
 <pre class="r"><code>head(e$model.matrix)</code></pre>
 <pre><code>##   (Intercept)   sexmale neuroticism extraversion neuroticism:extraversion
@@ -688,8 +688,8 @@ sapply(e$x, unique)</code></pre>
 ## 6           1 0.4510908           7            5                       35</code></pre>
 <p>Notice <code>sexmale</code> is set to 0.45, which is the proportion of males.</p>
 </div>
-<div id="example-of-setting-values-of-fixed-predictors" class="section level3">
-<h3>Example of setting values of fixed predictors</h3>
+<div id="example-of-setting-values-of-fixed-predictors" class="section level2">
+<h2>Example of setting values of fixed predictors</h2>
 <p>Set the <code>sex</code> predictor to “male”. Notice we have to use the label “sexmale” since that is what is used in the model output. We also have to use the number 1 since <code>sex</code> is a factor.</p>
 <pre class="r"><code>e &lt;- Effect(focal.predictors = c(&quot;neuroticism&quot;,
                                  &quot;extraversion&quot;), 
@@ -697,8 +697,8 @@ sapply(e$x, unique)</code></pre>
             fixed.predictors = 
               list(given.values = c(sexmale = 1)))</code></pre>
 </div>
-<div id="example-of-setting-values-of-fixed-predictors-1" class="section level3">
-<h3>Example of setting values of fixed predictors</h3>
+<div id="example-of-setting-values-of-fixed-predictors-1" class="section level2">
+<h2>Example of setting values of fixed predictors</h2>
 <p>Change the “typical” value from the mean to the median for the Prestige model.</p>
 <pre class="r"><code>e &lt;- Effect(&quot;education&quot;, mod.pres,
             fixed.predictors = 
@@ -706,8 +706,8 @@ sapply(e$x, unique)</code></pre>
 <p>The predictors <em>not</em> in the model, <code>income</code> and <code>women</code>, will be set to their median value instead of their mean value.</p>
 </div>
 </div>
-<div id="communicating-results" class="section level2">
-<h2>Communicating results</h2>
+<div id="communicating-results" class="section level1">
+<h1>Communicating results</h1>
 <p>Once we fit and visualize statistical models, we often need to communicate those results to an audience.</p>
 <p>One approach is to copy-and-paste results and plots out of R and into a program such as MS Word or PowerPoint.</p>
 <p>Two major drawbacks to that approach:</p>
@@ -715,15 +715,15 @@ sapply(e$x, unique)</code></pre>
 <li>manual and inefficient; prone to human error</li>
 <li>creates a lot of repeated steps if you need to update your analysis (ie, have to copy-and-paste stuff again)</li>
 </ol>
-<div id="r-markdown" class="section level3">
-<h3>R Markdown</h3>
+<div id="r-markdown" class="section level2">
+<h2>R Markdown</h2>
 <p>A better approach to communicating results is the R Markdown platform.</p>
 <p>R Markdown allows you to combine exposition, data, R code, output and graphics in one PDF, HTML or Word document.</p>
 <p>It is excellent and unrivaled for creating presentations and informal reports that feature analyses performed with R.</p>
 <p>It is also rapidly progressing as a platform for writing journal articles.</p>
 </div>
-<div id="what-is-r-markdown" class="section level3">
-<h3>What is R Markdown?</h3>
+<div id="what-is-r-markdown" class="section level2">
+<h2>What is R Markdown?</h2>
 <p>Markdown is a simple markup language. For example:</p>
 <ul>
 <li>To italicize “very” using HTML, we type <code>&lt;em&gt;very&lt;/em&gt;</code></li>
@@ -736,8 +736,8 @@ sapply(e$x, unique)</code></pre>
 <p>That previous line was generated with the following R Markdown syntax:</p>
 <p><code>The adjusted R-squared of the prestige model is `r round(summary(mod.pres)$adj.r.squared, 2)`</code></p>
 </div>
-<div id="starting-an-r-markdown-document" class="section level3">
-<h3>Starting an R Markdown document</h3>
+<div id="starting-an-r-markdown-document" class="section level2">
+<h2>Starting an R Markdown document</h2>
 <p>Writing out these instructions makes it appear more complicated than it really is.</p>
 <ol style="list-style-type: decimal">
 <li><p>In RStudio, go to File…New File…R Markdown…</p></li>
@@ -746,22 +746,22 @@ sapply(e$x, unique)</code></pre>
 <li><p>Select the output format (HTML, PDF, Word) and click OK. RStudio generates an <code>Rmd</code> file with some text and formatting to get you started.</p></li>
 </ol>
 </div>
-<div id="the-r-markdown-dialog" class="section level3">
-<h3>The R Markdown dialog</h3>
+<div id="the-r-markdown-dialog" class="section level2">
+<h2>The R Markdown dialog</h2>
 <div class="figure">
 <img src="images/Rmd_dialog.jpg" />
 
 </div>
 </div>
-<div id="the-r-markdown-template" class="section level3">
-<h3>The R Markdown template</h3>
+<div id="the-r-markdown-template" class="section level2">
+<h2>The R Markdown template</h2>
 <div class="figure">
 <img src="images/rmd_template.jpg" />
 
 </div>
 </div>
-<div id="knitting-an-r-markdown-document" class="section level3">
-<h3>Knitting an R Markdown document</h3>
+<div id="knitting-an-r-markdown-document" class="section level2">
+<h2>Knitting an R Markdown document</h2>
 <p>R Markdown uses the <code>knitr</code> package to compile the <code>Rmd</code> file into output. Hence, we “knit” the <code>Rmd</code> file.</p>
 <p>Before you knit for the first time, save the file. RStudio will automatically append the <code>Rmd</code> extension.</p>
 <p>To knit a file, click the Knit button to generate the output file. For example, if you selected HTML as the output format, RStudio will generate an HTML file and show it in a preview window.</p>
@@ -772,15 +772,15 @@ sapply(e$x, unique)</code></pre>
 <li><code>Command + Shift + K</code> (Mac)</li>
 </ul>
 </div>
-<div id="the-result-of-knitting-the-rmd-template" class="section level3">
-<h3>The result of knitting the Rmd template</h3>
+<div id="the-result-of-knitting-the-rmd-template" class="section level2">
+<h2>The result of knitting the Rmd template</h2>
 <div class="figure">
 <img src="images/rmd_output.jpg" />
 
 </div>
 </div>
-<div id="inserting-an-r-code-chunk" class="section level3">
-<h3>Inserting an R code chunk</h3>
+<div id="inserting-an-r-code-chunk" class="section level2">
+<h2>Inserting an R code chunk</h2>
 <p>R Code in an R Markdown file is called a “chunk”. To insert a code chunk:</p>
 <ul>
 <li>Ctrl + Alt + I (Win/Linux)<br />
@@ -794,8 +794,8 @@ sapply(e$x, unique)</code></pre>
 </div>
 <p>Enter R code between the delimiters.</p>
 </div>
-<div id="entering-r-code" class="section level3">
-<h3>Entering R code</h3>
+<div id="entering-r-code" class="section level2">
+<h2>Entering R code</h2>
 <p>After you enter R code and knit the Rmd file, the R code will execute and the output will be displayed.</p>
 <p>For example, the following code chunk would randomly sample 100 observations from a standard Normal distribution and plot a histogram.</p>
 <div class="figure">
@@ -806,8 +806,8 @@ sapply(e$x, unique)</code></pre>
 <pre class="r"><code>hist(rnorm(100))</code></pre>
 <p><img src="modelviz_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 </div>
-<div id="using-options-with-code-chunks" class="section level3">
-<h3>Using options with code chunks</h3>
+<div id="using-options-with-code-chunks" class="section level2">
+<h2>Using options with code chunks</h2>
 <p>We can add options after the <code>r</code> in <code>{r}</code> to change how code is executed. Separate multiple options with a comma.</p>
 <p>Some common options:</p>
 <ul>
@@ -822,13 +822,13 @@ sapply(e$x, unique)</code></pre>
 
 </div>
 </div>
-<div id="example-of-code-chunk-using-specified-options" class="section level3">
-<h3>Example of code chunk using specified options</h3>
+<div id="example-of-code-chunk-using-specified-options" class="section level2">
+<h2>Example of code chunk using specified options</h2>
 <pre class="r"><code>hist(rnorm(100))</code></pre>
 <p><img src="modelviz_files/figure-html/unnamed-chunk-22-1.png" width="480" /></p>
 </div>
-<div id="r-markdown-tips" class="section level3">
-<h3>R Markdown tips</h3>
+<div id="r-markdown-tips" class="section level2">
+<h2>R Markdown tips</h2>
 <ul>
 <li><p>R Markdown files are compiled in their own <em>environment</em>; that means any data or packages need to be loaded in the R Markdown file</p></li>
 <li><p>The header of an R Markdown file is called the YAML header; it is usually fine as is, but that’s where you can change the author, title or date if necessary; also where you create a TOC</p></li>
@@ -837,8 +837,8 @@ sapply(e$x, unique)</code></pre>
 <li><p>Remember, R Markdown generates an output file, such as an HTML or PDF file; the output file is usually what you want to show or send to your audience</p></li>
 </ul>
 </div>
-<div id="time-to-practice" class="section level3">
-<h3>Time to practice</h3>
+<div id="time-to-practice" class="section level2">
+<h2>Time to practice</h2>
 <p>The best way to learn R Markdown is to start using it. Let’s do an exercise:</p>
 <p><a href="https://at.virginia.edu/2X6Vcf8" class="uri">https://at.virginia.edu/2X6Vcf8</a></p>
 <p>R Markdown resources in RStudio:</p>
@@ -849,13 +849,13 @@ sapply(e$x, unique)</code></pre>
 </ul>
 </div>
 </div>
-<div id="formatting-coefficient-tables-with-stargazer" class="section level2">
-<h2>Formatting coefficient tables with <code>stargazer</code></h2>
+<div id="formatting-coefficient-tables-with-stargazer" class="section level1">
+<h1>Formatting coefficient tables with <code>stargazer</code></h1>
 <p>Recall the summary tables of our models.</p>
 <p>They look OK in the console, but when it’s time for publication or presentation we’ll probably want to modify.</p>
 <p>The <code>stargazer</code> package generates LaTeX code, HTML code and ASCII text for well-formatted tables.</p>
-<div id="stargazer-basic-usage" class="section level3">
-<h3><code>stargazer</code> basic usage</h3>
+<div id="stargazer-basic-usage" class="section level2">
+<h2><code>stargazer</code> basic usage</h2>
 <p>Use the <code>stargazer</code> function with a model object. For example:</p>
 <pre class="r"><code>library(stargazer)
 stargazer(mod.cowles)</code></pre>
@@ -863,15 +863,15 @@ stargazer(mod.cowles)</code></pre>
 <p>Use the <code>type</code> argument to switch format to “text” or “html”. For example:</p>
 <pre class="r"><code>stargazer(mod.cowles, type = &quot;text&quot;)</code></pre>
 </div>
-<div id="example-of-default-stargazer-table-text" class="section level3">
-<h3>Example of default <code>stargazer</code> table (text)</h3>
+<div id="example-of-default-stargazer-table-text" class="section level2">
+<h2>Example of default <code>stargazer</code> table (text)</h2>
 <div class="figure">
 <img src="images/stargazer.jpg" />
 
 </div>
 </div>
-<div id="common-stargazer-options" class="section level3">
-<h3>Common <code>stargazer</code> options</h3>
+<div id="common-stargazer-options" class="section level2">
+<h2>Common <code>stargazer</code> options</h2>
 <ul>
 <li>Using <code>stargazer</code> with multiple models produces a single table with results from multiple models</li>
 <li>Use the <code>title</code> argument to give the table a title (eg: <code>title = &quot;Regression results&quot;</code>)</li>
@@ -884,15 +884,15 @@ stargazer(mod.cowles, type = &quot;text&quot;,
           title = &quot;Regression results&quot;, 
           omit.table.layout = &quot;sn&quot;)</code></pre>
 </div>
-<div id="example-of-stargazer-table" class="section level3">
-<h3>Example of <code>stargazer</code> table</h3>
+<div id="example-of-stargazer-table" class="section level2">
+<h2>Example of <code>stargazer</code> table</h2>
 <div class="figure">
 <img src="images/stargazer2.jpg" />
 
 </div>
 </div>
-<div id="using-stargazer-with-r-markdown" class="section level3">
-<h3>Using <code>stargazer</code> with R Markdown</h3>
+<div id="using-stargazer-with-r-markdown" class="section level2">
+<h2>Using <code>stargazer</code> with R Markdown</h2>
 <ul>
 <li>To insert a <code>stargazer</code> table into R Markdown, add the following code chunk options
 <ul>
@@ -903,8 +903,8 @@ stargazer(mod.cowles, type = &quot;text&quot;,
 <li>For PDF output, set <code>type = &quot;latex&quot;</code> and <code>header = FALSE</code> in <code>stargazer()</code></li>
 </ul>
 </div>
-<div id="example-of-stargazer-table-in-r-markdown" class="section level3">
-<h3>Example of <code>stargazer</code> table in R Markdown</h3>
+<div id="example-of-stargazer-table-in-r-markdown" class="section level2">
+<h2>Example of <code>stargazer</code> table in R Markdown</h2>
 <pre class="r"><code>library(stargazer)
 stargazer(mod.cowles, type = &quot;html&quot;, 
           title = &quot;Regression results&quot;, 
@@ -1024,8 +1024,8 @@ Akaike Inf. Crit.
 </tr>
 </table>
 </div>
-<div id="modifying-the-coefficient-names" class="section level3">
-<h3>Modifying the coefficient names</h3>
+<div id="modifying-the-coefficient-names" class="section level2">
+<h2>Modifying the coefficient names</h2>
 <p>The <code>covariate.labels</code> argument allows you to change the coefficient names.</p>
 <pre class="r"><code>stargazer(mod.cowles, type = &quot;html&quot;, 
           title = &quot;Regression results&quot;, 
@@ -1147,8 +1147,8 @@ Akaike Inf. Crit.
 </tr>
 </table>
 </div>
-<div id="stargazer-styles" class="section level3">
-<h3><code>stargazer</code> styles</h3>
+<div id="stargazer-styles" class="section level2">
+<h2><code>stargazer</code> styles</h2>
 <p><code>stargazer</code> provides built-in support for several social science academic journals. Use the following with the <code>style</code> argument:</p>
 <ul>
 <li><code>&quot;aer&quot;</code> American Economic Review</li>
@@ -1163,8 +1163,8 @@ Akaike Inf. Crit.
 <li><code>&quot;qje&quot;</code> Quarterly Journal of Economics</li>
 </ul>
 </div>
-<div id="stargazer-table-with-apsr-style" class="section level3">
-<h3><code>stargazer</code> table with <code>apsr</code> style</h3>
+<div id="stargazer-table-with-apsr-style" class="section level2">
+<h2><code>stargazer</code> table with <code>apsr</code> style</h2>
 <pre class="r"><code>stargazer(mod.cowles, type = &quot;html&quot;, 
           style = &quot;apsr&quot;,
           title = &quot;Regression results&quot;, 
@@ -1266,8 +1266,8 @@ AIC
 </tr>
 </table>
 </div>
-<div id="stargazer-has-many-more-options" class="section level3">
-<h3><code>stargazer</code> has many more options</h3>
+<div id="stargazer-has-many-more-options" class="section level2">
+<h2><code>stargazer</code> has many more options</h2>
 <ul>
 <li>The <code>stargazer</code> function is very powerful and has many arguments</li>
 <li>Go to <code>?stargazer</code> and run the Examples</li>
@@ -1281,14 +1281,14 @@ AIC
 </ul></li>
 </ul>
 </div>
-<div id="time-to-practice-1" class="section level3">
-<h3>Time to practice</h3>
+<div id="time-to-practice-1" class="section level2">
+<h2>Time to practice</h2>
 <p>The best way to learn stargazer is to start using it. Let’s do an exercise:</p>
 <p><a href="https://at.virginia.edu/2IalVnD" class="uri">https://at.virginia.edu/2IalVnD</a></p>
 </div>
 </div>
-<div id="references" class="section level2">
-<h2>References</h2>
+<div id="references" class="section level1">
+<h1>References</h1>
 <ul>
 <li><p>Fox, J. and S. Weisberg (2018). Visualizing Fit and Lack of Fit in Complex Regression Models: Effect Plots with Partial Residuals. <em>Journal of Statistical Software</em> 87:9, 1-27, <a href="https://www.jstatsoft.org/article/view/v087i09" class="uri">https://www.jstatsoft.org/article/view/v087i09</a></p></li>
 <li><p>John Fox and Sanford Weisberg (2019). An R Companion to Applied Regression, 3rd Edition. Thousand Oaks, CA <a href="http://tinyurl.com/carbook" class="uri">http://tinyurl.com/carbook</a></p></li>
