@@ -1,5 +1,5 @@
 ---
-title: "Model Visualization"
+title: "Visualizing Models and Communicating Results"
 output: 
   html_document: 
     fig_caption: yes
