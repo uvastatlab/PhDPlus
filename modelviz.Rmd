@@ -455,15 +455,13 @@ hist(rnorm(100))
 
 The best way to learn R Markdown is to start using it. Let's do an exercise:
 
-https://at.virginia.edu/2X6Vcf8
+<a href="https://at.virginia.edu/2X6Vcf8" target="_blank">https://at.virginia.edu/2X6Vcf8</a>
 
 R Markdown resources in RStudio:
 
 - Help...Markdown Quick Reference
 - Help...Cheatsheets...R Markdown Cheatsheet (PDF file)
 - Help...Cheatsheets...R Markdown Reference Guide (PDF file)
-
-
 
 
 # Formatting coefficient tables with `stargazer`
@@ -596,7 +594,7 @@ stargazer(mod.cowles, type = "html",
 
 The best way to learn stargazer is to start using it. Let's do an exercise:
 
-https://at.virginia.edu/2IalVnD
+<a href="https://at.virginia.edu/2IalVnD" target="_blank">https://at.virginia.edu/2IalVnD</a>
 
 
 # References

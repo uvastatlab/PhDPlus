@@ -14,6 +14,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Get Ready!
 
+- Download [shinR.zip](https://github.com/uvastatlab/phdplus/raw/master/shinyR.zip) to your computer. It contains an R script and the content of this page as a slide deck. Save it somewhere easy to find. 
+- Unzip shinR.zip. (*Mac*: Double click the zipped file. *Win*: Right-click on the zip file and select "Extract All...")
+
 
 # What is shiny?
 
@@ -67,7 +70,7 @@ RStudio provides a shiny template to help us get started building a shiny app.
 4. Copy in your code from step 1 and modify with shiny code to convert to interactive app
 
 
-## Simple motivating example
+# Simple motivating example
 
 Zoom in on scatter plot of TotalValue vs FinSqFt and adjust alpha setting (transparency of points).
 
@@ -109,7 +112,7 @@ It would be nice to interact with the alpha, xlim and ylim arguments.
 
 ## Sketch of a possible app
 
-![](drawing.jpg)
+![](images/drawing.jpg)
 
 ## Let's build that shiny app!
 
@@ -124,7 +127,7 @@ Here's how we get started:
 ## New Shiny Web App dialog
 
 
-![](shiny_dialog.jpg)
+![](images/shiny_dialog.jpg)
 
 
 ## Shiny Web App template
@@ -141,9 +144,9 @@ Building your shiny app means modifying the user interface, server, and comments
 
 ## Default user interface: sidebar layout
 
-![](ui.jpg)
+![](images/ui.jpg)
 
-This is the layout we'll use in the workshop. It's very functional. See the shiny cheat sheet for several other layouts. (RStudio: Help...Cheatsheets...)
+This is the layout we'll use in this session. It's very functional. See the shiny cheat sheet for several other layouts. (RStudio: Help...Cheatsheets...)
 
 ## Inputs
 
@@ -151,7 +154,7 @@ This is the layout we'll use in the workshop. It's very functional. See the shin
 - These can be numeric fields, radio buttons, pull down lists, slider bars, check boxes, action buttons, text fields, etc
 - The shiny template provides us with a slider bar, created with the `sliderInput` function
 
-![](slider_input.jpg)
+![](images/slider_input.jpg)
 
 - The value collected is input into our R code as `input$bins`
 
@@ -166,7 +169,7 @@ This is the layout we'll use in the workshop. It's very functional. See the shin
 ## `render` and `Output` functions work together
 
 
-![](plot_output.jpg)
+![]images/(plot_output.jpg)
 
 ## The server
 
@@ -181,13 +184,13 @@ The "server" is a function where the application's R code is executed. The follo
 
 Your R code typically goes inside a `render*` function that creates output to be displayed in the user interface. 
 
-![](server.jpg)
+![](images/server.jpg)
 
 ## Updating the UI controls for our example
 
 We want to create 1 slider input and 4 numeric inputs.
 
-![](homes_plot_ui.jpg)
+![](images/homes_plot_ui.jpg)
 
 
 
@@ -195,13 +198,13 @@ We want to create 1 slider input and 4 numeric inputs.
 
 We copy-and-paste our code into the `renderPlot` function and update the alpha, xlim and ylim arguments. Notice I chose to save the result as `output$scatterPlot`.
 
-![](homes_plot_server.jpg)
+![](images/homes_plot_server.jpg)
 
 ## Add data for the app
 
 We also need to include the R code that reads in and prepares the homes data for plotting. Insert under `library(shiny)` but before we define the UI.
 
-![](homes_plot_server2.jpg)
+![](images/homes_plot_server2.jpg)
 
 
 ## Updating the UI output for our example
@@ -210,7 +213,7 @@ Two last steps:
 
 1. in the UI section we update the `plotOutput` function to use `"scatterPlot"`, which we named our plot in the server section.
 
-![](homes_plot_ui2.jpg)
+![](images/homes_plot_ui2.jpg)
 
 2. Update the plot title as follows: `titlePanel("TotalValue vs FinSqFt")`
 
@@ -218,7 +221,7 @@ Try out the app by clicking the Run App button.
 
 ## The finished app
 
-![](homes_plot_app.jpg)
+![](images/homes_plot_app.jpg)
 
 ## Congratulations on your first shiny app!
 
@@ -231,7 +234,7 @@ That's how the development of your first few shiny apps will proceed:
 
 You are developing an application. Expect it to take time and patience. 
 
-## Going beyond the RStudio template
+# Going beyond the RStudio template
 
 The RStudio template is a great foundation for creating basic shiny apps. However shiny offers much more functionality than what is offered in the template.
 
@@ -253,7 +256,7 @@ Let's look at a few:
 
 ## Example: Minimal tab panel
 
-![](tabpanel1.jpg)
+![](images/tabpanel1.jpg)
 
 
 
@@ -261,7 +264,7 @@ Let's look at a few:
 ## Example: Different apps on each tab
 
 
-![](tabpanel2.jpg)
+![](images/tabpanel2.jpg)
 
 
 
@@ -278,7 +281,7 @@ Let's look at a few:
 
 ## Example: using HTML in shiny app
 
-![](html.jpg)
+![](images/html.jpg)
 
 
 
@@ -315,16 +318,16 @@ output$hist1 <- renderPlot({hist(rnorm(input$n1),
 - `renderPlot` uses the reactive expression to generate the histogram
 
 
-## Our final shiny app
+# Our final shiny app
 
 Let's apply what we learned to build a shiny app that allows us to explore a complex linear model based on the Albemarle County homes data.
 
-[Click here](https://at.virginia.edu/2SS695y) to access the workshop exercise.
+[Click here](https://at.virginia.edu/2SS695y) to access the exercise.
 
 Or go to https://at.virginia.edu/2SS695y
 
 
-## Where to host Shiny apps
+# Where to host Shiny apps
 
 To put your Shiny app on the web, it needs to be hosted on a Shiny server. Three options are available:
 
@@ -334,7 +337,7 @@ To put your Shiny app on the web, it needs to be hosted on a Shiny server. Three
 
 Options 2 and 3 require setting up your own server. There are some articles on the web about how to do it with Amazon Web Services (AWS).
 
-## Resources
+# Resources
 
 Written and video tutorials:   
 https://shiny.rstudio.com/tutorial/

@@ -11,7 +11,7 @@
 
 
 
-<title>Interactive-Shiny</title>
+<title>Interactive Visualization and Web Apps with Shiny</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -73,9 +73,7 @@ h6 {
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -193,8 +191,6 @@ $(document).ready(function () {
   menuAnchor.closest('li.dropdown').addClass('active');
 });
 </script>
-
-<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -353,6 +349,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -410,14 +416,347 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Interactive-Shiny</h1>
+<h1 class="title toc-ignore">Interactive Visualization and Web Apps with Shiny</h1>
 
 </div>
 
 
-<div id="interactive-visualization-and-web-apps-with-shiny" class="section level1">
-<h1>Interactive Visualization and Web Apps with Shiny</h1>
-<p>TBA</p>
+<div id="get-ready" class="section level1">
+<h1>Get Ready!</h1>
+<ul>
+<li>Download <a href="https://github.com/uvastatlab/phdplus/raw/master/shinyR.zip">shinR.zip</a> to your computer. It contains an R script and the content of this page as a slide deck. Save it somewhere easy to find.</li>
+<li>Unzip shinR.zip. (<em>Mac</em>: Double click the zipped file. <em>Win</em>: Right-click on the zip file and select “Extract All…”)</li>
+</ul>
+</div>
+<div id="what-is-shiny" class="section level1">
+<h1>What is shiny?</h1>
+<ul>
+<li>shiny is a package that provides functions for converting R code into interactive web applications</li>
+<li>The applications it creates can be run in RStudio; they don’t have to be hosted on a web site</li>
+<li>Developed by RStudio</li>
+<li>Doesn’t require web development skills but does require a good grasp of R</li>
+</ul>
+<div id="why-use-shiny" class="section level2">
+<h2>Why use shiny?</h2>
+<p>Create interactive apps…</p>
+<ul>
+<li>for teaching statistical concepts: <a href="https://gallery.shinyapps.io/tdist/">Example</a></li>
+<li>for using and visualizing statistical models: <a href="https://gallery.shinyapps.io/drinkr/">Example</a></li>
+<li>for exploring data or creating reports: <a href="https://gallery.shinyapps.io/college_explorer-master/">Example</a></li>
+</ul>
+<p>See more at the shiny Gallery: <a href="https://shiny.rstudio.com/gallery/" class="uri">https://shiny.rstudio.com/gallery/</a></p>
+</div>
+<div id="agenda" class="section level2">
+<h2>Agenda</h2>
+<ul>
+<li>Examine the RStudio shiny app template</li>
+<li>Build a basic shiny app</li>
+<li>Build a more advanced shiny app to explore a linear model of the Albemarle County Homes Data</li>
+</ul>
+</div>
+<div id="installing-shiny" class="section level2">
+<h2>Installing shiny</h2>
+<p>shiny is an R package, so install as you would any other package:</p>
+<pre class="r"><code>install.packages(&quot;shiny&quot;)</code></pre>
+<p>At the beginning of any shiny app you will need to load shiny.</p>
+<pre class="r"><code>library(shiny)</code></pre>
+<p>RStudio provides a shiny template to help us get started building a shiny app.</p>
+</div>
+<div id="suggested-steps-for-building-a-shiny-app" class="section level2">
+<h2>Suggested steps for building a shiny app</h2>
+<ol style="list-style-type: decimal">
+<li>Start work in a normal R script developing code that does what you want; identify arguments or settings that you would like to make interactive</li>
+<li>(optional) Draw on paper a rough sketch of what the app might look like</li>
+<li>Start a shiny app using RStudio template: File…New File…Shiny Web App…</li>
+<li>Copy in your code from step 1 and modify with shiny code to convert to interactive app</li>
+</ol>
+</div>
+</div>
+<div id="simple-motivating-example" class="section level1">
+<h1>Simple motivating example</h1>
+<p>Zoom in on scatter plot of TotalValue vs FinSqFt and adjust alpha setting (transparency of points).</p>
+<pre class="r"><code>library(tidyverse)
+homes &lt;- readRDS(url(&quot;http://people.virginia.edu/~jcf2d/data/albemarle_homes.rds&quot;))
+
+# focus on 6 cities
+vars &lt;- c(&quot;CHARLOTTESVILLE&quot;, &quot;CROZET&quot;, &quot;EARLYSVILLE&quot;, 
+          &quot;KESWICK&quot;, &quot;SCOTTSVILLE&quot;, &quot;NORTH GARDEN&quot;)
+
+# filter for our cities of interest and homes with at least 1 bedroom and 1 bathroom
+homes &lt;- homes %&gt;% 
+  filter(city %in% vars &amp; Bedroom &gt; 0 &amp; FullBath &gt; 0)
+
+# drop unusued levels for city
+homes$city &lt;- droplevels(homes$city)
+
+# plot TotalValue vs FinSqFt
+ggplot(homes, aes(x = FinSqFt, y = TotalValue)) +
+  geom_point(alpha = 0.3) +
+  scale_x_continuous(labels = scales::comma) +
+  scale_y_continuous(labels = scales::dollar) +
+  coord_cartesian(xlim = c(0,5000),ylim = c(0,1e6)) </code></pre>
+<p><img src="shinyr_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<div id="the-r-code" class="section level2">
+<h2>The R code</h2>
+<pre class="r"><code>ggplot(homes, aes(x = FinSqFt, y = TotalValue)) +
+  geom_point(alpha = 0.3) +
+  scale_x_continuous(labels = scales::comma) +
+  scale_y_continuous(labels = scales::dollar) +
+  coord_cartesian(xlim = c(0,5000),ylim = c(0,1e6))</code></pre>
+<p>It would be nice to interact with the alpha, xlim and ylim arguments.</p>
+</div>
+<div id="sketch-of-a-possible-app" class="section level2">
+<h2>Sketch of a possible app</h2>
+<div class="figure">
+<img src="images/drawing.jpg" />
+
+</div>
+</div>
+<div id="lets-build-that-shiny-app" class="section level2">
+<h2>Let’s build that shiny app!</h2>
+<p>Here’s how we get started:</p>
+<ol style="list-style-type: decimal">
+<li>In RStudio, go to File…New File…Shiny Web App…</li>
+<li>In the Application Name field, enter a name for your application. (Example: “homes_plot”) This will become the <em>name of the folder</em> where your shiny app is saved.</li>
+<li>Leave Application Type set to “Single File (app.R)”</li>
+<li>Browse to where you want to save your shiny app. In that location a folder will be created with the name of your application. In that folder will be a file called “app.R”. <strong>Do not change the name of that file!</strong></li>
+</ol>
+</div>
+<div id="new-shiny-web-app-dialog" class="section level2">
+<h2>New Shiny Web App dialog</h2>
+<div class="figure">
+<img src="images/shiny_dialog.jpg" />
+
+</div>
+</div>
+<div id="shiny-web-app-template" class="section level2">
+<h2>Shiny Web App template</h2>
+<p>When you start a new shiny web app you are a provided a working app as a template to help get your started. Feel free to run it and see what it does by clicking the Run App button.</p>
+<p>It’s a simple app, but it provides the core shiny components we need to start building our own shiny app.</p>
+<ol style="list-style-type: decimal">
+<li>the user interface (an object called <code>ui</code>)</li>
+<li>the server logic (an object called <code>server</code>; the R code of our app)</li>
+<li>the function call <code>shinyApp(ui = ui, server = server)</code></li>
+</ol>
+<p>Building your shiny app means modifying the user interface, server, and comments.</p>
+</div>
+<div id="default-user-interface-sidebar-layout" class="section level2">
+<h2>Default user interface: sidebar layout</h2>
+<div class="figure">
+<img src="images/ui.jpg" />
+
+</div>
+<p>This is the layout we’ll use in this session. It’s very functional. See the shiny cheat sheet for several other layouts. (RStudio: Help…Cheatsheets…)</p>
+</div>
+<div id="inputs" class="section level2">
+<h2>Inputs</h2>
+<ul>
+<li>Inputs allow us to collect values from the user</li>
+<li>These can be numeric fields, radio buttons, pull down lists, slider bars, check boxes, action buttons, text fields, etc</li>
+<li>The shiny template provides us with a slider bar, created with the <code>sliderInput</code> function</li>
+</ul>
+<div class="figure">
+<img src="images/slider_input.jpg" />
+
+</div>
+<ul>
+<li>The value collected is input into our R code as <code>input$bins</code></li>
+</ul>
+</div>
+<div id="outputs" class="section level2">
+<h2>Outputs</h2>
+<ul>
+<li>The user interface not only collects values from the user but also displays R <em>output</em>, such as plots, tables and statistical summaries.</li>
+<li>The shiny template provides us with plot output, created with the <code>plotOutput</code> function</li>
+<li><code>plotOutput</code> is called on <code>&quot;distPlot&quot;</code>, which is created in the server portion of the app using a <code>renderPlot</code> function.</li>
+<li><code>&quot;distPlot&quot;</code> is a user-generated name; it could have been called <code>&quot;histogram&quot;</code></li>
+<li>In general, output that is presented in the user interface will be created in the server portion using a <code>render*</code> function</li>
+</ul>
+</div>
+<div id="render-and-output-functions-work-together" class="section level2">
+<h2><code>render</code> and <code>Output</code> functions work together</h2>
+<p>[]images/(plot_output.jpg)</p>
+</div>
+<div id="the-server" class="section level2">
+<h2>The server</h2>
+<p>The “server” is a function where the application’s R code is executed. The following process roughly summarizes how a shiny app works:</p>
+<ol style="list-style-type: decimal">
+<li>user provides input in the user interface (<em>eg, number of bins</em>)</li>
+<li>the input is passed to the server where the R code is processed (<em>eg, create histogram with specified number of bins</em>)</li>
+<li>the output is passed back to the user interface to be displayed (<em>eg, plot histogram</em>)</li>
+</ol>
+</div>
+<div id="the-server-template" class="section level2">
+<h2>The server template</h2>
+<p>Your R code typically goes inside a <code>render*</code> function that creates output to be displayed in the user interface.</p>
+<div class="figure">
+<img src="images/server.jpg" />
+
+</div>
+</div>
+<div id="updating-the-ui-controls-for-our-example" class="section level2">
+<h2>Updating the UI controls for our example</h2>
+<p>We want to create 1 slider input and 4 numeric inputs.</p>
+<div class="figure">
+<img src="images/homes_plot_ui.jpg" />
+
+</div>
+</div>
+<div id="updating-the-server-for-our-example" class="section level2">
+<h2>Updating the server for our example</h2>
+<p>We copy-and-paste our code into the <code>renderPlot</code> function and update the alpha, xlim and ylim arguments. Notice I chose to save the result as <code>output$scatterPlot</code>.</p>
+<div class="figure">
+<img src="images/homes_plot_server.jpg" />
+
+</div>
+</div>
+<div id="add-data-for-the-app" class="section level2">
+<h2>Add data for the app</h2>
+<p>We also need to include the R code that reads in and prepares the homes data for plotting. Insert under <code>library(shiny)</code> but before we define the UI.</p>
+<div class="figure">
+<img src="images/homes_plot_server2.jpg" />
+
+</div>
+</div>
+<div id="updating-the-ui-output-for-our-example" class="section level2">
+<h2>Updating the UI output for our example</h2>
+<p>Two last steps:</p>
+<ol style="list-style-type: decimal">
+<li>in the UI section we update the <code>plotOutput</code> function to use <code>&quot;scatterPlot&quot;</code>, which we named our plot in the server section.</li>
+</ol>
+<div class="figure">
+<img src="images/homes_plot_ui2.jpg" />
+
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Update the plot title as follows: <code>titlePanel(&quot;TotalValue vs FinSqFt&quot;)</code></li>
+</ol>
+<p>Try out the app by clicking the Run App button.</p>
+</div>
+<div id="the-finished-app" class="section level2">
+<h2>The finished app</h2>
+<div class="figure">
+<img src="images/homes_plot_app.jpg" />
+
+</div>
+</div>
+<div id="congratulations-on-your-first-shiny-app" class="section level2">
+<h2>Congratulations on your first shiny app!</h2>
+<p>That’s how the development of your first few shiny apps will proceed:</p>
+<ol style="list-style-type: decimal">
+<li>recognize R code that could be presented as an interactive app</li>
+<li>start a new shiny web app using RStudio</li>
+<li>tweak the template to work with your R code</li>
+</ol>
+<p>You are developing an application. Expect it to take time and patience.</p>
+</div>
+</div>
+<div id="going-beyond-the-rstudio-template" class="section level1">
+<h1>Going beyond the RStudio template</h1>
+<p>The RStudio template is a great foundation for creating basic shiny apps. However shiny offers much more functionality than what is offered in the template.</p>
+<p>Let’s look at a few:</p>
+<ul>
+<li>use tabs so we can run multiple shiny apps in a single app</li>
+<li>use HTML to format the look of the app and/or add text</li>
+<li>modularize reactions so we can store values and reduce computation</li>
+</ul>
+<div id="multiple-tabs" class="section level2">
+<h2>Multiple tabs</h2>
+<ul>
+<li>Using <code>tabsetPanel</code> and <code>tabPanel</code> we can create multiple tabs, or pages, for our apps.</li>
+<li>Examples:
+<ul>
+<li>an app on one tab and instructions on another tab</li>
+<li>multiple apps, each on their own tab</li>
+<li>an app on one tab, data browser on another tab</li>
+</ul></li>
+<li>Today our goal is to build a shiny app with two tabs: one to display effect plots and another to calculate expected home values for given specifications.</li>
+</ul>
+</div>
+<div id="example-minimal-tab-panel" class="section level2">
+<h2>Example: Minimal tab panel</h2>
+<div class="figure">
+<img src="images/tabpanel1.jpg" />
+
+</div>
+</div>
+<div id="example-different-apps-on-each-tab" class="section level2">
+<h2>Example: Different apps on each tab</h2>
+<div class="figure">
+<img src="images/tabpanel2.jpg" />
+
+</div>
+</div>
+<div id="using-html-to-add-text-and-format-look" class="section level2">
+<h2>Using HTML to add text and format look</h2>
+<ul>
+<li>HTML is a markup language that web browsers use to render text</li>
+<li>Example: <code>this is &lt;strong&gt;bold&lt;/strong&gt;</code> is rendered as “This is <strong>bold</strong>”</li>
+<li>We can add text to our apps and format the text with HTML</li>
+<li>Most common tags have wrapper functions</li>
+<li>Example: <code>This is strong(&quot;bold&quot;)</code> is rendered as “This is <strong>bold</strong>”</li>
+</ul>
+</div>
+<div id="example-using-html-in-shiny-app" class="section level2">
+<h2>Example: using HTML in shiny app</h2>
+<div class="figure">
+<img src="images/html.jpg" />
+
+</div>
+</div>
+<div id="modular-reactions" class="section level2">
+<h2>Modular reactions</h2>
+<ul>
+<li><p>Let’s say we want to sample data from a Normal distribution, plot a histogram, and then try different bin widths.</p></li>
+<li><p>We could do this:</p></li>
+</ul>
+<pre class="r"><code>output$hist1 &lt;- renderPlot({hist(rnorm(input$n1), 
+                                 breaks = input$bins)})</code></pre>
+<ul>
+<li><p>But changing the bin widths (<code>breaks</code>) would cause <code>renderPlot</code> to execute again and generate a new sample.</p></li>
+<li><p>We would like to <em>modularize</em> the call to <code>rnorm</code> so it only runs when we change the sample size and not the bin width.</p></li>
+</ul>
+</div>
+<div id="create-modular-reactions-with-the-reactive-function" class="section level2">
+<h2>Create modular reactions with the <code>reactive</code> function</h2>
+<ul>
+<li>The <code>reactive</code> function creates a <em>reactive expression</em></li>
+<li>It caches (or saves) its value and can be called by other code</li>
+<li>Example:</li>
+</ul>
+<pre class="r"><code>  re &lt;- reactive({n &lt;- rnorm(input$n1)}) 
+  output$hist1 &lt;- renderPlot({hist(re(), 
+                                   breaks = input$bins)})</code></pre>
+<ul>
+<li>The reactive expression <code>re()</code> runs when the sample size changes and saves the result to <code>n</code></li>
+<li><code>renderPlot</code> uses the reactive expression to generate the histogram</li>
+</ul>
+</div>
+</div>
+<div id="our-final-shiny-app" class="section level1">
+<h1>Our final shiny app</h1>
+<p>Let’s apply what we learned to build a shiny app that allows us to explore a complex linear model based on the Albemarle County homes data.</p>
+<p><a href="https://at.virginia.edu/2SS695y">Click here</a> to access the exercise.</p>
+<p>Or go to <a href="https://at.virginia.edu/2SS695y" class="uri">https://at.virginia.edu/2SS695y</a></p>
+</div>
+<div id="where-to-host-shiny-apps" class="section level1">
+<h1>Where to host Shiny apps</h1>
+<p>To put your Shiny app on the web, it needs to be hosted on a Shiny server. Three options are available:</p>
+<ol style="list-style-type: decimal">
+<li>Deploy to the cloud: <a href="http://www.shinyapps.io/" class="uri">http://www.shinyapps.io/</a> Free and paid options available</li>
+<li>Deploy on-premises (open source): Shiny Server</li>
+<li>Deploy on-premises (commercial): Shiny Server Pro</li>
+</ol>
+<p>Options 2 and 3 require setting up your own server. There are some articles on the web about how to do it with Amazon Web Services (AWS).</p>
+</div>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<p>Written and video tutorials:<br />
+<a href="https://shiny.rstudio.com/tutorial/" class="uri">https://shiny.rstudio.com/tutorial/</a></p>
+<p>Gallery of example shiny apps:<br />
+<a href="https://shiny.rstudio.com/gallery/" class="uri">https://shiny.rstudio.com/gallery/</a></p>
+<p>Building Shiny apps - an interactive tutorial<br />
+<a href="https://deanattali.com/blog/building-shiny-apps-tutorial/" class="uri">https://deanattali.com/blog/building-shiny-apps-tutorial/</a></p>
 </div>
 
 
