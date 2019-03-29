@@ -158,6 +158,10 @@ This is the layout we'll use in this session. It's very functional. See the shin
 
 - The value collected is input into our R code as `input$bins`
 
+## List of shiny inputs
+
+![](images/inputs.jpg)
+
 ## Outputs
 
 - The user interface not only collects values from the user but also displays R _output_, such as plots, tables and statistical summaries.
@@ -169,7 +173,14 @@ This is the layout we'll use in this session. It's very functional. See the shin
 ## `render` and `Output` functions work together
 
 
-![]images/(plot_output.jpg)
+![](images/plot_output.jpg)
+
+<br><br>
+The RStudio shiny cheat sheet provides a nice summary of `render*()` and `*Output()` pairs:
+<br><br>
+
+![](images/render_output.jpg)
+<br><br>
 
 ## The server
 
@@ -287,19 +298,19 @@ Let's look at a few:
 
 ## Modular reactions
 
-- Let's say we want to sample data from a Normal distribution, plot a histogram, and then try different bin widths.
+- Sometimes we want to _modularize_ code either to reduce computation or prevent other code from executing
+- Consider the following example which samples `n` numbers from 1-100, and then sorts in either ascending or descending order according to `desc`
 
-- We could do this:
 
 ```{r eval=FALSE, echo=TRUE}
-output$hist1 <- renderPlot({hist(rnorm(input$n1), 
-                                 breaks = input$bins)})
+   output$numbers <- renderText({
+     sort(sample(100, size = input$n), 
+          decreasing = input$desc)
+   })
 ```
 
-- But changing the bin widths (`breaks`) would cause `renderPlot` to execute again and generate a new sample.
-
-- We would like to _modularize_ the call to `rnorm` so it only runs when we change the sample size and not the bin width.
-
+- changing the `decreasing` argument causes `sample` to execute again and generate a new sample.
+- We would like to _modularize_ the call to `sample` so we can change sort order without generating a new sample.
 
 
 ## Create modular reactions with the `reactive` function
@@ -309,13 +320,14 @@ output$hist1 <- renderPlot({hist(rnorm(input$n1),
 - Example:
 
 ```{r echo=TRUE, eval=FALSE}
-  re <- reactive({n <- rnorm(input$n1)}) 
-  output$hist1 <- renderPlot({hist(re(), 
-                                   breaks = input$bins)})
+   re <- reactive({sample(100, size = input$n)})
+   output$numbers <- renderText({
+     sort(re(), decreasing = input$desc)
+   })
 ```
 
-- The reactive expression `re()` runs when the sample size changes and saves the result to `n`
-- `renderPlot` uses the reactive expression to generate the histogram
+- The reactive expression `re()` runs when the sample size changes
+
 
 
 # Our final shiny app
