@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Get Ready!
 
-- Download [shinR.zip](https://github.com/uvastatlab/phdplus/raw/master/shinyR.zip) to your computer. It contains an R script and the content of this page as a slide deck. Save it somewhere easy to find. 
+- Download [shinyR.zip](https://github.com/uvastatlab/phdplus/raw/master/shinyR.zip) to your computer. It contains an R script and the content of this page as a slide deck. Save it somewhere easy to find. 
 - Unzip shinR.zip. (*Mac*: Double click the zipped file. *Win*: Right-click on the zip file and select "Extract All...")
 
 
@@ -334,9 +334,7 @@ Let's look at a few:
 
 Let's apply what we learned to build a shiny app that allows us to explore a complex linear model based on the Albemarle County homes data.
 
-[Click here](https://at.virginia.edu/2SS695y) to access the exercise.
-
-Or go to https://at.virginia.edu/2SS695y
+Go to [https://at.virginia.edu/2SS695y](https://at.virginia.edu/2SS695y) to access the exercise.
 
 
 # Where to host Shiny apps
