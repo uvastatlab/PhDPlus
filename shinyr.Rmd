@@ -334,7 +334,7 @@ Let's look at a few:
 
 Let's apply what we learned to build a shiny app that allows us to explore a complex linear model based on the Albemarle County homes data.
 
-Go to [https://at.virginia.edu/2SS695y](https://at.virginia.edu/2SS695y) to access the exercise.
+Go to <a href = "https://at.virginia.edu/2SS695y" target = "_blank">https://at.virginia.edu/2SS695y</a> to access the exercise.
 
 
 # Where to host Shiny apps
