@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Get Ready!
 
 - Download [shinyR.zip](https://github.com/uvastatlab/phdplus/raw/master/shinyR.zip) to your computer. It contains an R script and the content of this page as a slide deck. Save it somewhere easy to find. 
-- Unzip shinR.zip. (*Mac*: Double click the zipped file. *Win*: Right-click on the zip file and select "Extract All...")
+- Unzip shinyR.zip. (*Mac*: Double click the zipped file. *Win*: Right-click on the zip file and select "Extract All...")
 
 
 # What is shiny?
