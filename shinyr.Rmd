@@ -30,7 +30,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Create interactive apps...
 
-- for teaching statistical concepts: [Example](https://gallery.shinyapps.io/tdist/)
+- for teaching statistical concepts: [Example](http://consultr.uvadcos.io/correlation/)
 - for using and visualizing statistical models: [Example](https://gallery.shinyapps.io/drinkr/)
 - for exploring data or creating reports: [Example](https://gallery.shinyapps.io/college_explorer-master/)
     
