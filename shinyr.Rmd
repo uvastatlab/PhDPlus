@@ -263,7 +263,8 @@ Let's look at a few:
     * an app on one tab and instructions on another tab
     * multiple apps, each on their own tab
     * an app on one tab, data browser on another tab
-* Today our goal is to build a shiny app with two tabs: one to display effect plots and another to calculate expected home values for given specifications.
+* Today our goal is to build a shiny app with two tabs: one to display effect plots and another to calculate expected home values for given specifications
+* TIP: use `Ctrl + P` to jump to beginning/end of matching parentheses
 
 ## Example: Minimal tab panel
 
